@@ -51,6 +51,33 @@ class Assembler
 		}
 };
 
+std::string assembleIdentifier(Identifier* id, Assembler& assembler)
+{
+	return id->name;
+}
+
+std::string assembleStringLiteral(StringLiteral* str, Assembler& assembler)
+{
+	return "\"" + str->value + "\"";
+}
+
+std::string assembleAssignment(Assignment* assign, Assembler& assembler, bool passedFromVarDec = false)
+{
+	if (assign->val == nullptr)
+		return ";";
+
+	return assembleIdentifier(&assign->name, assembler) + " = " + assembleNode(assign->val, assembler) + ";";
+}
+
+std::string assembleVarDec(VariableDeclaration* var, Assembler& assembler)
+{
+	if (var->val == nullptr)
+		return var->varType.name + " " + var->name.name + ";";
+
+	else
+		return var->varType.name + " " + var->name.name + assembleAssignment(var->val.get(), assembler, true);
+}
+
 std::string assembleNode(std::unique_ptr<ASTNode>& node, Assembler& assembler)
 {
 	switch (node->type)
@@ -63,11 +90,26 @@ std::string assembleNode(std::unique_ptr<ASTNode>& node, Assembler& assembler)
 
 		case ASTNode::NodeType::STRING_LITERAL:
 		{
-			// Casts the node to a string literal
-			StringLiteral* str = static_cast<StringLiteral*>(node.get());
+			// Calls the function to assemble the string literal with a cast to correct type
+			return assembleStringLiteral(static_cast<StringLiteral*>(node.get()), assembler);
+		}
 
-			// Returns the value of the string literal
-			return "\"" + str->value + "\"";
+		case ASTNode::NodeType::IDENTIFIER:
+		{
+			// Calls the function to assemble the identifier with a cast to correct type
+			return assembleIdentifier(static_cast<Identifier*>(node.get()), assembler);
+		}
+
+		case ASTNode::NodeType::VARIABLE_DECLARATION:
+		{
+			// Calls the function to assemble the variable declaration with a cast to correct type
+			return assembleVarDec(static_cast<VariableDeclaration*>(node.get()), assembler);
+		}
+
+		case ASTNode::NodeType::ASSIGNMENT:
+		{
+			// Calls the function to assemble the assignment with a cast to correct type
+			return assembleAssignment(static_cast<Assignment*>(node.get()), assembler);
 		}
 
 		default:

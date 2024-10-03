@@ -15,20 +15,20 @@ namespace LX_Compiler
     public class VS_22_Compiler : CompilerBase
     {
         // Path to the MSVC compiler
-        private string MSVC_location;
+        private readonly string MSVC_location;
 
         // Include and library paths for the MSVC compiler
-        private string msvcIncludePath;
-        private string msvcLibPath;
+        private readonly string msvcIncludePath;
+        private readonly string msvcLibPath;
 
         // Include paths for the Windows SDK (Software Development Kit)
-        private string ucrtIncludePath;
-        private string sharedIncludePath;
-        private string umIncludePath;
+        private readonly string ucrtIncludePath;
+        private readonly string sharedIncludePath;
+        private readonly string umIncludePath;
 
         // Library paths for the Windows SDK (Software Development Kit)
-        private string ucrtLibPath;
-        private string umLibPath;
+        private readonly string ucrtLibPath;
+        private readonly string umLibPath;
 
         // Function to make the generation of the ProcessStartInfo object easier
         private ProcessStartInfo generateStartUpInfo(string extraArgs)

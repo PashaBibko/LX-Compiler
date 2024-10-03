@@ -13,5 +13,7 @@
     "src-dir":
     [
         "src"
-    ]
+    ],
+
+    "debug": true
 }

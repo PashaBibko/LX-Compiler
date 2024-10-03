@@ -7,10 +7,12 @@
 
 #include <assembler/assembler.h>
 
+#include <debug/DebugLog.h>
+
 #include <string>
 #include <filesystem>
 
-extern "C" __declspec(dllexport) void translate(const char* folder, const char* srcDir, const char* srcFileName)
+extern "C" __declspec(dllexport) void translate(const char* folder, const char* srcDir, const char* srcFileName, bool debugMode)
 {
 	// Error checking
 	// Explanation below why this is needed
@@ -33,8 +35,24 @@ extern "C" __declspec(dllexport) void translate(const char* folder, const char* 
 		// Lexical Analysis
 		tokens = lexer.lex(fileContents);
 
+		// Print tokens if in debug mode
+		if (debugMode)
+		{
+			std::cout << "Tokens of: " + fullSrcFileName + "\n";
+			DebugLog(tokens);
+			std::cout << "\n";
+		}
+
 		// Parsing
 		parser.parse(tokens, AST);
+
+		// Print AST if in debug mode
+		if (debugMode)
+		{
+			std::cout << "AST of: " + fullSrcFileName + "\n";
+			DebugLog(AST);
+			std::cout << "\n";
+		}
 
 		// Creates the output file (if it doesn't exist)
 		std::string outputDir = std::string(folder) + std::string("/build");

@@ -62,7 +62,7 @@ namespace LX_Compiler
 
         // Includes the translate function from the DLL
         [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void translate(string srcMainDir, string srcSubDir, string filename);
+        private static extern void translate(string srcMainDir, string srcSubDir, string filename, bool debug = false);
 
         // Main function
         static void Main(string[] args)
@@ -90,6 +90,11 @@ namespace LX_Compiler
                 // Creates a new VS_Controller object
                 CompilerBase c = CompilerController.create(ref info); //new VS_22_Compiler("C:\\Program Files\\Microsoft Visual Studio\\2022\\Community", "14.40.33807", "C:\\Program Files (x86)\\Windows Kits\\10", "10.0.22621.0");
 
+                // Determines if the program is in debug mode
+                bool debug = false;
+                try { debug = info.jsonDoc.RootElement.GetProperty("debug").GetBoolean(); }
+                catch (KeyNotFoundException) { }
+
                 // Loops through all the source directories
                 foreach (string srcDir in info.sourceDirs)
                 {
@@ -100,7 +105,7 @@ namespace LX_Compiler
                     foreach (string file in files)
                     {
                         // Translates the .lx file to a .cpp file
-                        translate(info.projectDir, System.IO.Path.GetFileNameWithoutExtension(srcDir), System.IO.Path.GetFileNameWithoutExtension(file) + ".lx");
+                        translate(info.projectDir, System.IO.Path.GetFileNameWithoutExtension(srcDir), System.IO.Path.GetFileNameWithoutExtension(file) + ".lx", debug);
 
                         // Compiles the .cpp file to a .obj file
                         c.CompileToObj(info.projectDir + "\\build\\" + System.IO.Path.GetFileNameWithoutExtension(file) + ".lx.cpp");

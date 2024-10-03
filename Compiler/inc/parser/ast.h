@@ -38,6 +38,8 @@ class ASTNode
             OPERATION,
             FUNCTION_CALL,
             STRING_LITERAL,
+
+            UNDEFINED
 		};
 
         // Constructor

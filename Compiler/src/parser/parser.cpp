@@ -102,39 +102,40 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 	// Switch statement to handle the different types of primary expressions
 	switch (currentTokens->operator[](currentIndex).type)
 	{
-	case TokenType::STRING_LITERAL:
-	{
-		// Return a StringLiteral type
-		return std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value);
-	}
+		case TokenType::STRING_LITERAL:
+		{
+			// Return a StringLiteral type
+			return std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value);
+		}
 
-	case TokenType::IDENTIFIER:
-	{
-		// Return an Identifier type
-		return std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value);
-	}
+		case TokenType::IDENTIFIER:
+		{
+			// Return an Identifier type
+			return std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value);
+		}
 
-	case TokenType::LEFT_PAREN:
-	{
-		// Skip the left parenthesis
-		currentIndex++;
+		case TokenType::LEFT_PAREN:
+		{
+			// Skip the left parenthesis
+			currentIndex++;
 
-		// Parse the operation
-		std::unique_ptr<ASTNode> out = parseOperation();
+			// Parse the operation
+			std::unique_ptr<ASTNode> out = parseOperation();
 
-		// Skip the right parenthesis
-		currentIndex++;
+			// Skip the right parenthesis
+			currentIndex++;
 
-		// Return the output
-		return out;
-	}
+			// Return the output
+			return out;
+		}
 
-	default:
-	{
-		// Throw an error if the token is unknown
-		std::cout << "WARNING: nullptr thrown at " << currentIndex << std::endl;
-		return nullptr;
-	}
+		default:
+		{
+			// Throw an error if the token is unknown
+			std::cout << "WARNING: nullptr thrown at " << currentIndex << std::endl;
+			std::cout << (int)currentTokens->operator[](currentIndex).type << std::endl;
+			return std::make_unique<ASTNode>(ASTNode::NodeType::UNDEFINED);
+		}
 	}
 }
 
@@ -191,22 +192,28 @@ std::unique_ptr<ASTNode> Parser::parseFunctionCall()
 			// Switch statement to handle the different types of arguments
 			switch (currentTokens->operator[](currentIndex).type)
 			{
-			case TokenType::COMMA:
-				// Iterate to skip the comma
-				currentIndex++;
-				break;
+				case TokenType::COMMA:
+					// Iterate to skip the comma
+					currentIndex++;
+					break;
 
-			case TokenType::STRING_LITERAL:
-				// Add the string literal to the arguments (and iterate over it)
-				out->args.push_back(std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value));
-				currentIndex++;
-				break;
+				case TokenType::STRING_LITERAL:
+					// Add the string literal to the arguments (and iterate over it)
+					out->args.push_back(std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value));
+					currentIndex++;
+					break;
 
-			default:
-				// Default case (follow the call chain)
-				out->args.push_back(parseFunctionCall());
-				currentIndex++;
-				break;
+				case TokenType::IDENTIFIER:
+					// Add the identifier to the arguments (and iterate over it)
+					out->args.push_back(std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value));
+					currentIndex++;
+					break;
+
+				default:
+					// Default case (follow the call chain)
+					out->args.push_back(parseFunctionCall());
+					currentIndex++;
+					break;
 			}
 		}
 
@@ -305,7 +312,7 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 		//
 		currentIndex++;
 
-		// Check if the variable is a constant
+		// 
 		if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
 		{
 			// Skip the assignment operator
@@ -315,6 +322,11 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 			out->val = std::make_unique<Assignment>();
 
 			out->val->val = parseFunctionCall();
+		}
+
+		else
+		{
+			out->val = nullptr;
 		}
 
 		// Return the output
