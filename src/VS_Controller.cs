@@ -10,7 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace LX_Compiler
 {
     // Class to control the MSVC compiler
-    public class VS_Controller
+    public class VS_22_Compiler
     {
         // Path to the MSVC compiler
         private string MSVC_location;
@@ -56,7 +56,7 @@ namespace LX_Compiler
         }
 
         // Constructor to set all the needed paths
-        public VS_Controller(string VS_location, string VS_Version, string windowsSdkPath, string windowsSDKVersion)
+        public VS_22_Compiler(string VS_location, string VS_Version, string windowsSdkPath, string windowsSDKVersion)
         {
             // MSVC compiler location
             MSVC_location = System.IO.Path.Combine(VS_location, $"VC\\Tools\\MSVC\\{VS_Version}\\bin\\Hostx86\\x86\\cl.exe");

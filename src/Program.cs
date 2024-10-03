@@ -43,7 +43,7 @@ namespace LX_Compiler
             BuildInfo info = new(args[0]);
 
             // Creates a new VS_Controller object
-            VS_Controller vsController = new("C:\\Program Files\\Microsoft Visual Studio\\2022\\Community", "14.40.33807", "C:\\Program Files (x86)\\Windows Kits\\10", "10.0.22621.0");
+            VS_22_Compiler vsController = new("C:\\Program Files\\Microsoft Visual Studio\\2022\\Community", "14.40.33807", "C:\\Program Files (x86)\\Windows Kits\\10", "10.0.22621.0");
 
             // Loops through all the source directories
             foreach (string srcDir in info.sourceDirs)
