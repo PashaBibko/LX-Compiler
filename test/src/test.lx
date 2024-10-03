@@ -1,0 +1,4 @@
+# This is a comment #
+
+print("Hello World\n")
+print("This is the 1st time"," code has been run on LX")

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel = "stylesheet" href = "../style.css">
+    </head>
+
+    <body>
+        <div class = "normal-text">
+            <h2> Variable declaration </h2>
+
+            <p>
+                Variables in lx types are hard coded.
+                This means that the type of the variable cannot be changed at runtime.
+                This is because C++ is a statically typed language.
+                <br>
+                Also similiar to C++ you can define a variable without a value.
+                This is useful for when you want to define a variable but you don't have a value for it yet.
+                Note that the variable will be undefined until you assign a value to it.
+            </p>
+
+            <div class = "code">
+                <p> int var1 = 0; <br> int var2; # Undefined </p>
+            </div>
+
+            <h2> Types </h2>
+
+            <h3> Int and Float </h3>
+
+            <p>
+                Int and Float are both reprsentations of numbers.
+                Int is a whole number and float is a decimal number.
+            </p>
+
+            <div class = "code">
+                <p> int var1 = 0; <br> float var2 = 0.0; </p>
+                <p> # var3 will have a contents of 3 due to truncation <br> int var3 = 3.1459 </p>
+                <p> # var4 will have a contents of 3.1459 because it is a float <br> float var4 = 3.1459 </p>
+            </div>
+
+            <p>
+                Ints are defined by the 'int' keyword and floats are defined by the 'float' keyword.
+                You can also make it unsigned by adding the 'unsigned' keyword before the type.
+                This means that the number cannot be negative.
+            </p>
+
+            <h3> Bool </h3>
+
+            <p>
+                Bool is a representation of a true or false value.
+                It is defined by the 'bool' keyword.
+            </p>
+
+            <p>
+                The values are 'true' and 'false'.
+                The first letter can be capitalized or lowercase.
+                You can also use '1' and '0' to represent true and false.
+            </p>
+
+            <div class = "code">
+                <p> # All variables store true <br> bool var1 = True; <br> bool var2 = true; <br> bool var3 = 1; </p>
+            </div>
+
+            <h3> Char and String </h3>
+
+            <p>
+                Char is a single ASCII character.
+                If you do not know what ASCII is find out 
+                
+                <a href = "https://www.ascii-code.com" target = "_blank">
+                    here.
+                </a>
+
+                <br>
+            
+                It is defined by the 'char' keyword.
+            </p>
+
+            <p>
+                String is a collection of characters.
+                It is defined by the 'string' keyword.
+                You can access the individual characters of a string by using the [] operator.
+            </p>
+
+            <div class = "code">
+                <p> # Stores the letter 'a' <br> char var1 = 'a'; </p>
+                <p> string var2 = "Hello"; <br> char var3 = var2[0]; </p>
+            </div>
+
+            <h3> Void </h3>
+
+            <p>
+                Void is a type that represents nothing.
+                It is defined by the 'void' keyword.
+                It is used for functions that do not return a value.
+            </p>
+
+            <p>
+                You can also use void as a type for a variable.
+                This means that the variable does not have a type.
+                This is useful for when you want to store a pointer to any type (however it is recommended to use a base class pointer).
+            </p>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+# Folder locations to exclude
+
+.vs/
+.git/
+.vscode/
+
+bin/
+obj/
+
+x64/
+
+# Ignore precompiled binaries
+
+*.exe
+*.dll
+*.pdb
+*.obj
+
+# Ignore all visual studio specific files
+
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+
+*.csproj

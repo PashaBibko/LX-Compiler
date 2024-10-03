@@ -1,0 +1,37 @@
+
+guide<NumberGuide> [enum size, bool signed]
+{
+    string toStr();
+}
+
+guide<NumberGuide> case u_short
+{
+    attributes:
+        [ size == enum::small ]
+        [ signed == false ]
+
+        [ value = unsigned short ]
+
+    public:
+        string toStr()
+        {}
+
+        unsigned short& operator=
+}
+
+string toStr(NumberGuide[u_short]& value)
+{}
+
+guide<NumberGuide> default int
+{
+    attributes:
+        [ size == enum::medium ]
+        [ signed == true ]
+
+    public:
+        string toStr()
+        {}
+}
+
+NumberGuide[u_short] var
+var.getStr()

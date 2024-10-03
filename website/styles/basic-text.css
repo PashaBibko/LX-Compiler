@@ -1,0 +1,18 @@
+.normal-text
+{
+    max-width: 800px;
+    margin: auto;
+}
+
+.code
+{
+    max-width: 800px;
+    margin: auto;
+
+    background-color: #111111;
+
+    border: 5px solid #333333;
+    border-radius: 30px;
+
+    padding: 0px 30px;
+}
