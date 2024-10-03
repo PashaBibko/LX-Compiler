@@ -13,20 +13,20 @@ namespace LX_Compiler
     public class VS_Controller
     {
         // Path to the MSVC compiler
-        string MSVC_location;
+        private string MSVC_location;
 
         // Include and library paths for the MSVC compiler
-        string msvcIncludePath;
-        string msvcLibPath;
+        private string msvcIncludePath;
+        private string msvcLibPath;
 
         // Include paths for the Windows SDK (Software Development Kit)
-        string ucrtIncludePath;
-        string sharedIncludePath;
-        string umIncludePath;
+        private string ucrtIncludePath;
+        private string sharedIncludePath;
+        private string umIncludePath;
 
         // Library paths for the Windows SDK (Software Development Kit)
-        string ucrtLibPath;
-        string umLibPath;
+        private string ucrtLibPath;
+        private string umLibPath;
 
         // Function to make the generation of the ProcessStartInfo object easier
         private ProcessStartInfo generateStartUpInfo(string extraArgs)
@@ -106,10 +106,11 @@ namespace LX_Compiler
         }
 
         // Function to compile multiple .obj files to an .exe file
-        public void CompileObjsToExe(string mainDir)
+        public void CompileObjsToExe(string mainDir, string exeFileName)
         {
             // Creates the path to the .exe file
-            string exeFileName = mainDir + "\\test.exe";
+            DateTime now = DateTime.Now;
+            exeFileName = System.IO.Path.Combine(mainDir, exeFileName) + "[" + now.ToString("yyyy-MM-dd_HH-mm-ss") + "].exe";
 
             // Gets all the .obj files in the build directory
             string objFiles = string.Join(" ", System.IO.Directory.GetFiles(mainDir + "\\build", "*.obj"));
