@@ -5,12 +5,14 @@ using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
+using LX_Compiler;
 
 // Project namespace
 namespace LX_Compiler
 {
     // Class to control the MSVC compiler
-    public class VS_22_Compiler
+    public class VS_22_Compiler : CompilerBase
     {
         // Path to the MSVC compiler
         private string MSVC_location;
@@ -56,14 +58,46 @@ namespace LX_Compiler
         }
 
         // Constructor to set all the needed paths
-        public VS_22_Compiler(string VS_location, string VS_Version, string windowsSdkPath, string windowsSDKVersion)
+        public VS_22_Compiler(ref JsonElement compilerJSON)
         {
+            // Gets the Visual Studio location
+            string? VS_location;
+            try { VS_location = compilerJSON.GetProperty("dir").GetString(); }
+            catch (KeyNotFoundException) { throw new Exception("Visual Studio location not specified in build info. Should be under \"dir\""); }
+            if (VS_location == null) { throw new Exception("Visual Studio location not specified in build info. Should be under \"dir\""); }
+
+            // Gets the Visual Studio version
+            string? VS_Version;
+            try { VS_Version = compilerJSON.GetProperty("version").GetString(); }
+            catch (KeyNotFoundException) { throw new Exception("Visual Studio version not specified in build info. Should be under \"version\""); }
+            if (VS_Version == null) { throw new Exception("Visual Studio version not specified in build info. Should be under \"version\""); }
+
+            // Gets the Windows SDK path
+            string? windowsSdkPath;
+            try { windowsSdkPath = compilerJSON.GetProperty("sdk-dir").GetString(); }
+            catch (KeyNotFoundException) { throw new Exception("Windows SDK path not specified in build info. Should be under \"sdk-dir\""); }
+            if (windowsSdkPath == null) { throw new Exception("Windows SDK path not specified in build info. Should be under \"sdk-dir\""); }
+
+            // Gets the Windows SDK version
+            string? windowsSDKVersion;
+            try { windowsSDKVersion = compilerJSON.GetProperty("sdk-version").GetString(); }
+            catch (KeyNotFoundException) { throw new Exception("Windows SDK version not specified in build info. Should be under \"sdk-version\""); }
+            if (windowsSDKVersion == null) { throw new Exception("Windows SDK version not specified in build info. Should be under \"sdk-version\""); }
+
             // MSVC compiler location
-            MSVC_location = System.IO.Path.Combine(VS_location, $"VC\\Tools\\MSVC\\{VS_Version}\\bin\\Hostx86\\x86\\cl.exe");
+            MSVC_location = System.IO.Path.Combine(VS_location, $"VC\\Tools\\MSVC\\{VS_Version}\\bin\\Hostx86\\x86");
 
             // MSVC C++ include and library paths
             msvcIncludePath = System.IO.Path.Combine(VS_location, $"VC\\Tools\\MSVC\\{VS_Version}\\include");
             msvcLibPath = System.IO.Path.Combine(VS_location, $"VC\\Tools\\MSVC\\{VS_Version}\\lib\\x86");
+
+            // Checks if the paths are valid
+            if (Directory.Exists(MSVC_location) == false) { throw new Exception("MSVC compiler location does not exist: " + MSVC_location); }
+            if (Directory.Exists(msvcIncludePath) == false) { throw new Exception("MSVC include path does not exist: " + msvcIncludePath); }
+            if (Directory.Exists(msvcLibPath) == false) { throw new Exception("MSVC library path does not exist: " + msvcLibPath); }
+
+            // Updates the MSVC location to include the compiler
+            MSVC_location = System.IO.Path.Combine(MSVC_location, "cl.exe");
 
             // Windows SDK include paths
             ucrtIncludePath = System.IO.Path.Combine(windowsSdkPath, $"Include\\{windowsSDKVersion}\\ucrt");
@@ -73,10 +107,17 @@ namespace LX_Compiler
             // Windows SDK library paths
             ucrtLibPath = System.IO.Path.Combine(windowsSdkPath, $"Lib\\{windowsSDKVersion}\\ucrt\\x86");
             umLibPath = System.IO.Path.Combine(windowsSdkPath, $"Lib\\{windowsSDKVersion}\\um\\x86");
+
+            // Checks if the paths are valid
+            if (Directory.Exists(ucrtIncludePath) == false) { throw new Exception("Windows SDK ucrt include path does not exist: " + ucrtIncludePath); }
+            if (Directory.Exists(sharedIncludePath) == false) { throw new Exception("Windows SDK shared include path does not exist: " + sharedIncludePath); }
+            if (Directory.Exists(umIncludePath) == false) { throw new Exception("Windows SDK um include path does not exist: " + umIncludePath); }
+            if (Directory.Exists(ucrtLibPath) == false) { throw new Exception("Windows SDK ucrt library path does not exist: " + ucrtLibPath); }
+            if (Directory.Exists(umLibPath) == false) { throw new Exception("Windows SDK um library path does not exist: " + umLibPath); }
         }
 
         // Function to compile a .cpp file to a .obj file
-        public void CompileToObj(string fileName)
+        public override void CompileToObj(string fileName)
         {
             // Replace .cpp with .obj for the output file
             string objFileName = fileName.Replace(".cpp", ".obj");
@@ -92,21 +133,18 @@ namespace LX_Compiler
 
                 // If the process failed, throw an exception
                 if (p.ExitCode != 0) { throw new Exception("Compilation failed"); }
-
-                // Writes to the console that the file was compiled
-                Console.WriteLine($"Compiled {fileName} to {objFileName}");
             }
         }
 
         // Function to compile multiple .cpp files to multiple .obj files
-        public void CompileToObj(string[] fileNames)
+        public override void CompileToObj(string[] fileNames)
         {
             // Loops through all the file names
             foreach (string fileName in fileNames) { CompileToObj(fileName); }
         }
 
         // Function to compile multiple .obj files to an .exe file
-        public void CompileObjsToExe(string mainDir, string exeFileName)
+        public override void CompileObjsToExe(string mainDir, string exeFileName)
         {
             // Creates the path to the .exe file
             DateTime now = DateTime.Now;
@@ -126,9 +164,6 @@ namespace LX_Compiler
 
                 // If the process failed, throw an exception
                 if (p.ExitCode != 0) { throw new Exception("Linking failed"); }
-
-                // Writes to the console that the files were linked
-                Console.WriteLine($"Linked {objFiles} to {exeFileName}");
             }
         }
     }

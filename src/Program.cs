@@ -1,16 +1,59 @@
 ﻿// Standard Libraries
 using System;
+using System.Text.Json;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 
 // External Files
 using LX_Compiler;
-using LX_Compiler.src;
+using System.Security.Cryptography.X509Certificates;
 
 // Project namespace
 namespace LX_Compiler
 {
+    // Class to control which compiler to use (and how to set it up)
+    public class CompilerController
+    {
+        public static Exception InvalidComplierType(string type)
+        {
+            return new Exception
+            (
+                "Invalid Compiler Type: " + type + "\n" +
+                "Valid types are:\n" +
+                "\tMSVC-22"
+            );
+        }
+
+        public static CompilerBase create(ref BuildInfo info)
+        {
+            // Gets the root element
+            JsonElement root = info.jsonDoc.RootElement;
+
+            // Gets the compiler JSON element
+            JsonElement compilerJSON;
+            try { compilerJSON = root.GetProperty("compiler"); }
+            catch (KeyNotFoundException) { throw new Exception("Compiler not specified in build info"); }
+
+            // Gets the compiler type
+            string? compilerType;
+            try { compilerType = compilerJSON.GetProperty("type").GetString(); }
+            catch (KeyNotFoundException) { throw new Exception("Compiler Type not specified in build info"); }
+            if (compilerType == null) { throw new Exception("Compiler Type not specified in build info"); }
+
+            // Calls the relevant constuctor
+            switch (compilerType)
+            {
+                case "MSVC-22": return new VS_22_Compiler(ref compilerJSON);
+
+                // Throws an exception if the compiler type is invalid
+                default: throw InvalidComplierType(compilerType);
+            }
+
+            throw new Exception("Compiler Type not specified in build info");
+        }
+    }
+
     // Main class
     public class Program
     {
@@ -38,32 +81,44 @@ namespace LX_Compiler
                 Console.WriteLine("Only accepts one argument, received " + args.Length);
             }
 
-            // Creates a new BuildInfo object
-            // This object is used to store the build information
-            BuildInfo info = new(args[0]);
-
-            // Creates a new VS_Controller object
-            VS_22_Compiler vsController = new("C:\\Program Files\\Microsoft Visual Studio\\2022\\Community", "14.40.33807", "C:\\Program Files (x86)\\Windows Kits\\10", "10.0.22621.0");
-
-            // Loops through all the source directories
-            foreach (string srcDir in info.sourceDirs)
+            try
             {
-                // Finds all the .lx files in the source directory
-                string[] files = Directory.GetFiles(srcDir, "*.lx");
+                // Creates a new BuildInfo object
+                // This object is used to store the build information
+                BuildInfo info = new(args[0]);
 
-                // Loops through all the .lx files
-                foreach (string file in files)
+                // Creates a new VS_Controller object
+                CompilerBase c = CompilerController.create(ref info); //new VS_22_Compiler("C:\\Program Files\\Microsoft Visual Studio\\2022\\Community", "14.40.33807", "C:\\Program Files (x86)\\Windows Kits\\10", "10.0.22621.0");
+
+                // Loops through all the source directories
+                foreach (string srcDir in info.sourceDirs)
                 {
-                    // Translates the .lx file to a .cpp file
-                    translate(info.projectDir, System.IO.Path.GetFileNameWithoutExtension(srcDir), System.IO.Path.GetFileNameWithoutExtension(file) + ".lx");
+                    // Finds all the .lx files in the source directory
+                    string[] files = Directory.GetFiles(srcDir, "*.lx");
 
-                    // Compiles the .cpp file to a .obj file
-                    vsController.CompileToObj(info.projectDir + "\\build\\" + System.IO.Path.GetFileNameWithoutExtension(file) + ".lx.cpp");
+                    // Loops through all the .lx files
+                    foreach (string file in files)
+                    {
+                        // Translates the .lx file to a .cpp file
+                        translate(info.projectDir, System.IO.Path.GetFileNameWithoutExtension(srcDir), System.IO.Path.GetFileNameWithoutExtension(file) + ".lx");
+
+                        // Compiles the .cpp file to a .obj file
+                        c.CompileToObj(info.projectDir + "\\build\\" + System.IO.Path.GetFileNameWithoutExtension(file) + ".lx.cpp");
+                    }
                 }
+
+                // Compiles the test.lx.obj file to a test.lx.exe file
+                c.CompileObjsToExe(info.projectDir, info.projectName);
             }
 
-            // Compiles the test.lx.obj file to a test.lx.exe file
-            vsController.CompileObjsToExe(info.projectDir, info.projectName);
+            catch (Exception e)
+            {
+                Console.WriteLine("FATAL ERROR in: " + e.TargetSite);
+                Console.WriteLine("ERROR: " + e.Message);
+                Console.WriteLine();
+                Console.WriteLine("Call Stack:");
+                Console.WriteLine(e.StackTrace);
+            }
         }
     }
 }

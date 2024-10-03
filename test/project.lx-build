@@ -1,5 +1,16 @@
 {
-    "src":
+    "compiler":
+    {
+        "type": "MSVC-22",
+
+        "dir": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community",
+        "version": "14.40.33807",
+
+        "sdk-dir": "C:\\Program Files (x86)\\Windows Kits\\10",
+        "sdk-version": "10.0.22621.0"
+    },
+
+    "src-dir":
     [
         "src"
     ]
