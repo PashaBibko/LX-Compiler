@@ -105,6 +105,7 @@ inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 			VariableDeclaration* varDecl = static_cast<VariableDeclaration*>(node.get());
 
 			std::cout << std::string(depth, '\t') << "Variable Declaration: type {" << varDecl->varType.name << "} name {" << varDecl->name.name << "}" << std::endl;
+			std::cout << std::string(depth + 1, '\t') << "Const: " << (varDecl->isConst() ? "true" : "false") << std::endl;
 
 			if (varDecl->val != nullptr)
 			{

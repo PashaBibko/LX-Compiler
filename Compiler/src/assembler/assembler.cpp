@@ -49,13 +49,23 @@ std::string Assembler::assembleAssignment(Assignment* assign)
 	return Assembler::assembleIdentifier(&assign->name) + " = " + assembleNode(assign->val) + ";";
 }
 
+std::string Assembler::assembleVarMods(VariableDeclaration* var)
+{
+	std::string out = "";
+
+	if (var->isConst())
+		out = out + "const ";
+
+	return out;
+}
+
 std::string Assembler::assembleVarDec(VariableDeclaration* var)
 {
 	if (var->val == nullptr)
-		return var->varType.name + " " + var->name.name + ";";
+		return assembleVarMods(var) + var->varType.name + " " + var->name.name + ";";
 
 	else
-		return var->varType.name + " " + var->name.name + assembleAssignment(var->val.get());
+		return assembleVarMods(var) + var->varType.name + " " + var->name.name + assembleAssignment(var->val.get());
 }
 
 std::string Assembler::assembleOperand(TokenType op)

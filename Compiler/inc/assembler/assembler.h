@@ -14,6 +14,7 @@ class Assembler
 
 		std::string assembleAssignment(Assignment* assign);
 
+		std::string assembleVarMods(VariableDeclaration* var);
 		std::string assembleVarDec(VariableDeclaration* var);
 
 		std::string assembleOperand(TokenType op);

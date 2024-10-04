@@ -363,13 +363,13 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 		{
 			switch (currentTokens->operator[](currentIndex).type)
 			{
-			case TokenType::CONST:
-				out->setConst();
-				break;
+				case TokenType::CONST:
+					out->setConst();
+					break;
 
-			default:
-				std::cerr << "ERROR: Unknown variable modifier" << std::endl;
-				return nullptr;
+				default:
+					std::cerr << "ERROR: Unknown variable modifier" << std::endl;
+					return nullptr;
 			}
 
 			// Iterate to the next token
@@ -379,13 +379,13 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 		// Set the type of the variable
 		switch (currentTokens->operator[](currentIndex).type)
 		{
-		case TokenType::INT_DEC:
-			out->varType.name = "int";
-			break;
+			case TokenType::INT_DEC:
+				out->varType.name = "int";
+				break;
 
-		case TokenType::STR_DEC:
-			out->varType.name = "str";
-			break;
+			case TokenType::STR_DEC:
+				out->varType.name = "str";
+				break;
 		}
 
 		// Iterate to the next token
