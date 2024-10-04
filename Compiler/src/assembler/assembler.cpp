@@ -82,7 +82,7 @@ std::string Assembler::assembleOperand(TokenType op)
 
 std::string Assembler::assembleOperation(Operation* op)
 {
-	return assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs);
+	return "(" + assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs) + ")";
 }
 
 //

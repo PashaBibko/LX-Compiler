@@ -122,9 +122,6 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 			// Parse the operation
 			std::unique_ptr<ASTNode> out = parseOperation();
 
-			// Skip the right parenthesis
-			currentIndex++;
-
 			// Return the output
 			return out;
 		}
@@ -159,10 +156,7 @@ std::unique_ptr<ASTNode> Parser::parseOperation()
 		currentIndex++;
 
 		// Parse the rhs
-		out->rhs = parsePrimary();
-
-		// Skip the rhs
-		currentIndex++;
+		out->rhs = parseFunctionCall();
 
 		// Set the lhs
 		out->lhs = std::move(lhs);

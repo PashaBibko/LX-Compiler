@@ -1,6 +1,6 @@
 # This is a comment #
 
-int var1 = 8 + 2
+int var1 = 2 + (8 + 2) + 2
 int var2
 
 print(var1)
