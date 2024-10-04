@@ -16,6 +16,9 @@ class Assembler
 
 		std::string assembleVarDec(VariableDeclaration* var);
 
+		std::string assembleOperand(TokenType op);
+		std::string assembleOperation(Operation* op);
+
 	public:
 		std::string assembleNode(std::unique_ptr<ASTNode>& node);
 

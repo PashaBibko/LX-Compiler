@@ -58,6 +58,33 @@ std::string Assembler::assembleVarDec(VariableDeclaration* var)
 		return var->varType.name + " " + var->name.name + assembleAssignment(var->val.get());
 }
 
+std::string Assembler::assembleOperand(TokenType op)
+{
+	switch (op)
+	{
+		case TokenType::PLUS:
+		{
+			return "+";
+		}
+
+		case TokenType::MINUS:
+		{
+			return "-";
+		}
+
+		default:
+		{
+			std::cerr << "Error: Unknown operand type" << std::endl;
+			return "";
+		}
+	}
+}
+
+std::string Assembler::assembleOperation(Operation* op)
+{
+	return assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs);
+}
+
 //
 
 std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
@@ -92,6 +119,12 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 		{
 			// Calls the function to assemble the assignment with a cast to correct type
 			return assembleAssignment(static_cast<Assignment*>(node.get()));
+		}
+
+		case ASTNode::NodeType::OPERATION:
+		{
+			// Calls the function to assemble the operation with a cast to correct type
+			return assembleOperation(static_cast<Operation*>(node.get()));
 		}
 
 		default:

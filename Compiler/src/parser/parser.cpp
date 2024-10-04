@@ -161,6 +161,9 @@ std::unique_ptr<ASTNode> Parser::parseOperation()
 		// Parse the rhs
 		out->rhs = parsePrimary();
 
+		// Skip the rhs
+		currentIndex++;
+
 		// Set the lhs
 		out->lhs = std::move(lhs);
 

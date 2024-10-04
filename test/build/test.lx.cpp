@@ -2,7 +2,7 @@
 
 int main()
 {
-int var1 = 8;
+int var1 = 8 + 2;
 int var2;
 std::cout << var1;
 std::cout << var2;
