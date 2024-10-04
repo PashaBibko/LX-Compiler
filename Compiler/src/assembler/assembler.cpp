@@ -62,15 +62,30 @@ std::string Assembler::assembleOperand(TokenType op)
 {
 	switch (op)
 	{
-		case TokenType::PLUS:
-		{
-			return "+";
-		}
+		case TokenType::PLUS: { return "+"; }
+		case TokenType::MINUS: { return "-"; }
+		case TokenType::MULTIPLY: { return "*"; }
+		case TokenType::DIVIDE: { return "/"; }
+		case TokenType::MODULO: { return "%"; }
 
-		case TokenType::MINUS:
-		{
-			return "-";
-		}
+		case TokenType::PLUS_EQUALS: { return "+="; }
+		case TokenType::MINUS_EQUALS: { return "-="; }
+		case TokenType::MULTIPLY_EQUALS: { return "*="; }
+		case TokenType::DIVIDE_EQUALS: { return "/="; }
+
+		case TokenType::EQUALS: { return "=="; }
+		case TokenType::LESS_THAN: { return "<"; }
+		case TokenType::GREATER_THAN: { return ">"; }
+		case TokenType::LESS_THAN_EQUALS: { return "<="; }
+		case TokenType::GREATER_THAN_EQUALS: { return ">="; }
+		case TokenType::NOT_EQUALS: { return "!="; }
+
+		case TokenType::AND: { return "&&"; }
+		case TokenType::NOT: { return "!"; }
+		case TokenType::OR: { return "||"; }
+
+		case TokenType::INCREMENT: { return "++"; }
+		case TokenType::DECREMENT: { return "--"; }
 
 		default:
 		{
@@ -85,10 +100,22 @@ std::string Assembler::assembleOperation(Operation* op)
 	return "(" + assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs) + ")";
 }
 
+std::string Assembler::assembleUnaryOperation(UnaryOperation* op)
+{
+	if (op->side == UnaryOperation::Sided::LEFT)
+		return assembleOperand(op->op) + assembleNode(op->val);
+
+	else
+		return assembleNode(op->val) + assembleOperand(op->op);
+}
+
 //
 
 std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 {
+	if (node == nullptr)
+		return "";
+
 	switch (node->type)
 	{
 		case ASTNode::NodeType::FUNCTION_CALL:
@@ -127,9 +154,15 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 			return assembleOperation(static_cast<Operation*>(node.get()));
 		}
 
+		case ASTNode::NodeType::UNARY_OPERATION:
+		{
+			// Calls the function to assemble the unary operation with a cast to correct type
+			return assembleUnaryOperation(static_cast<UnaryOperation*>(node.get()));
+		}
+
 		default:
 		{
-			std::cerr << "Error: Unknown node type" << std::endl;
+			std::cerr << "Error: Unknown node type\n" << std::endl;
 			return "";
 		}
 	}
@@ -141,9 +174,9 @@ std::string Assembler::assemble(FileAST& AST)
 
 	for (std::unique_ptr<ASTNode>& node : AST.script)
 	{
-		out = out + assembleNode(node);
+		out = out + "\t" + assembleNode(node);
 		out = out + "\n";
 	}
 
-	return out + "\nstd::cin.get();\n}\n";
+	return out + "\n\tstd::cin.get();\n}\n";
 }

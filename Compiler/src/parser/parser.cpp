@@ -2,6 +2,7 @@
 
 #include <parser/ast.h>
 
+#include <debug/DebugLog.h>
 
 // Namespace to hold all the constexpr functions
 // This is to help split them up from the parser code
@@ -24,9 +25,6 @@ namespace Constexprs
 			case TokenType::MULTIPLY_EQUALS:
 			case TokenType::DIVIDE_EQUALS:
 
-			// Power operator
-			case TokenType::POWER:
-
 			// Binary comparison operators
 			case TokenType::EQUALS:
 			case TokenType::LESS_THAN:
@@ -40,9 +38,51 @@ namespace Constexprs
 			case TokenType::NOT:
 			case TokenType::OR:
 
+			// Unary operators
+			case TokenType::INCREMENT:
+			case TokenType::DECREMENT:
+
 			// Returns true if the token is an operator
 				return true;
 
+			// Default case
+			default:
+				return false;
+		}
+	}
+
+	constexpr bool isUnaryOnlyOperator(TokenType type)
+	{
+		switch (type)
+		{
+			// Unary operators
+			case TokenType::INCREMENT:
+			case TokenType::DECREMENT:
+			case TokenType::NOT:
+
+			// Returns true if the token is a unary operator
+				return true;
+
+			// Default case
+			default:
+				return false;
+		}
+	}
+
+	constexpr bool isUnaryOperator(TokenType type)
+	{
+		if (isUnaryOnlyOperator(type))
+			return true;
+
+		switch (type)
+		{
+			// Binary operators
+			case TokenType::PLUS:
+			case TokenType::MINUS:
+
+			// Returns true if the token is a unary operator
+				return true;
+			
 			// Default case
 			default:
 				return false;
@@ -131,13 +171,41 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 			// Throw an error if the token is unknown
 			std::cout << "WARNING: nullptr thrown at " << currentIndex << std::endl;
 			std::cout << (int)currentTokens->operator[](currentIndex).type << std::endl;
-			return std::make_unique<ASTNode>(ASTNode::NodeType::UNDEFINED);
+			return nullptr;
 		}
 	}
 }
 
+std::unique_ptr<ASTNode> Parser::parseUnaryOperation()
+{
+	// Create the output as an UnaryOperation type to allow access
+	std::unique_ptr<UnaryOperation> out = std::make_unique<UnaryOperation>();
+
+	// Set the operator
+	out->op = currentTokens->operator[](currentIndex).type;
+
+	// Skip the operator
+	currentIndex++;
+
+	// Parse the value
+	out->val = parseFunctionCall();
+
+	// Set the side of the operation
+	out->side = UnaryOperation::Sided::LEFT;
+
+	// Return the output
+	return out;
+}
+
 std::unique_ptr<ASTNode> Parser::parseOperation()
 {
+	// If the token is an operator, parse the unary operation
+	if (Constexprs::isUnaryOperator(currentTokens->operator[](currentIndex).type))
+	{
+		// Calls the unary operation parser
+		return parseUnaryOperation();
+	}
+
 	// Parses the lhs
 	std::unique_ptr<ASTNode> lhs = parsePrimary();
 
@@ -155,14 +223,34 @@ std::unique_ptr<ASTNode> Parser::parseOperation()
 		// Skip the operator
 		currentIndex++;
 
-		// Parse the rhs
-		out->rhs = parseFunctionCall();
+		// Check if the operator is unary only
+		if (Constexprs::isUnaryOnlyOperator(out->op))
+		{
+			// Create the output as an UnaryOperation type to allow access
+			std::unique_ptr<UnaryOperation> unaryOut = std::make_unique<UnaryOperation>();
 
-		// Set the lhs
-		out->lhs = std::move(lhs);
+			// Moves the values to the unary operation
+			unaryOut->val = std::move(lhs);
+			unaryOut->op = out->op;
 
-		// Return the output
-		return out;
+			// Set the side of the operation
+			unaryOut->side = UnaryOperation::Sided::RIGHT;
+
+			// Return the output
+			return unaryOut;
+		}
+		
+		else
+		{
+			// Parse the rhs
+			out->rhs = parseFunctionCall();
+
+			// Set the lhs
+			out->lhs = std::move(lhs);
+
+			// Return the output
+			return out;
+		}
 	}
 
 	// Return the lhs if there is no operator
@@ -334,7 +422,7 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 	return parseAssignment();
 }
 
-void Parser::parse(const std::vector<Token>& tokens, FileAST& out)
+void Parser::parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode)
 {
 	// Initialize
 	currentTokens = &tokens;
@@ -343,6 +431,12 @@ void Parser::parse(const std::vector<Token>& tokens, FileAST& out)
 	while (currentTokens->operator[](currentIndex).type != TokenType::END_OF_FILE)
 	{
 		out.script.push_back(parseVariableDeclaration());
+
+		// Debug mode
+		if (debugMode)
+		{
+			DebugLog(out.script.back(), 0);
+		}
 
 		if (out.script.back() == nullptr)
 		{

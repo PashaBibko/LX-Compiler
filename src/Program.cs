@@ -88,7 +88,7 @@ namespace LX_Compiler
                 BuildInfo info = new(args[0]);
 
                 // Creates a new VS_Controller object
-                CompilerBase c = CompilerController.create(ref info); //new VS_22_Compiler("C:\\Program Files\\Microsoft Visual Studio\\2022\\Community", "14.40.33807", "C:\\Program Files (x86)\\Windows Kits\\10", "10.0.22621.0");
+                CompilerBase c = CompilerController.create(ref info);
 
                 // Determines if the program is in debug mode
                 bool debug = false;

@@ -1,9 +1,7 @@
 # This is a comment #
 
-int var1 = 2 + (8 + 2) + 2
-int var2
+int var1 = 2
+int var2 = var1++
+int var3 = --var1
 
-print(var1)
-print(var2)
-print("Hello World\n")
-print("This is the 1st time"," code has been run on LX")
+print(var1, ",", var2, ",", var3)

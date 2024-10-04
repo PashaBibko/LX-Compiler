@@ -2,6 +2,8 @@
 
 #include <parser/ast.h>
 
+#include <debug/DebugLog.h>
+
 class Parser
 {
 	private:
@@ -13,6 +15,7 @@ class Parser
 
 		std::unique_ptr<ASTNode> parsePrimary();
 
+		std::unique_ptr<ASTNode> parseUnaryOperation();
 		std::unique_ptr<ASTNode> parseOperation();
 
 		std::unique_ptr<ASTNode> parseFunctionCall();
@@ -24,5 +27,5 @@ class Parser
 	public:
 		Parser() {}
 
-		void parse(const std::vector<Token>& tokens, FileAST& out);
+		void parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode);
 };

@@ -36,6 +36,7 @@ class ASTNode
 			VARIABLE_DECLARATION,
             ASSIGNMENT,
             OPERATION,
+            UNARY_OPERATION,
             FUNCTION_CALL,
             STRING_LITERAL,
 
@@ -119,6 +120,26 @@ class Operation : public ASTNode
         std::unique_ptr<ASTNode> rhs;
 
         TokenType op;
+};
+
+class UnaryOperation : public ASTNode
+{
+	public:
+        // Enum for representing the side of the operation
+        enum class Sided : bool
+        {
+            LEFT,
+			RIGHT
+        };
+
+		// Constructor
+		UnaryOperation() : ASTNode(NodeType::UNARY_OPERATION) {}
+
+		// Contents of the operation
+		std::unique_ptr<ASTNode> val;
+
+		TokenType op;
+        Sided side;
 };
 
 /*

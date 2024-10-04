@@ -8,7 +8,7 @@
 
 #define TOKEN_CASE(tokenCase) case tokenCase: std::cout << #tokenCase << ": " << token.value << std::endl; break;
 
-void DebugLog(const Token& token)
+inline void DebugLog(const Token& token)
 {
 	switch (token.type)
 	{
@@ -67,7 +67,7 @@ void DebugLog(const Token& token)
 	}
 }
 
-void DebugLog(const std::vector<Token>& tokens)
+inline void DebugLog(const std::vector<Token>& tokens)
 {
 	int counter = 0;
 
@@ -81,13 +81,13 @@ void DebugLog(const std::vector<Token>& tokens)
 
 void DebugLog(const std::unique_ptr<ASTNode>& node, int depth);
 
-void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
+inline void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
 {
 	std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
 	DebugLog(assignment->val, depth + 1);
 }
 
-void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
+inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 {
 	switch (node->type)
 	{
@@ -136,6 +136,19 @@ void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 			return;
 		}
 
+		case ASTNode::NodeType::UNARY_OPERATION:
+		{
+			UnaryOperation* unaryOperation = static_cast<UnaryOperation*>(node.get());
+
+			std::cout << std::string(depth, '\t') << "Unary Operation: ";
+			DebugLog(unaryOperation->op);
+			DebugLog(unaryOperation->val, depth + 1);
+
+			std::cout << std::string(depth, '\t') << (unaryOperation->side == UnaryOperation::Sided::LEFT ? "Left" : "Right") << " sided" << std::endl;
+
+			return;
+		}
+
 		case ASTNode::NodeType::FUNCTION_CALL:
 		{
 			FunctionCall* functionCall = static_cast<FunctionCall*>(node.get());
@@ -161,14 +174,14 @@ void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 
 		case ASTNode::NodeType::UNDEFINED:
 		{
-			std::cout << std::string(depth, '\t') << "Undefined" << std::endl;
+			std::cout << std::string(depth, '\t') << "Undefined: " << (int)node->type << std::endl;
 
 			return;
 		}
 	}
 }
 
-void DebugLog(FileAST& AST)
+inline void DebugLog(FileAST& AST)
 {
 	for (const std::unique_ptr<ASTNode>& node : AST.script)
 	{

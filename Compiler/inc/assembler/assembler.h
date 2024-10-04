@@ -19,6 +19,8 @@ class Assembler
 		std::string assembleOperand(TokenType op);
 		std::string assembleOperation(Operation* op);
 
+		std::string assembleUnaryOperation(UnaryOperation* op);
+
 	public:
 		std::string assembleNode(std::unique_ptr<ASTNode>& node);
 

@@ -2,12 +2,10 @@
 
 int main()
 {
-int var1 = (2 + ((8 + 2) + 2));
-int var2;
-std::cout << var1;
-std::cout << var2;
-std::cout << "Hello World\n";
-std::cout << "This is the 1st time" << " code has been run on LX";
+	int var1 = 2;
+	int var2 = var1++;
+	int var3 = --var1;
+	std::cout << var1 << "," << var2 << "," << var3;
 
-std::cin.get();
+	std::cin.get();
 }

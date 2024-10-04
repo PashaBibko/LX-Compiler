@@ -44,15 +44,7 @@ extern "C" __declspec(dllexport) void translate(const char* folder, const char* 
 		}
 
 		// Parsing
-		parser.parse(tokens, AST);
-
-		// Print AST if in debug mode
-		if (debugMode)
-		{
-			std::cout << "AST of: " + fullSrcFileName + "\n";
-			DebugLog(AST);
-			std::cout << "\n";
-		}
+		parser.parse(tokens, AST, debugMode);
 
 		// Creates the output file (if it doesn't exist)
 		std::string outputDir = std::string(folder) + std::string("/build");
