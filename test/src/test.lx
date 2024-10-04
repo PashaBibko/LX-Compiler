@@ -1,7 +1,9 @@
 # This is a comment #
 
-int var1 = 5
+int var1 = 8
 int var2
 
+print(var1)
+print(var2)
 print("Hello World\n")
 print("This is the 1st time"," code has been run on LX")
