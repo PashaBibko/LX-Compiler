@@ -15,12 +15,3 @@ x64/
 *.dll
 *.pdb
 *.obj
-
-# Ignore all visual studio specific files
-
-*.sln
-*.vcxproj
-*.vcxproj.user
-*.vcxproj.filters
-
-*.csproj

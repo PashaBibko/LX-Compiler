@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>LX_Compiler</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Compiler\**" />
+    <Compile Remove="test\**" />
+    <Compile Remove="website\**" />
+    <Compile Remove="x64\**" />
+    <EmbeddedResource Remove="Compiler\**" />
+    <EmbeddedResource Remove="test\**" />
+    <EmbeddedResource Remove="website\**" />
+    <EmbeddedResource Remove="x64\**" />
+    <None Remove="Compiler\**" />
+    <None Remove="test\**" />
+    <None Remove="website\**" />
+    <None Remove="x64\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+    <None Remove="index.html" />
+  </ItemGroup>
+
+</Project>
