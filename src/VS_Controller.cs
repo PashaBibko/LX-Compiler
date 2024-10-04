@@ -58,7 +58,7 @@ namespace LX_Compiler
         }
 
         // Constructor to set all the needed paths
-        public VS_22_Compiler(ref JsonElement compilerJSON)
+        public VS_22_Compiler(ref JsonElement compilerJSON, string buildInfoPath)
         {
             // Gets the Visual Studio location
             string? VS_location;
@@ -83,6 +83,36 @@ namespace LX_Compiler
             try { windowsSDKVersion = compilerJSON.GetProperty("sdk-version").GetString(); }
             catch (KeyNotFoundException) { throw new Exception("Windows SDK version not specified in build info. Should be under \"sdk-version\""); }
             if (windowsSDKVersion == null) { throw new Exception("Windows SDK version not specified in build info. Should be under \"sdk-version\""); }
+
+            // DEBUG CODE - REMOVE ON RELEASE
+            if (VS_Version == "version.json" || windowsSDKVersion == "version.json")
+            {
+                // Path to the version.json file
+                string versionJSONPath = System.IO.Path.GetDirectoryName(buildInfoPath) + "\\version.json";
+
+                // Opens the version.json file
+                using (JsonDocument versionDoc = JsonDocument.Parse(System.IO.File.ReadAllText(versionJSONPath)))
+                {
+                    // Gets the root element
+                    JsonElement root = versionDoc.RootElement;
+
+                    // Gets the Visual Studio version
+                    if (VS_Version == "version.json")
+                    {
+                        try { VS_Version = root.GetProperty("vs").GetString(); }
+                        catch (KeyNotFoundException) { throw new Exception("Visual Studio version not specified in version.json"); }
+                        if (VS_Version == null) { throw new Exception("Visual Studio version not specified in version.json"); }
+                    }
+
+                    // Gets the Windows SDK version
+                    if (windowsSDKVersion == "version.json")
+                    {
+                        try { windowsSDKVersion = root.GetProperty("sdk").GetString(); }
+                        catch (KeyNotFoundException) { throw new Exception("Windows SDK version not specified in version.json"); }
+                        if (windowsSDKVersion == null) { throw new Exception("Windows SDK version not specified in version.json"); }
+                    }
+                }
+            }
 
             // MSVC compiler location
             MSVC_location = System.IO.Path.Combine(VS_location, $"VC\\Tools\\MSVC\\{VS_Version}\\bin\\Hostx86\\x86");

@@ -25,7 +25,7 @@ namespace LX_Compiler
             );
         }
 
-        public static CompilerBase create(ref BuildInfo info)
+        public static CompilerBase create(ref BuildInfo info, string buildInfoPath)
         {
             // Gets the root element
             JsonElement root = info.jsonDoc.RootElement;
@@ -44,7 +44,7 @@ namespace LX_Compiler
             // Calls the relevant constuctor
             switch (compilerType)
             {
-                case "MSVC-22": return new VS_22_Compiler(ref compilerJSON);
+                case "MSVC-22": return new VS_22_Compiler(ref compilerJSON, buildInfoPath);
 
                 // Throws an exception if the compiler type is invalid
                 default: throw InvalidComplierType(compilerType);
@@ -58,7 +58,7 @@ namespace LX_Compiler
     public class Program
     {
         // Path to the C++ compiler DLL
-        public const string DLL_CompilerLocation = "C:\\Users\\Pasha\\source\\github-repos\\LX-Compiler\\x64\\Debug\\Compiler.dll";
+        public const string DLL_CompilerLocation = "Compiler.dll";
 
         // Includes the translate function from the DLL
         [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
@@ -71,7 +71,13 @@ namespace LX_Compiler
             if (args.Length == 0)
             {
                 args = new string[1];
-                args[0] = "C:\\Users\\Pasha\\source\\github-repos\\LX-Compiler\\test\\project.lx-build";
+
+                // Move up to the solution directory
+                #pragma warning disable CS8602 // Dereference of a possibly null reference.
+                string solutionDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
+                #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+                args[0] = solutionDir + "\\test\\project.lx-build";
             }
 
             // Checks if it was called with the correct number of arguments
@@ -88,12 +94,12 @@ namespace LX_Compiler
                 BuildInfo info = new(args[0]);
 
                 // Creates a new VS_Controller object
-                CompilerBase c = CompilerController.create(ref info);
+                CompilerBase c = CompilerController.create(ref info, args[0]);
 
                 // Determines if the program is in debug mode
                 bool debug = false;
                 try { debug = info.jsonDoc.RootElement.GetProperty("debug").GetBoolean(); }
-                catch (KeyNotFoundException) { }
+                catch (KeyNotFoundException) { /* Should be empty */ }
 
                 // Loops through all the source directories
                 foreach (string srcDir in info.sourceDirs)

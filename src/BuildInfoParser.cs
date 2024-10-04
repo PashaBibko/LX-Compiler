@@ -19,7 +19,7 @@ namespace LX_Compiler
         public string[] sourceDirs;
 
         // Holds the JSON object
-        // Used by the compilers to get thier respective build information
+        // Used by the compilers to get their respective build information
         public JsonDocument jsonDoc;
 
         // Constructor to set the source paths
@@ -78,13 +78,13 @@ namespace LX_Compiler
         private static void verifyBuildPath(string buildInfoPath)
         {
             // Checks if the build info path is null else throws an exception
-            if (buildInfoPath == null)                         { throw new Exception("Build info path is null");                 }
+            if (buildInfoPath == null)                         { throw new Exception("Build info path is null: " + buildInfoPath);                 }
 
             // Checks if the build info path is a valid file else throws an exception
-            if (System.IO.File.Exists(buildInfoPath) == false) { throw new Exception("Build info path does not exist");          }
+            if (System.IO.File.Exists(buildInfoPath) == false) { throw new Exception("Build info path does not exist: " + buildInfoPath);          }
 
             // Checks if the build info path is a LX-Build file else throws an exception
-            if (buildInfoPath.EndsWith(".lx-build") == false)  { throw new Exception("Build info path is not a .lx-build file"); }
+            if (buildInfoPath.EndsWith(".lx-build") == false)  { throw new Exception("Build info path is not a .lx-build file: " + buildInfoPath); }
         }
     }
 }

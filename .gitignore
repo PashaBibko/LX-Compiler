@@ -9,6 +9,10 @@ obj/
 
 x64/
 
+# Ignore Version JSON file
+
+version.json
+
 # Ignore precompiled binaries
 
 *.exe
