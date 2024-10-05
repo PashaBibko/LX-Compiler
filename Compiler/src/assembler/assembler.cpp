@@ -107,7 +107,7 @@ std::string Assembler::assembleOperand(TokenType op)
 
 std::string Assembler::assembleOperation(Operation* op)
 {
-	return "(" + assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs) + ")";
+	return assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs);
 }
 
 std::string Assembler::assembleUnaryOperation(UnaryOperation* op)
@@ -132,6 +132,11 @@ std::string Assembler::assembleIfStatement(IfStatement* ifStmt)
 	out = out + "\t}\n";
 
 	return out;
+}
+
+std::string Assembler::assembleBracketExpression(BracketedExpression* bracket)
+{
+	return "(" + assembleNode(bracket->expr) + ")";
 }
 
 //
@@ -189,6 +194,12 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 		{
 			// Calls the function to assemble the if statement with a cast to correct type
 			return assembleIfStatement(static_cast<IfStatement*>(node.get()));
+		}
+
+		case ASTNode::NodeType::BRACKETED_EXPRESSION:
+		{
+			// Calls the function to assemble the bracketed expression with a cast to correct type
+			return assembleBracketExpression(static_cast<BracketedExpression*>(node.get()));
 		}
 
 		default:

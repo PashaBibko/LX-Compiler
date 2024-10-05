@@ -2,12 +2,7 @@
 
 int main()
 {
-	std::cout << "print";
-	if ((2 * (3 + 2)))
-	{
-		std::cout << "True does infact equal true";
-	}
-
+	int var4 = 1 + (2 * 3);
 
 	std::cin.get();
 }

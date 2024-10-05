@@ -24,6 +24,8 @@ class Assembler
 
 		std::string assembleIfStatement(IfStatement* ifStmt);
 
+		std::string assembleBracketExpression(BracketedExpression* bracket);
+
 	public:
 		std::string assembleNode(std::unique_ptr<ASTNode>& node);
 

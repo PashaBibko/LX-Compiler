@@ -159,8 +159,18 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 			// Skip the left parenthesis
 			currentIndex++;
 
-			// Parse the operation
-			std::unique_ptr<ASTNode> out = parseOperation();
+			// Create the output as a BracketedExpression type to allow access
+			std::unique_ptr<BracketedExpression> out = std::make_unique<BracketedExpression>();
+
+			// Parse the value
+			out->expr = parseFunctionCall();
+
+			// Check for the right parenthesis
+			if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			{
+				std::cerr << "ERROR: Expected right parenthesis" << std::endl;
+				return nullptr;
+			}
 
 			// Return the output
 			return out;
