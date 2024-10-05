@@ -40,6 +40,10 @@ class ASTNode
             FUNCTION_CALL,
             STRING_LITERAL,
 
+            BRACKETED_EXPRESSION,
+
+            IF_STATEMENT,
+
             UNDEFINED
 		};
 
@@ -170,6 +174,29 @@ class StringLiteral : public ASTNode
 
 		// Contents
 		std::string value;
+};
+
+class IfStatement : public ASTNode
+{
+	public:
+		// Constructor
+		IfStatement() : ASTNode(NodeType::IF_STATEMENT) {}
+
+		// Condition
+		std::unique_ptr<ASTNode> condition;
+
+        // Body
+        std::vector<std::unique_ptr<ASTNode>> body;
+};
+
+class BracketedExpression : public ASTNode
+{
+	public:
+		// Constructor
+		BracketedExpression() : ASTNode(NodeType::BRACKETED_EXPRESSION) {}
+
+		// Contents
+        std::unique_ptr<ASTNode> expr;
 };
 
 // Debug function

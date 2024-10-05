@@ -24,6 +24,8 @@ class Parser
 
 		std::unique_ptr<ASTNode> parseVariableDeclaration();
 
+		std::unique_ptr<ASTNode> parseIfStatement();
+
 	public:
 		Parser() {}
 

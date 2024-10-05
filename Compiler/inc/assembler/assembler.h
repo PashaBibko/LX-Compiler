@@ -22,6 +22,10 @@ class Assembler
 
 		std::string assembleUnaryOperation(UnaryOperation* op);
 
+		std::string assembleIfStatement(IfStatement* ifStmt);
+
+		std::string assembleBracketExpression(BracketedExpression* bracket);
+
 	public:
 		std::string assembleNode(std::unique_ptr<ASTNode>& node);
 

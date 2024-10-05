@@ -107,7 +107,7 @@ std::string Assembler::assembleOperand(TokenType op)
 
 std::string Assembler::assembleOperation(Operation* op)
 {
-	return "(" + assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs) + ")";
+	return assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs);
 }
 
 std::string Assembler::assembleUnaryOperation(UnaryOperation* op)
@@ -117,6 +117,26 @@ std::string Assembler::assembleUnaryOperation(UnaryOperation* op)
 
 	else
 		return assembleNode(op->val) + assembleOperand(op->op);
+}
+
+std::string Assembler::assembleIfStatement(IfStatement* ifStmt)
+{
+	std::string out = "if (" + assembleNode(ifStmt->condition) + ")\n\t{\n";
+
+	for (std::unique_ptr<ASTNode>& node : ifStmt->body)
+	{
+		out = out + "\t\t" + assembleNode(node);
+		out = out + "\n";
+	}
+
+	out = out + "\t}\n";
+
+	return out;
+}
+
+std::string Assembler::assembleBracketExpression(BracketedExpression* bracket)
+{
+	return "(" + assembleNode(bracket->expr) + ")";
 }
 
 //
@@ -170,9 +190,21 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 			return assembleUnaryOperation(static_cast<UnaryOperation*>(node.get()));
 		}
 
+		case ASTNode::NodeType::IF_STATEMENT:
+		{
+			// Calls the function to assemble the if statement with a cast to correct type
+			return assembleIfStatement(static_cast<IfStatement*>(node.get()));
+		}
+
+		case ASTNode::NodeType::BRACKETED_EXPRESSION:
+		{
+			// Calls the function to assemble the bracketed expression with a cast to correct type
+			return assembleBracketExpression(static_cast<BracketedExpression*>(node.get()));
+		}
+
 		default:
 		{
-			std::cerr << "Error: Unknown node type\n" << std::endl;
+			std::cerr << "Error: Unknown node type: " << (int)node->type << "\n" << std::endl;
 			return "";
 		}
 	}

@@ -159,8 +159,18 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 			// Skip the left parenthesis
 			currentIndex++;
 
-			// Parse the operation
-			std::unique_ptr<ASTNode> out = parseOperation();
+			// Create the output as a BracketedExpression type to allow access
+			std::unique_ptr<BracketedExpression> out = std::make_unique<BracketedExpression>();
+
+			// Parse the value
+			out->expr = parseFunctionCall();
+
+			// Check for the right parenthesis
+			if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			{
+				std::cerr << "ERROR: Expected right parenthesis" << std::endl;
+				return nullptr;
+			}
 
 			// Return the output
 			return out;
@@ -171,7 +181,7 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 			// Throw an error if the token is unknown
 			std::cout << "WARNING: nullptr thrown at " << currentIndex << std::endl;
 			std::cout << (int)currentTokens->operator[](currentIndex).type << std::endl;
-			return nullptr;
+			return std::make_unique<ASTNode>(ASTNode::NodeType::UNDEFINED);
 		}
 	}
 }
@@ -306,7 +316,7 @@ std::unique_ptr<ASTNode> Parser::parseFunctionCall()
 		currentIndex++;
 
 		// Returns the output
-		return std::move(out);
+		return out;
 	}
 
 	// Goes down the call chain
@@ -422,6 +432,79 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 	return parseAssignment();
 }
 
+std::unique_ptr<ASTNode> Parser::parseIfStatement()
+{
+	if (currentTokens->operator[](currentIndex).type == TokenType::IF)
+	{
+		// Skip the if token
+		currentIndex++;
+
+		// Create the output as an IfStatement type to allow access
+		std::unique_ptr<IfStatement> out = std::make_unique<IfStatement>();
+
+		// Check for the left parenthesis
+		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+		{
+			std::cerr << "ERROR: Expected left parenthesis" << std::endl;
+			return nullptr;
+		}
+
+		// Skip the left parenthesis
+		currentIndex++;
+
+		// Parse the condition
+		out->condition = parseFunctionCall();
+
+		// Check for the right parenthesis
+		if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+		{
+			std::cerr << "ERROR: Expected right parenthesis" << std::endl;
+			return nullptr;
+		}
+
+		// Skip the right parenthesis
+		currentIndex++;
+
+		// Check for the left brace
+		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_BRACE)
+		{
+			std::cerr << "ERROR: Expected left brace" << std::endl;
+			return nullptr;
+		}
+
+		// Skip the left brace
+		currentIndex++;
+
+		// Loop through the body
+		while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACE)
+		{
+			// Parse the body
+			out->body.push_back(parseVariableDeclaration());
+
+			// Check for end of file token
+			if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
+			{
+				std::cerr << "ERROR: Expected right brace" << std::endl;
+				return nullptr;
+			}
+
+			// Early return
+			if (out->body.back() == nullptr)
+			{
+				std::cerr << "Early Parser Return" << std::endl;
+				return nullptr;
+			}
+		}
+
+		// Skip the right brace
+		currentIndex++;
+
+		return out;
+	}
+
+	return parseVariableDeclaration();
+}
+
 void Parser::parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode)
 {
 	// Initialize
@@ -430,7 +513,7 @@ void Parser::parse(const std::vector<Token>& tokens, FileAST& out, bool debugMod
 	// Loop through the tokens
 	while (currentTokens->operator[](currentIndex).type != TokenType::END_OF_FILE)
 	{
-		out.script.push_back(parseVariableDeclaration());
+		out.script.push_back(parseIfStatement());
 
 		// Debug mode
 		if (debugMode)
