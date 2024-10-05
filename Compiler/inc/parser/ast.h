@@ -30,36 +30,35 @@ namespace lx
 	*/
 	class ASTNode
 	{
-	public:
-		// Enum for representing the type of the node
-		enum class NodeType : unsigned char
-		{
-			IDENTIFIER,
-			VARIABLE_DECLARATION,
-			ASSIGNMENT,
-			OPERATION,
-			UNARY_OPERATION,
-			FUNCTION_CALL,
-			STRING_LITERAL,
+		public:
+			// Enum for representing the type of the node
+			enum class NodeType : unsigned char
+			{
+				IDENTIFIER,
+				VARIABLE_DECLARATION,
+				ASSIGNMENT,
+				OPERATION,
+				UNARY_OPERATION,
+				FUNCTION_CALL,
+				STRING_LITERAL,
 
-			BRACKETED_EXPRESSION,
+				BRACKETED_EXPRESSION,
 
-			IF_STATEMENT,
+				IF_STATEMENT,
 
-            RETURN_STATEMENT,
+				RETURN_STATEMENT,
 
-            UNDEFINED
-			UNDEFINED
-		};
+				UNDEFINED
+			};
 
-		// Constructor
-		ASTNode(NodeType type) : type(type) {}
+			// Constructor
+			ASTNode(NodeType type) : type(type) {}
 
-		// Node type for polymorphism
-		const NodeType type;
+			// Node type for polymorphism
+			const NodeType type;
 
-		// Destructor
-		virtual ~ASTNode() = default;
+			// Destructor
+			virtual ~ASTNode() = default;
 	};
 
 	/*
@@ -68,24 +67,24 @@ namespace lx
 	*/
 	class Identifier : public ASTNode
 	{
-	public:
-		// Constructor
-		Identifier(std::string name = "") : ASTNode(NodeType::IDENTIFIER), name(name) {}
+		public:
+			// Constructor
+			Identifier(std::string name = "") : ASTNode(NodeType::IDENTIFIER), name(name) {}
 
-		// Contents
-		std::string name;
+			// Contents
+			std::string name;
 	};
 	/*
 	*/
 	class Assignment : public ASTNode
 	{
-	public:
-		// Constructor
-		Assignment() : ASTNode(NodeType::ASSIGNMENT) {}
+		public:
+			// Constructor
+			Assignment() : ASTNode(NodeType::ASSIGNMENT) {}
 
-		// Contents
-		Identifier name;
-		std::unique_ptr<ASTNode> val;
+			// Contents
+			Identifier name;
+			std::unique_ptr<ASTNode> val;
 	};
 
 	/*
@@ -93,26 +92,26 @@ namespace lx
 	*/
 	class VariableDeclaration : public ASTNode
 	{
-	private:
-		Flags flags = 0;
+		private:
+			Flags flags = 0;
 
-	public:
-		// Constructor
-		VariableDeclaration() : ASTNode(NodeType::VARIABLE_DECLARATION) {}
+		public:
+			// Constructor
+			VariableDeclaration() : ASTNode(NodeType::VARIABLE_DECLARATION) {}
 
-		// Contents
-		Identifier varType;
-		Identifier name;
+			// Contents
+			Identifier varType;
+			Identifier name;
 
-		std::unique_ptr<Assignment> val;
+			std::unique_ptr<Assignment> val;
 
-		// Flags
-		FLAG_DEF(Const, 0x01);
-		FLAG_DEF(Reference, 0x02);
-		FLAG_DEF(Pointer, 0x04);
-		FLAG_DEF(Static, 0x08);
-		FLAG_DEF(GuideChild, 0x10);
-		FLAG_DEF(Unsigned, 0x20);
+			// Flags
+			FLAG_DEF(Const, 0x01);
+			FLAG_DEF(Reference, 0x02);
+			FLAG_DEF(Pointer, 0x04);
+			FLAG_DEF(Static, 0x08);
+			FLAG_DEF(GuideChild, 0x10);
+			FLAG_DEF(Unsigned, 0x20);
 	};
 
 	/*
@@ -120,149 +119,132 @@ namespace lx
 	*/
 	class Operation : public ASTNode
 	{
-	public:
-		// Constructor
-		Operation() : ASTNode(NodeType::OPERATION) {}
+		public:
+			// Constructor
+			Operation() : ASTNode(NodeType::OPERATION) {}
 
-		// Contents of the operation
-		std::unique_ptr<ASTNode> lhs;
-		std::unique_ptr<ASTNode> rhs;
+			// Contents of the operation
+			std::unique_ptr<ASTNode> lhs;
+			std::unique_ptr<ASTNode> rhs;
 
-		TokenType op;
+			TokenType op;
 	};
 
 	class UnaryOperation : public ASTNode
 	{
-	public:
-		// Enum for representing the side of the operation
-		enum class Sided : bool
-		{
-			LEFT,
-			RIGHT
-		};
+		public:
+			// Enum for representing the side of the operation
+			enum class Sided : bool
+			{
+				LEFT,
+				RIGHT
+			};
 
-		// Constructor
-		UnaryOperation() : ASTNode(NodeType::UNARY_OPERATION) {}
+			// Constructor
+			UnaryOperation() : ASTNode(NodeType::UNARY_OPERATION) {}
 
-		// Contents of the operation
-		std::unique_ptr<ASTNode> val;
+			// Contents of the operation
+			std::unique_ptr<ASTNode> val;
 
-		TokenType op;
-		Sided side;
+			TokenType op;
+			Sided side;
 	};
 
 	/*
 	*/
 	class FunctionCall : public ASTNode
 	{
-	private:
-		Flags flags = 0;
+		private:
+			Flags flags = 0;
 
-	public:
-		// Constructor
-		FunctionCall() : ASTNode(NodeType::FUNCTION_CALL) {}
+		public:
+			// Constructor
+			FunctionCall() : ASTNode(NodeType::FUNCTION_CALL) {}
 
-		// Name
-		Identifier funcName;
+			// Name
+			Identifier funcName;
 
-		// Arguments
-		std::vector<std::unique_ptr<ASTNode>> args;
+			// Arguments
+			std::vector<std::unique_ptr<ASTNode>> args;
 	};
 
 	/*
 	*/
 	class StringLiteral : public ASTNode
 	{
-	public:
-		// Constructor
-		StringLiteral(std::string value) : ASTNode(NodeType::STRING_LITERAL), value(value) {}
+		public:
+			// Constructor
+			StringLiteral(std::string value) : ASTNode(NodeType::STRING_LITERAL), value(value) {}
 
-		// Contents
-		std::string value;
+			// Contents
+			std::string value;
 	};
 
 	class IfStatement : public ASTNode
 	{
-	public:
-        //
-        enum class IfType : char
-        {
-            IF,
-			ELSE_IF,
-			ELSE
-        };
+		public:
+			//
+			enum class IfType : char
+			{
+				IF,
+				ELSE_IF,
+				ELSE
+			};
 
-		// Constructor
-		IfStatement(IfType t) : ASTNode(NodeType::IF_STATEMENT), type(t) {}
+			// Constructor
+			IfStatement(IfType t) : ASTNode(NodeType::IF_STATEMENT), type(t) {}
 
-		// Condition
-		std::unique_ptr<ASTNode> condition;
+			// Condition
+			std::unique_ptr<ASTNode> condition;
 
-        // Body
-        std::vector<std::unique_ptr<ASTNode>> body;
+			// Body
+			std::vector<std::unique_ptr<ASTNode>> body;
 
-        // Type
-        IfType type;
+			// Type
+			IfType type;
 
-        // Chain
-        std::unique_ptr<IfStatement> next;
-};
-		// Body
-		std::vector<std::unique_ptr<ASTNode>> body;
+			// Chain
+			std::unique_ptr<IfStatement> next;
 	};
 
 	class BracketedExpression : public ASTNode
 	{
-	public:
-		// Constructor
-		BracketedExpression() : ASTNode(NodeType::BRACKETED_EXPRESSION) {}
+		public:
+			// Constructor
+			BracketedExpression() : ASTNode(NodeType::BRACKETED_EXPRESSION) {}
 
-		// Contents
-		std::unique_ptr<ASTNode> expr;
+			// Contents
+			std::unique_ptr<ASTNode> expr;
 	};
 
-class ReturnStatement : public ASTNode
-{
-	public:
-		// Constructor
-		ReturnStatement() : ASTNode(NodeType::RETURN_STATEMENT) {}
+	class ReturnStatement : public ASTNode
+	{
+		public:
+			// Constructor
+			ReturnStatement() : ASTNode(NodeType::RETURN_STATEMENT) {}
 
-		// Contents
-		std::unique_ptr<ASTNode> expr;
-};
+			// Contents
+			std::unique_ptr<ASTNode> expr;
+	};
 
-class FunctionDeclaration
-{
-    public:
-        // Constructor
-        FunctionDeclaration() {}
+	class FunctionDeclaration
+	{
+		public:
+			// Constructor
+			FunctionDeclaration() {}
 
-        // Name
-        Identifier name;
+			// Name
+			Identifier name;
 
-        // Return type
-        std::vector<Identifier> returnTypes;
+			// Return type
+			std::vector<Identifier> returnTypes;
 
-        // Arguments
-        std::vector<std::unique_ptr<ASTNode>> args;
+			// Arguments
+			std::vector<std::unique_ptr<ASTNode>> args;
 
-        // Body
-        AST body;
-};
-
-/*
-* @brief Wrapper class for the AST of a file
-* 
-* @note This will eventually store items such as:
-* - Function declarations
-* - Class declarations
-*/
-struct FileAST
-{
-    std::vector<FunctionDeclaration> functions;
-};
-	// Debug function
-	void displayAST(std::unique_ptr<ASTNode>& node, short depth = 0);
+			// Body
+			AST body;
+	};
 
 	/*
 	* @brief Wrapper class for the AST of a file
@@ -273,16 +255,6 @@ struct FileAST
 	*/
 	struct FileAST
 	{
-		AST script;
-
-		void display()
-		{
-			for (auto& node : script)
-			{
-				displayAST(node);
-				std::cout << std::endl;
-			}
-		}
+		std::vector<FunctionDeclaration> functions;
 	};
-
-}
+};

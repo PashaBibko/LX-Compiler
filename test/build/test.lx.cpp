@@ -1,9 +1,17 @@
 #include <iostream>
-int add(int a, int b)
-{
-	return a + b;
-}
 int main()
 {
-	std::cout << "hi";
+	if (true)
+{
+	std::cout;
+}
+else if (false)
+{
+	std::cout;
+}
+else
+{
+	std::cout;
+}
+
 }

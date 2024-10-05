@@ -1,10 +1,18 @@
 
-func [int] add(int a, int b)
-{
-    return a + b
-}
-
 func [int] main()
 {
-    print("hi")
+    if (true)
+    {
+        print()
+    }
+
+    elif (false)
+    {
+        print()
+    }
+
+    else
+    {
+        print()
+    }
 }

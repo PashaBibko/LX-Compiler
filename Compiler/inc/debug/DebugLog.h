@@ -10,7 +10,6 @@
 
 namespace lx
 {
-
 	inline void DebugLog(const Token& token)
 	{
 		switch (token.type)
@@ -84,16 +83,16 @@ namespace lx
 
 	void DebugLog(const std::unique_ptr<ASTNode>& node, int depth);
 
-inline void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
-{
-	std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
-	DebugLog(assignment->val, depth + 1);
-}
-
-inline void DebugLog(IfStatement* ifStatement, int depth)
-{
-	switch (ifStatement->type)
+	inline void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
 	{
+		std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
+		DebugLog(assignment->val, depth + 1);
+	}
+
+	inline void DebugLog(IfStatement* ifStatement, int depth)
+	{
+		switch (ifStatement->type)
+		{
 		case IfStatement::IfType::IF:
 		{
 			std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
@@ -137,172 +136,164 @@ inline void DebugLog(IfStatement* ifStatement, int depth)
 
 			break;
 		}
+		}
+
+		if (ifStatement->next != nullptr)
+		{
+			DebugLog(ifStatement->next.get(), depth);
+		}
 	}
 
-	if (ifStatement->next != nullptr)
+	inline void DebugLog(FunctionDeclaration* funcDecl, int depth)
 	{
-		DebugLog(ifStatement->next.get(), depth);
-	}
-}
+		std::cout << std::string(depth, '\t') << "Function Declaration: " << funcDecl->name.name << std::endl;
 
-inline void DebugLog(FunctionDeclaration* funcDecl, int depth)
-{
-	std::cout << std::string(depth, '\t') << "Function Declaration: " << funcDecl->name.name << std::endl;
+		for (Identifier& returnType : funcDecl->returnTypes)
+		{
+			std::cout << std::string(depth, '\t') << "Return Type: " << returnType.name << std::endl;
+		}
 
-	for (Identifier& returnType : funcDecl->returnTypes)
-	{
-		std::cout << std::string(depth, '\t') << "Return Type: " << returnType.name << std::endl;
-	}
-	
-	for (std::unique_ptr<ASTNode>& arg: funcDecl->args)
-	{
-		DebugLog(arg, depth + 1);
-	}
+		for (std::unique_ptr<ASTNode>& arg : funcDecl->args)
+		{
+			DebugLog(arg, depth + 1);
+		}
 
-	for (std::unique_ptr<ASTNode>& statement : funcDecl->body)
-	{
-		DebugLog(statement, depth + 1);
-	}
-}
-
-inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
-{
-	switch (node->type)
-	inline void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
-	{
-		std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
-		DebugLog(assignment->val, depth + 1);
+		for (std::unique_ptr<ASTNode>& statement : funcDecl->body)
+		{
+			DebugLog(statement, depth + 1);
+		}
 	}
 
 	inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 	{
 		switch (node->type)
 		{
-		case ASTNode::NodeType::IDENTIFIER:
-		{
-			Identifier* identifier = static_cast<Identifier*>(node.get());
-
-			std::cout << std::string(depth, '\t') << "Identifier: " << identifier->name << std::endl;
-
-			return;
-		}
-
-		case ASTNode::NodeType::VARIABLE_DECLARATION:
-		{
-			VariableDeclaration* varDecl = static_cast<VariableDeclaration*>(node.get());
-
-			std::cout << std::string(depth, '\t') << "Variable Declaration: type {" << varDecl->varType.name << "} name {" << varDecl->name.name << "}" << std::endl;
-			std::cout << std::string(depth + 1, '\t') << "Const: " << (varDecl->isConst() ? "true" : "false") << std::endl;
-
-			if (varDecl->val != nullptr)
+			case ASTNode::NodeType::IDENTIFIER:
 			{
-				DebugLogA(varDecl->val, depth + 1);
+				Identifier* identifier = static_cast<Identifier*>(node.get());
+
+				std::cout << std::string(depth, '\t') << "Identifier: " << identifier->name << std::endl;
+
+				return;
 			}
 
-			return;
-		}
-
-		case ASTNode::NodeType::ASSIGNMENT:
-		{
-			Assignment* assignment = static_cast<Assignment*>(node.get());
-
-			std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
-			DebugLog(assignment->val, depth + 1);
-
-			return;
-		}
-
-		case ASTNode::NodeType::OPERATION:
-		{
-			Operation* operation = static_cast<Operation*>(node.get());
-
-			DebugLog(operation->lhs, depth + 1);
-			std::cout << std::string(depth, '\t') << "Operation: ";
-			DebugLog(operation->op);
-			DebugLog(operation->rhs, depth + 1);
-
-			return;
-		}
-
-		case ASTNode::NodeType::UNARY_OPERATION:
-		{
-			UnaryOperation* unaryOperation = static_cast<UnaryOperation*>(node.get());
-
-			std::cout << std::string(depth, '\t') << "Unary Operation: ";
-			DebugLog(unaryOperation->op);
-			DebugLog(unaryOperation->val, depth + 1);
-
-			std::cout << std::string(depth, '\t') << (unaryOperation->side == UnaryOperation::Sided::LEFT ? "Left" : "Right") << " sided" << std::endl;
-
-			return;
-		}
-
-		case ASTNode::NodeType::FUNCTION_CALL:
-		{
-			FunctionCall* functionCall = static_cast<FunctionCall*>(node.get());
-
-			std::cout << std::string(depth, '\t') << "Function Call: " << functionCall->funcName.name << std::endl;
-
-			for (std::unique_ptr<ASTNode>& arg : functionCall->args)
+			case ASTNode::NodeType::VARIABLE_DECLARATION:
 			{
-				DebugLog(arg, depth + 1);
+				VariableDeclaration* varDecl = static_cast<VariableDeclaration*>(node.get());
+
+				std::cout << std::string(depth, '\t') << "Variable Declaration: type {" << varDecl->varType.name << "} name {" << varDecl->name.name << "}" << std::endl;
+				std::cout << std::string(depth + 1, '\t') << "Const: " << (varDecl->isConst() ? "true" : "false") << std::endl;
+
+				if (varDecl->val != nullptr)
+				{
+					DebugLogA(varDecl->val, depth + 1);
+				}
+
+				return;
 			}
 
-			return;
-		}
+			case ASTNode::NodeType::ASSIGNMENT:
+			{
+				Assignment* assignment = static_cast<Assignment*>(node.get());
 
-		case ASTNode::NodeType::STRING_LITERAL:
-		{
-			StringLiteral* stringLiteral = static_cast<StringLiteral*>(node.get());
+				std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
+				DebugLog(assignment->val, depth + 1);
 
-			std::cout << std::string(depth, '\t') << "String Literal: " << stringLiteral->value << std::endl;
+				return;
+			}
 
-			return;
-		}
+			case ASTNode::NodeType::OPERATION:
+			{
+				Operation* operation = static_cast<Operation*>(node.get());
 
-		case ASTNode::NodeType::IF_STATEMENT:
-		{
-			DebugLog(static_cast<IfStatement*>(node.get()), depth);
+				DebugLog(operation->lhs, depth + 1);
+				std::cout << std::string(depth, '\t') << "Operation: ";
+				DebugLog(operation->op);
+				DebugLog(operation->rhs, depth + 1);
 
-			return;
-		}
+				return;
+			}
 
-		case ASTNode::NodeType::RETURN_STATEMENT:
-		{
-			ReturnStatement* returnStatement = static_cast<ReturnStatement*>(node.get());
+			case ASTNode::NodeType::UNARY_OPERATION:
+			{
+				UnaryOperation* unaryOperation = static_cast<UnaryOperation*>(node.get());
 
-			std::cout << std::string(depth, '\t') << "Return Statement: " << std::endl;
+				std::cout << std::string(depth, '\t') << "Unary Operation: ";
+				DebugLog(unaryOperation->op);
+				DebugLog(unaryOperation->val, depth + 1);
 
-			DebugLog(returnStatement->expr, depth + 1);
+				std::cout << std::string(depth, '\t') << (unaryOperation->side == UnaryOperation::Sided::LEFT ? "Left" : "Right") << " sided" << std::endl;
 
-			return;
-		}
+				return;
+			}
 
-		case ASTNode::NodeType::BRACKETED_EXPRESSION:
-		{
-			BracketedExpression* bracketedExpression = static_cast<BracketedExpression*>(node.get());
+			case ASTNode::NodeType::FUNCTION_CALL:
+			{
+				FunctionCall* functionCall = static_cast<FunctionCall*>(node.get());
 
-			std::cout << std::string(depth, '\t') << "Bracketed Expression: " << std::endl;
+				std::cout << std::string(depth, '\t') << "Function Call: " << functionCall->funcName.name << std::endl;
 
-			DebugLog(bracketedExpression->expr, depth + 1);
+				for (std::unique_ptr<ASTNode>& arg : functionCall->args)
+				{
+					DebugLog(arg, depth + 1);
+				}
 
-			return;
-		}
+				return;
+			}
 
-		default:
-		{
-			std::cout << std::string(depth, '\t') << "Undefined: " << (int)node->type << std::endl;
+			case ASTNode::NodeType::STRING_LITERAL:
+			{
+				StringLiteral* stringLiteral = static_cast<StringLiteral*>(node.get());
 
-			return;
-		}
+				std::cout << std::string(depth, '\t') << "String Literal: " << stringLiteral->value << std::endl;
+
+				return;
+			}
+
+			case ASTNode::NodeType::IF_STATEMENT:
+			{
+				DebugLog(static_cast<IfStatement*>(node.get()), depth);
+
+				return;
+			}
+
+			case ASTNode::NodeType::RETURN_STATEMENT:
+			{
+				ReturnStatement* returnStatement = static_cast<ReturnStatement*>(node.get());
+
+				std::cout << std::string(depth, '\t') << "Return Statement: " << std::endl;
+
+				DebugLog(returnStatement->expr, depth + 1);
+
+				return;
+			}
+
+			case ASTNode::NodeType::BRACKETED_EXPRESSION:
+			{
+				BracketedExpression* bracketedExpression = static_cast<BracketedExpression*>(node.get());
+
+				std::cout << std::string(depth, '\t') << "Bracketed Expression: " << std::endl;
+
+				DebugLog(bracketedExpression->expr, depth + 1);
+
+				return;
+			}
+
+			default:
+			{
+				std::cout << std::string(depth, '\t') << "Undefined AST node: " << (int)node->type << std::endl;
+
+				return;
+			}
 		}
 	}
 
-inline void DebugLog(FileAST& AST)
-{
-	for (FunctionDeclaration& funcDecl : AST.functions)
+	inline void DebugLog(FileAST& AST)
 	{
-		DebugLog(&funcDecl, 0);
-	}
+		for (FunctionDeclaration& funcDecl : AST.functions)
+		{
+			DebugLog(&funcDecl, 0);
+		}
 
+	}
 }

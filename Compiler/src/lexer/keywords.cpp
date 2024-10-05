@@ -4,18 +4,20 @@
 
 #include <Util/trans-table.h>
 
-const TransTable<std::string, TokenType> Lexer::keywords
-({
-	// Variables
-	{ "int", TokenType::INT_DEC },
-	{ "string", TokenType::STR_DEC },
+namespace lx
+{
+	const TransTable<std::string, TokenType> Lexer::keywords
+	({
+		// Variables
+		{ "int", TokenType::INT_DEC },
+		{ "string", TokenType::STR_DEC },
 
 		{ "const", TokenType::CONST },
 
-	// Control flow
-	{ "if", TokenType::IF },
-	{ "elif", TokenType::ELIF },
-	{ "else", TokenType::ELSE },
+		// Control flow
+		{ "if", TokenType::IF },
+		{ "elif", TokenType::ELIF },
+		{ "else", TokenType::ELSE },
 
 		{ "for", TokenType::FOR },
 		{ "while", TokenType::WHILE },
@@ -35,5 +37,5 @@ const TransTable<std::string, TokenType> Lexer::keywords
 		{ "or", TokenType::OR },
 
 		{ "not", TokenType::NOT }
-		});
+	});
 }

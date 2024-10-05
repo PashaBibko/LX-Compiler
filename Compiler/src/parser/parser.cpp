@@ -4,10 +4,10 @@
 
 #include <debug/DebugLog.h>
 
-// Namespace to hold all the constexpr functions
-// This is to help split them up from the parser code
-namespace lx 
+namespace lx
 {
+	// Namespace to hold all the constexpr functions
+	// This is to help split them up from the parser code
 	namespace Constexprs
 	{
 		constexpr bool isOperator(TokenType type)
@@ -128,57 +128,57 @@ namespace lx
 		}
 	}
 
-std::vector < std::unique_ptr<ASTNode>> Parser::parseBlock()
-{
-	// Creates a vector to hold the output
-	std::vector<std::unique_ptr<ASTNode>> out;
-
-	// Check for the left brace
-	if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_BRACE)
+	std::vector < std::unique_ptr<ASTNode>> Parser::parseBlock()
 	{
-		throw std::runtime_error("Expected left brace");
-	}
+		// Creates a vector to hold the output
+		std::vector<std::unique_ptr<ASTNode>> out;
 
-	// Skip the left brace
-	currentIndex++;
-
-	// Loop through the body
-	while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACE)
-	{
-		// Parse the body
-		out.push_back(parseVariableDeclaration());
-
-		// Check for end of file token
-		if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
+		// Check for the left brace
+		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_BRACE)
 		{
-			throw std::runtime_error("Expected right brace");
+			throw std::runtime_error("Expected left brace");
 		}
 
-		// Early return
-		if (out.back() == nullptr)
+		// Skip the left brace
+		currentIndex++;
+
+		// Loop through the body
+		while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACE)
 		{
-			throw std::runtime_error("Early Parser Return");
+			// Parse the body
+			out.push_back(parseIfStatement());
+
+			// Check for end of file token
+			if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
+			{
+				throw std::runtime_error("Expected right brace");
+			}
+
+			// Early return
+			if (out.back() == nullptr)
+			{
+				throw std::runtime_error("Early Parser Return");
+			}
 		}
+
+		// Skip the right brace
+		currentIndex++;
+
+		return out;
 	}
 
-	// Skip the right brace
-	currentIndex++;
+	// The parser is split into a call stack
+	// This means the bottom of the stack is the first function called
+	// It then calls the next function in the stack (if needed)
 
-	return out;
-}
-
-// The parser is split into a call stack
-// This means the bottom of the stack is the first function called
-// It then calls the next function in the stack (if needed)
-
-// The call stack is as follows:
-// - parseFunctionDeclaration
-// - parseIfStatement
-// - parseVariableDeclaration
-// - parseAssignment
-// - parseFunctionCall
-// - parseOperation
-// - parsePrimary - Should always be the last function called
+	// The call stack is as follows:
+	// - parseFunctionDeclaration
+	// - parseIfStatement
+	// - parseVariableDeclaration
+	// - parseAssignment
+	// - parseFunctionCall
+	// - parseOperation
+	// - parsePrimary - Should always be the last function called
 
 	std::unique_ptr<ASTNode> Parser::parsePrimary()
 	{
@@ -366,43 +366,34 @@ std::vector < std::unique_ptr<ASTNode>> Parser::parseBlock()
 		return parseOperation();
 	}
 
-	// Goes down the call chain
-	return parseOperation();
-}
-
-std::unique_ptr<ASTNode> Parser::parseReturnStatement()
-{
-	if (currentTokens->operator[](currentIndex).type == TokenType::RETURN)
+	std::unique_ptr<ASTNode> Parser::parseReturnStatement()
 	{
-		// Skip the return token
-		currentIndex++;
+		if (currentTokens->operator[](currentIndex).type == TokenType::RETURN)
+		{
+			// Skip the return token
+			currentIndex++;
 
-		// Create the output as a ReturnStatement type to allow access
-		std::unique_ptr<ReturnStatement> out = std::make_unique<ReturnStatement>();
+			// Create the output as a ReturnStatement type to allow access
+			std::unique_ptr<ReturnStatement> out = std::make_unique<ReturnStatement>();
 
-		// Parse the value
-		out->expr = parseFunctionCall();
+			// Parse the value
+			out->expr = parseFunctionCall();
 
-		// Iterate to the next token
-		//currentIndex++;
+			// Iterate to the next token
+			//currentIndex++;
 
-		// Return the output
-		return out;
+			// Return the output
+			return out;
 
+		}
+
+		return parseFunctionCall();
 	}
 
-	return parseFunctionCall();
-}
-
-std::unique_ptr<ASTNode> Parser::parseAssignment()
-{
-	// Parses the first token
-	std::unique_ptr<ASTNode> asignee = parseReturnStatement();
-
-	if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
+	std::unique_ptr<ASTNode> Parser::parseAssignment()
 	{
 		// Parses the first token
-		std::unique_ptr<ASTNode> asignee = parseFunctionCall();
+		std::unique_ptr<ASTNode> asignee = parseReturnStatement();
 
 		if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
 		{
@@ -510,48 +501,13 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
 
 	std::unique_ptr<ASTNode> Parser::parseIfStatement()
 	{
-		// Skip the if token
-		currentIndex++;
-
-		// Create the output as an IfStatement type to allow access
-		std::unique_ptr<IfStatement> out = std::make_unique<IfStatement>(IfStatement::IfType::IF);
-
-		// Check for the left parenthesis
-		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+		if (currentTokens->operator[](currentIndex).type == TokenType::IF)
 		{
 			// Skip the if token
 			currentIndex++;
 
 			// Create the output as an IfStatement type to allow access
-			std::unique_ptr<IfStatement> out = std::make_unique<IfStatement>();
-
-		// Parse the condition
-		out->condition = parseFunctionCall();
-
-		// Check for the right parenthesis
-		if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
-		{
-			std::cerr << "ERROR: Expected right parenthesis" << std::endl;
-			return nullptr;
-		}
-
-		// Skip the right parenthesis
-		currentIndex++;
-
-		// Parse the body
-		out->body = parseBlock();
-
-		// Creates raw pointer to current if object (will be reassigned in chains)
-		IfStatement* currentIf = out.get();
-
-		// Checks for the elif token
-		while (currentTokens->operator[](currentIndex).type == TokenType::ELIF)
-		{
-			// Skip the elif token
-			currentIndex++;
-
-			// Create the output as an IfStatement type to allow access
-			currentIf->next = std::make_unique<IfStatement>(IfStatement::IfType::ELSE_IF);
+			std::unique_ptr<IfStatement> out = std::make_unique<IfStatement>(IfStatement::IfType::IF);
 
 			// Check for the left parenthesis
 			if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
@@ -564,7 +520,7 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
 			currentIndex++;
 
 			// Parse the condition
-			currentIf->next->condition = parseFunctionCall();
+			out->condition = parseFunctionCall();
 
 			// Check for the right parenthesis
 			if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
@@ -577,145 +533,183 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
 			currentIndex++;
 
 			// Parse the body
-			currentIf->next->body = parseBlock();
+			out->body = parseBlock();
 
-			// Chains the next if statement
-			currentIf = currentIf->next.get();
+			// Creates raw pointer to current if object (will be reassigned in chains)
+			IfStatement* currentIf = out.get();
+
+			// Checks for the elif token
+			while (currentTokens->operator[](currentIndex).type == TokenType::ELIF)
+			{
+				// Skip the elif token
+				currentIndex++;
+
+				// Create the output as an IfStatement type to allow access
+				currentIf->next = std::make_unique<IfStatement>(IfStatement::IfType::ELSE_IF);
+
+				// Check for the left parenthesis
+				if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+				{
+					std::cerr << "ERROR: Expected left parenthesis" << std::endl;
+					return nullptr;
+				}
+
+				// Skip the left parenthesis
+				currentIndex++;
+
+				// Parse the condition
+				currentIf->next->condition = parseFunctionCall();
+
+				// Check for the right parenthesis
+				if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+				{
+					std::cerr << "ERROR: Expected right parenthesis" << std::endl;
+					return nullptr;
+				}
+
+				// Skip the right parenthesis
+				currentIndex++;
+
+				// Parse the body
+				currentIf->next->body = parseBlock();
+
+				// Chains the next if statement
+				currentIf = currentIf->next.get();
+			}
+
+			// Checks for the else token
+			if (currentTokens->operator[](currentIndex).type == TokenType::ELSE)
+			{
+				// Skip the else token
+				currentIndex++;
+
+				// Create the output as an IfStatement type to allow access
+				currentIf->next = std::make_unique<IfStatement>(IfStatement::IfType::ELSE);
+
+				// Parse the body
+				currentIf->next->body = parseBlock();
+			}
+
+			return out;
 		}
 
-		// Checks for the else token
-		if (currentTokens->operator[](currentIndex).type == TokenType::ELSE)
-		{
-			// Skip the else token
-			currentIndex++;
-
-			// Create the output as an IfStatement type to allow access
-			currentIf->next = std::make_unique<IfStatement>(IfStatement::IfType::ELSE);
-
-			// Parse the body
-			currentIf->next->body = parseBlock();
-		}
-
-		return out;
+		return parseVariableDeclaration();
 	}
 
-	return parseVariableDeclaration();
-}
-
-FunctionDeclaration Parser::parseFunctionDeclaration()
-{
-	if (currentTokens->operator[](currentIndex).type == TokenType::FUNCTION)
+	FunctionDeclaration Parser::parseFunctionDeclaration()
 	{
-		// Skip the function token
-		currentIndex++;
-
-		// Create the output as a FunctionDeclaration type to allow access
-		FunctionDeclaration out;
-
-		// Check for return type
-		if (currentTokens->operator[](currentIndex).type == TokenType::LEFT_BRACKET)
+		if (currentTokens->operator[](currentIndex).type == TokenType::FUNCTION)
 		{
+			// Skip the function token
 			currentIndex++;
 
-			switch (currentTokens->operator[](currentIndex).type)
+			// Create the output as a FunctionDeclaration type to allow access
+			FunctionDeclaration out;
+
+			// Check for return type
+			if (currentTokens->operator[](currentIndex).type == TokenType::LEFT_BRACKET)
 			{
-				case TokenType::INT_DEC:
-					out.returnTypes.push_back(Identifier("int"));
-					break;
+				currentIndex++;
 
-				case TokenType::STR_DEC:
-					out.returnTypes.push_back(Identifier("std::string"));
-					break;
+				switch (currentTokens->operator[](currentIndex).type)
+				{
+					case TokenType::INT_DEC:
+						out.returnTypes.push_back(Identifier("int"));
+						break;
 
-				default:
-					break;
-			}
+					case TokenType::STR_DEC:
+						out.returnTypes.push_back(Identifier("std::string"));
+						break;
 
-			// Check for the closing bracket
-			currentIndex++;
+					default:
+						break;
+				}
 
-			if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACKET)
-			{
-				std::cerr << "ERROR: Expected closing bracket" << std::endl;
-				return FunctionDeclaration();
-			}
+				// Check for the closing bracket
+				currentIndex++;
 
-			currentIndex++;
-		}
+				if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACKET)
+				{
+					std::cerr << "ERROR: Expected closing bracket" << std::endl;
+					return FunctionDeclaration();
+				}
 
-		if (currentTokens->operator[](currentIndex).type != TokenType::IDENTIFIER)
-		{
-			std::cerr << "ERROR: Expected function name" << std::endl;
-			return FunctionDeclaration();
-		}
-
-		// Set the name of the function
-		out.name.name = currentTokens->operator[](currentIndex).value;
-
-		// Skip the function name
-		currentIndex++;
-
-		// Check for the left parenthesis
-		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
-		{
-			std::cerr << "ERROR: Expected left parenthesis" << std::endl;
-			return FunctionDeclaration();
-		}
-
-		currentIndex++;
-
-		while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
-		{
-			if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
-			{
-				std::cerr << "ERROR: Expected right parenthesis" << std::endl;
-				return FunctionDeclaration();
-			}
-
-			out.args.push_back(parseVariableDeclaration());
-			if (out.args.back().get()->type != ASTNode::NodeType::VARIABLE_DECLARATION)
-			{
-				std::cerr << "ERROR: Expected argument" << std::endl;
-				return FunctionDeclaration();
-			}
-
-			if (currentTokens->operator[](currentIndex).type == TokenType::COMMA)
-			{
 				currentIndex++;
 			}
 
+			if (currentTokens->operator[](currentIndex).type != TokenType::IDENTIFIER)
+			{
+				std::cerr << "ERROR: Expected function name" << std::endl;
+				return FunctionDeclaration();
+			}
+
+			// Set the name of the function
+			out.name.name = currentTokens->operator[](currentIndex).value;
+
+			// Skip the function name
+			currentIndex++;
+
+			// Check for the left parenthesis
+			if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+			{
+				std::cerr << "ERROR: Expected left parenthesis" << std::endl;
+				return FunctionDeclaration();
+			}
+
+			currentIndex++;
+
+			while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			{
+				if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
+				{
+					std::cerr << "ERROR: Expected right parenthesis" << std::endl;
+					return FunctionDeclaration();
+				}
+
+				out.args.push_back(parseVariableDeclaration());
+				if (out.args.back().get()->type != ASTNode::NodeType::VARIABLE_DECLARATION)
+				{
+					std::cerr << "ERROR: Expected argument" << std::endl;
+					return FunctionDeclaration();
+				}
+
+				if (currentTokens->operator[](currentIndex).type == TokenType::COMMA)
+				{
+					currentIndex++;
+				}
+			}
+
+			currentIndex++;
+
+			out.body = parseBlock();
+
+			return out;
 		}
 
-		currentIndex++;
-
-		out.body = parseBlock();
-
-		return out;
-	}
-
-	else
-	{
-		std::cerr << "ERROR: Expected function declaration" << std::endl;
-		return FunctionDeclaration();
-	}
-}
-
-void Parser::parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode)
-{
-	// Initialize
-	currentTokens = &tokens;
-
-	// Loop through the tokens
-	while (currentTokens->operator[](currentIndex).type != TokenType::END_OF_FILE)
-	{
-		out.functions.push_back(parseFunctionDeclaration());
-
-		DebugLog(&out.functions.back(), 0);
-
-		if (out.functions.back().body.back() == nullptr)
+		else
 		{
-			std::cerr << "Early Parser Return" << std::endl;
-			return;
+			std::cerr << "ERROR: Expected function declaration: " << (int)currentTokens->operator[](currentIndex).type << std::endl;
+			return FunctionDeclaration();
+		}
+	}
+
+	void Parser::parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode)
+	{
+		// Initialize
+		currentTokens = &tokens;
+
+		// Loop through the tokens
+		while (currentTokens->operator[](currentIndex).type != TokenType::END_OF_FILE)
+		{
+			out.functions.push_back(parseFunctionDeclaration());
+
+			DebugLog(&out.functions.back(), 0);
+
+			if (out.functions.back().body.back() == nullptr)
+			{
+				std::cerr << "Early Parser Return" << std::endl;
+				return;
+			}
 		}
 	}
 }

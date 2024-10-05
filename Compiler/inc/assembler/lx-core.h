@@ -9,7 +9,6 @@
 
 namespace lx 
 {
-
 	// Forward declarations
 	class Assembler;
 

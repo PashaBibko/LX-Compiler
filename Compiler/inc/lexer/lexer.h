@@ -7,45 +7,44 @@
 #include <Util/trans-table.h>
 namespace lx
 {
-
 	class Lexer
 	{
-	private:
-		// Current source code being lexed
-		const std::string* currentSource;
+		private:
+			// Current source code being lexed
+			const std::string* currentSource;
 
-		// Current index in the source code
-		size_t currentIndex = 0;
+			// Current index in the source code
+			size_t currentIndex = 0;
 
-		// Function for string literals
-		Token lexString();
+			// Function for string literals
+			Token lexString();
 
-		// Seperate functions for each operator for higher efficiency
+			// Seperate functions for each operator for higher efficiency
 
-		Token lexPlusOperator();
-		Token lexMinusOperator();
-		Token lexMultiplyOperator();
-		Token lexDivideOperator();
+			Token lexPlusOperator();
+			Token lexMinusOperator();
+			Token lexMultiplyOperator();
+			Token lexDivideOperator();
 
-		Token lexEqaulsOperator();
-		Token lexNotOperator();
+			Token lexEqaulsOperator();
+			Token lexNotOperator();
 
-		Token lexLessThanOperator();
-		Token lexGreaterThanOperator();
+			Token lexLessThanOperator();
+			Token lexGreaterThanOperator();
 
-		Token lexColonOperator();
+			Token lexColonOperator();
 
-		// Multi-character operators
+			// Multi-character operators
 
-		Token lexMultiChar();
+			Token lexMultiChar();
 
-	public:
-		// Translation table for keywords
-		static const TransTable<std::string, TokenType> keywords;
+		public:
+			// Translation table for keywords
+			static const TransTable<std::string, TokenType> keywords;
 
-		Lexer() : currentSource(nullptr) {}
+			Lexer() : currentSource(nullptr) {}
 
-		std::vector<Token> lex(const std::string& input);
+			std::vector<Token> lex(const std::string& input);
 	};
 
 	inline Token Lexer::lexPlusOperator()
