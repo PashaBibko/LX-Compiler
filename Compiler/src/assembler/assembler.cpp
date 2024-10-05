@@ -3,75 +3,75 @@
 #include <assembler/lx-core.h>
 #include <parser/parser.h>
 
-//
-
-std::string Assembler::assembleFunctionCall(FunctionCall* call)
+namespace lx 
 {
-	// Checks if the function is in the core function map
-	if (LXCore::funcMap.find(call->funcName.name) != LXCore::funcMap.end())
-		return LXCore::funcMap[call->funcName.name](call, *this);
-
-	// If the function is not in the core function map, it is a user defined function
-	std::string output = call->funcName.name + "(";
-
-	bool firstArg = true;
-
-	// Adds the arguments to the output
-	for (std::unique_ptr<ASTNode>& arg : call->args)
+	std::string Assembler::assembleFunctionCall(FunctionCall* call)
 	{
-		if (!firstArg)
-			output = output + ", ";
+		// Checks if the function is in the core function map
+		if (core::funcMap.find(call->funcName.name) != core::funcMap.end())
+			return core::funcMap[call->funcName.name](call, *this);
 
-		output = output + assembleNode(arg);
+		// If the function is not in the core function map, it is a user defined function
+		std::string output = call->funcName.name + "(";
 
-		firstArg = false;
+		bool firstArg = true;
+
+		// Adds the arguments to the output
+		for (std::unique_ptr<ASTNode>& arg : call->args)
+		{
+			if (!firstArg)
+				output = output + ", ";
+
+			output = output + assembleNode(arg);
+
+			firstArg = false;
+		}
+
+		// Adds the closing bracket with the return statement
+		return output + ");";
 	}
 
-	// Adds the closing bracket with the return statement
-	return output + ");";
-}
-
-std::string Assembler::assembleIdentifier(Identifier* id)
-{
-	return id->name;
-}
-
-std::string Assembler::assembleStringLiteral(StringLiteral* str)
-{
-	return "\"" + str->value + "\"";
-}
-
-std::string Assembler::assembleAssignment(Assignment* assign)
-{
-	if (assign->val == nullptr)
-		return ";";
-
-	return Assembler::assembleIdentifier(&assign->name) + " = " + assembleNode(assign->val) + ";";
-}
-
-std::string Assembler::assembleVarMods(VariableDeclaration* var)
-{
-	std::string out = "";
-
-	if (var->isConst())
-		out = out + "const ";
-
-	return out;
-}
-
-std::string Assembler::assembleVarDec(VariableDeclaration* var)
-{
-	if (var->val == nullptr)
-		return assembleVarMods(var) + var->varType.name + " " + var->name.name + ";";
-
-	else
-		return assembleVarMods(var) + var->varType.name + " " + var->name.name + assembleAssignment(var->val.get());
-}
-
-std::string Assembler::assembleOperand(TokenType op)
-{
-	switch (op)
+	std::string Assembler::assembleIdentifier(Identifier* id)
 	{
+		return id->name;
+	}
+
+	std::string Assembler::assembleStringLiteral(StringLiteral* str)
+	{
+		return "\"" + str->value + "\"";
+	}
+
+	std::string Assembler::assembleAssignment(Assignment* assign)
+	{
+		if (assign->val == nullptr)
+			return ";";
+
+		return Assembler::assembleIdentifier(&assign->name) + " = " + assembleNode(assign->val) + ";";
+	}
+
+	std::string Assembler::assembleVarMods(VariableDeclaration* var)
+	{
+		std::string out = "";
+
+		if (var->isConst())
+			out = out + "const ";
+
+		return out;
+	}
+
+	std::string Assembler::assembleVarDec(VariableDeclaration* var)
+	{
+		if (var->val == nullptr)
+			return assembleVarMods(var) + var->varType.name + " " + var->name.name + ";";
+
+		else
+			return assembleVarMods(var) + var->varType.name + " " + var->name.name + assembleAssignment(var->val.get());
+	}
+
+	std::string Assembler::assembleOperand(TokenType op)
+	{
+		switch (op)
+		{
 		case TokenType::PLUS: { return "+"; }
 		case TokenType::MINUS: { return "-"; }
 		case TokenType::MULTIPLY: { return "*"; }
@@ -102,52 +102,52 @@ std::string Assembler::assembleOperand(TokenType op)
 			std::cerr << "Error: Unknown operand type" << std::endl;
 			return "";
 		}
-	}
-}
-
-std::string Assembler::assembleOperation(Operation* op)
-{
-	return assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs);
-}
-
-std::string Assembler::assembleUnaryOperation(UnaryOperation* op)
-{
-	if (op->side == UnaryOperation::Sided::LEFT)
-		return assembleOperand(op->op) + assembleNode(op->val);
-
-	else
-		return assembleNode(op->val) + assembleOperand(op->op);
-}
-
-std::string Assembler::assembleIfStatement(IfStatement* ifStmt)
-{
-	std::string out = "if (" + assembleNode(ifStmt->condition) + ")\n\t{\n";
-
-	for (std::unique_ptr<ASTNode>& node : ifStmt->body)
-	{
-		out = out + "\t\t" + assembleNode(node);
-		out = out + "\n";
+		}
 	}
 
-	out = out + "\t}\n";
-
-	return out;
-}
-
-std::string Assembler::assembleBracketExpression(BracketedExpression* bracket)
-{
-	return "(" + assembleNode(bracket->expr) + ")";
-}
-
-//
-
-std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
-{
-	if (node == nullptr)
-		return "";
-
-	switch (node->type)
+	std::string Assembler::assembleOperation(Operation* op)
 	{
+		return assembleNode(op->lhs) + " " + assembleOperand(op->op) + " " + assembleNode(op->rhs);
+	}
+
+	std::string Assembler::assembleUnaryOperation(UnaryOperation* op)
+	{
+		if (op->side == UnaryOperation::Sided::LEFT)
+			return assembleOperand(op->op) + assembleNode(op->val);
+
+		else
+			return assembleNode(op->val) + assembleOperand(op->op);
+	}
+
+	std::string Assembler::assembleIfStatement(IfStatement* ifStmt)
+	{
+		std::string out = "if (" + assembleNode(ifStmt->condition) + ")\n\t{\n";
+
+		for (std::unique_ptr<ASTNode>& node : ifStmt->body)
+		{
+			out = out + "\t\t" + assembleNode(node);
+			out = out + "\n";
+		}
+
+		out = out + "\t}\n";
+
+		return out;
+	}
+
+	std::string Assembler::assembleBracketExpression(BracketedExpression* bracket)
+	{
+		return "(" + assembleNode(bracket->expr) + ")";
+	}
+
+	//
+
+	std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
+	{
+		if (node == nullptr)
+			return "";
+
+		switch (node->type)
+		{
 		case ASTNode::NodeType::FUNCTION_CALL:
 		{
 			// Calls the function to assemble the function call with a cast to correct type
@@ -207,18 +207,20 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 			std::cerr << "Error: Unknown node type: " << (int)node->type << "\n" << std::endl;
 			return "";
 		}
+		}
 	}
-}
 
-std::string Assembler::assemble(FileAST& AST)
-{
-	std::string out = "#include <iostream>\n\nint main()\n{\n";
-
-	for (std::unique_ptr<ASTNode>& node : AST.script)
+	std::string Assembler::assemble(FileAST& AST)
 	{
-		out = out + "\t" + assembleNode(node);
-		out = out + "\n";
-	}
+		std::string out = "#include <iostream>\n\nint main()\n{\n";
 
-	return out + "\n\tstd::cin.get();\n}\n";
+		for (std::unique_ptr<ASTNode>& node : AST.script)
+		{
+			out = out + "\t" + assembleNode(node);
+			out = out + "\n";
+		}
+
+		return out + "\n\tstd::cin.get();\n}\n";
+	}
 }
+

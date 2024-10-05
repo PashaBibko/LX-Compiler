@@ -3,8 +3,10 @@
 #include <assembler/lx-core.h>
 #include <parser/parser.h>
 
-class Assembler
+namespace lx 
 {
+	class Assembler
+	{
 	private:
 		std::string assembleFunctionCall(FunctionCall* call);
 
@@ -32,4 +34,6 @@ class Assembler
 		Assembler() = default;
 
 		std::string assemble(FileAST& AST);
-};
+	};
+}
+

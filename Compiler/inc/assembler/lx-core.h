@@ -7,15 +7,18 @@
 
 #include <parser/ast.h>
 
-// Forward declarations
-
-class Assembler;
-
-// Standard library functions
-
-namespace LXCore
+namespace lx 
 {
-	std::string printFunction(FunctionCall* call, Assembler& assembler);
 
-	extern std::unordered_map <std::string, std::function<std::string(FunctionCall*, Assembler&)>> funcMap;
-};
+	// Forward declarations
+	class Assembler;
+
+	// Standard library functions
+
+	namespace core
+	{
+		std::string printFunction(FunctionCall* call, Assembler& assembler);
+
+		extern std::unordered_map <std::string, std::function<std::string(FunctionCall*, Assembler&)>> funcMap;
+	};
+}

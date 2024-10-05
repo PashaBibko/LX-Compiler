@@ -8,103 +8,105 @@
 #include <Util/trans-table.h>
 
 
-static constexpr bool isAlpha                (const char c) { return (c >=  'a' && c <=  'z') || (c >=  'A' && c <=  'Z'); }
-static constexpr bool isWhitespace           (const char c) { return (c ==  ' ' || c == '\t') || (c == '\n' || c == '\r'); }
-static constexpr bool isEndOfComment         (const char c) { return (c == '\n' || c ==  '#');                             }
-static constexpr bool isNumeric              (const char c) { return (c >=  '0' && c <=  '9');                             }
+static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
+static constexpr bool isEndOfComment(const char c) { return (c == '\n' || c == '#'); }
+static constexpr bool isNumeric(const char c) { return (c >= '0' && c <= '9'); }
 
-static constexpr bool isAlphaNumeric         (const char c) { return isAlpha(c) || isNumeric(c);                           }
+static constexpr bool isAlphaNumeric(const char c) { return isAlpha(c) || isNumeric(c); }
 
-Token Lexer::lexString()
+namespace lx
 {
-	// Creates the output token
-	Token out = { TokenType::STRING_LITERAL, "" };
-
-	// The length of the string
-	size_t lengthOfString = 1;
-
-	// Increments to avoid the first quote
-	currentIndex++;
-
-	// Loops through the source code until the end of the string is reached
-	while (currentIndex + lengthOfString < currentSource->length() && currentSource->operator[](currentIndex + lengthOfString) != '"')
-		lengthOfString++;
-
-	// Turns the string into a string
-	out.value = currentSource->substr(currentIndex, lengthOfString);
-
-	// Sets the current index to the end of the string
-	currentIndex = currentIndex + lengthOfString;
-
-	// Returns the output token
-	return out;
-}
-
-Token Lexer::lexMultiChar()
-{
-	// Creates the output token
-	Token out;
-
-	// The length of the word
-	size_t lengthOfWord = 1;
-
-	// Loops through the source code until the whitespace is reached
-	while (currentIndex + lengthOfWord < currentSource->length() && isAlphaNumeric(currentSource->operator[](currentIndex + lengthOfWord)))
-		lengthOfWord++;
-
-	// Turns the word into a string
-	const std::string word = currentSource->substr(currentIndex, lengthOfWord);
-
-	TokenType tokenType = TokenType::UNDEFINED;
-
-	try
+	Token Lexer::lexString()
 	{
-		tokenType = keywords[word];
+		// Creates the output token
+		Token out = { TokenType::STRING_LITERAL, "" };
+
+		// The length of the string
+		size_t lengthOfString = 1;
+
+		// Increments to avoid the first quote
+		currentIndex++;
+
+		// Loops through the source code until the end of the string is reached
+		while (currentIndex + lengthOfString < currentSource->length() && currentSource->operator[](currentIndex + lengthOfString) != '"')
+			lengthOfString++;
+
+		// Turns the string into a string
+		out.value = currentSource->substr(currentIndex, lengthOfString);
+
+		// Sets the current index to the end of the string
+		currentIndex = currentIndex + lengthOfString;
+
+		// Returns the output token
+		return out;
 	}
 
-	catch (std::out_of_range)
+	Token Lexer::lexMultiChar()
 	{
-		tokenType = TokenType::IDENTIFIER;
-		out.value = word;
-	}
+		// Creates the output token
+		Token out;
 
-	out.type = tokenType;
+		// The length of the word
+		size_t lengthOfWord = 1;
 
-	currentIndex = currentIndex + lengthOfWord - 1;
+		// Loops through the source code until the whitespace is reached
+		while (currentIndex + lengthOfWord < currentSource->length() && isAlphaNumeric(currentSource->operator[](currentIndex + lengthOfWord)))
+			lengthOfWord++;
 
-	return out;
-}
+		// Turns the word into a string
+		const std::string word = currentSource->substr(currentIndex, lengthOfWord);
 
-std::vector<Token> Lexer::lex(const std::string& input)
-{
-	std::vector<Token> tokens;
+		TokenType tokenType = TokenType::UNDEFINED;
 
-	// The current source code (passed by reference for performance)
-	currentSource = &input;
-
-	// Sets lexer variables to their default values
-	currentIndex = 0;
-
-	const size_t sourceLength = currentSource->length();
-
-	// Loops through the source code until the end is reached
-	while (currentIndex < sourceLength)
-	{
-		//  Gets the current character
-		const char currentChar = currentSource->operator[](currentIndex);
-
-		// Checks if the next character is whitespace
-		bool isNextCharWhitespace = false;
-
-		size_t nextIndex = currentIndex + 1;
-
-		if (nextIndex < sourceLength)
-			isNextCharWhitespace = isWhitespace(currentSource->operator[](nextIndex));
-
-		// Switch statement for the current character
-		switch (currentChar)
+		try
 		{
-			// Skips whitespace
+			tokenType = keywords[word];
+		}
+
+		catch (std::out_of_range)
+		{
+			tokenType = TokenType::IDENTIFIER;
+			out.value = word;
+		}
+
+		out.type = tokenType;
+
+		currentIndex = currentIndex + lengthOfWord - 1;
+
+		return out;
+	}
+
+	std::vector<Token> Lexer::lex(const std::string& input)
+	{
+		std::vector<Token> tokens;
+
+		// The current source code (passed by reference for performance)
+		currentSource = &input;
+
+		// Sets lexer variables to their default values
+		currentIndex = 0;
+
+		const size_t sourceLength = currentSource->length();
+
+		// Loops through the source code until the end is reached
+		while (currentIndex < sourceLength)
+		{
+			//  Gets the current character
+			const char currentChar = currentSource->operator[](currentIndex);
+
+			// Checks if the next character is whitespace
+			bool isNextCharWhitespace = false;
+
+			size_t nextIndex = currentIndex + 1;
+
+			if (nextIndex < sourceLength)
+				isNextCharWhitespace = isWhitespace(currentSource->operator[](nextIndex));
+
+			// Switch statement for the current character
+			switch (currentChar)
+			{
+				// Skips whitespace
 			case '\n':
 				break;
 
@@ -113,18 +115,18 @@ std::vector<Token> Lexer::lex(const std::string& input)
 
 			case '\t':
 				break;
-			
-			
+
+
 			case '\r':
 				break;
 
-			// Skips comments
+				// Skips comments
 			case '#':
 				do { currentIndex++; } while (currentIndex < sourceLength && !isEndOfComment(currentSource->operator[](currentIndex)));
 				break;
 
-			// Single character tokens
-			// These tokens do not matter if the next character is not whitespace
+				// Single character tokens
+				// These tokens do not matter if the next character is not whitespace
 			case ';':
 				tokens.push_back(Token(TokenType::SEMICOLON));
 				break;
@@ -141,8 +143,8 @@ std::vector<Token> Lexer::lex(const std::string& input)
 				tokens.push_back(Token(TokenType::MODULO));
 				break;
 
-			// Brackets
-			// Why are there three different types of brackets?
+				// Brackets
+				// Why are there three different types of brackets?
 			case '(':
 				tokens.push_back(Token(TokenType::LEFT_PAREN));
 				break;
@@ -154,7 +156,7 @@ std::vector<Token> Lexer::lex(const std::string& input)
 			case '{':
 				tokens.push_back(Token(TokenType::LEFT_BRACE));
 				break;
-				
+
 			case '}':
 				tokens.push_back(Token(TokenType::RIGHT_BRACE));
 				break;
@@ -167,7 +169,7 @@ std::vector<Token> Lexer::lex(const std::string& input)
 				tokens.push_back(Token(TokenType::RIGHT_BRACKET));
 				break;
 
-			// Single character tokens that can be part of a multicharacter token
+				// Single character tokens that can be part of a multicharacter token
 			case '+':
 				tokens.push_back(isNextCharWhitespace ? Token(TokenType::PLUS) : lexPlusOperator());
 				break;
@@ -204,12 +206,12 @@ std::vector<Token> Lexer::lex(const std::string& input)
 				tokens.push_back(isNextCharWhitespace ? Token(TokenType::COLON) : lexColonOperator());
 				break;
 
-			// String literals
+				// String literals
 			case '"':
 				tokens.push_back(lexString());
 				break;
 
-			// Multicharacter tokens
+				// Multicharacter tokens
 			default:
 				if (isAlphaNumeric(currentChar))
 				{
@@ -222,15 +224,16 @@ std::vector<Token> Lexer::lex(const std::string& input)
 					std::cerr << "Unknown character: " << currentChar << std::endl;
 					return std::vector<Token>();
 				}
+			}
+
+			// Increments the current index
+			currentIndex++;
 		}
 
-		// Increments the current index
-		currentIndex++;
+		// Adds EOF token
+		tokens.push_back(Token(TokenType::END_OF_FILE));
+
+		// Returns the tokens
+		return tokens;
 	}
-
-	// Adds EOF token
-	tokens.push_back(Token(TokenType::END_OF_FILE));
-
-	// Returns the tokens
-	return tokens;
 }
