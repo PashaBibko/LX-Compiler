@@ -255,6 +255,17 @@ inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 			return;
 		}
 
+		case ASTNode::NodeType::RETURN_STATEMENT:
+		{
+			ReturnStatement* returnStatement = static_cast<ReturnStatement*>(node.get());
+
+			std::cout << std::string(depth, '\t') << "Return Statement: " << std::endl;
+
+			DebugLog(returnStatement->expr, depth + 1);
+
+			return;
+		}
+
 		case ASTNode::NodeType::BRACKETED_EXPRESSION:
 		{
 			BracketedExpression* bracketedExpression = static_cast<BracketedExpression*>(node.get());

@@ -29,6 +29,8 @@ class Assembler
 
 		std::string assembleBracketExpression(BracketedExpression* bracket);
 
+		std::string assembleReturnStatement(ReturnStatement* ret);
+
 	public:
 		std::string assembleNode(std::unique_ptr<ASTNode>& node);
 

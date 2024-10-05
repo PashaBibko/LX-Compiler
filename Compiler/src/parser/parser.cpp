@@ -364,10 +364,34 @@ std::unique_ptr<ASTNode> Parser::parseFunctionCall()
 	return parseOperation();
 }
 
+std::unique_ptr<ASTNode> Parser::parseReturnStatement()
+{
+	if (currentTokens->operator[](currentIndex).type == TokenType::RETURN)
+	{
+		// Skip the return token
+		currentIndex++;
+
+		// Create the output as a ReturnStatement type to allow access
+		std::unique_ptr<ReturnStatement> out = std::make_unique<ReturnStatement>();
+
+		// Parse the value
+		out->expr = parseFunctionCall();
+
+		// Iterate to the next token
+		//currentIndex++;
+
+		// Return the output
+		return out;
+
+	}
+
+	return parseFunctionCall();
+}
+
 std::unique_ptr<ASTNode> Parser::parseAssignment()
 {
 	// Parses the first token
-	std::unique_ptr<ASTNode> asignee = parseFunctionCall();
+	std::unique_ptr<ASTNode> asignee = parseReturnStatement();
 
 	if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
 	{

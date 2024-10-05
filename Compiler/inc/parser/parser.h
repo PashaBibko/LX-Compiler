@@ -24,6 +24,8 @@ class Parser
 
 		std::unique_ptr<ASTNode> parseAssignment();
 
+		std::unique_ptr<ASTNode> parseReturnStatement();
+
 		std::unique_ptr<ASTNode> parseVariableDeclaration();
 
 		std::unique_ptr<ASTNode> parseIfStatement();

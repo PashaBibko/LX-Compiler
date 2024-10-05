@@ -220,6 +220,7 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 		case ASTNode::NodeType::UNARY_OPERATION:      { return assembleUnaryOperation    (static_cast<UnaryOperation*>(node.get()));      }
 		case ASTNode::NodeType::IF_STATEMENT:         { return assembleIfStatement       (static_cast<IfStatement*>(node.get()));         }
 		case ASTNode::NodeType::BRACKETED_EXPRESSION: { return assembleBracketExpression (static_cast<BracketedExpression*>(node.get())); }
+		case ASTNode::NodeType::RETURN_STATEMENT:     { return assembleReturnStatement   (static_cast<ReturnStatement*>(node.get()));     }
 		
 		// If the node type is unknown, throw an error with the node type
 		default:
@@ -228,6 +229,11 @@ std::string Assembler::assembleNode(std::unique_ptr<ASTNode>& node)
 			return "";
 		}
 	}
+}
+
+std::string Assembler::assembleReturnStatement(ReturnStatement* ret)
+{
+	return "return " + assembleNode(ret->expr) + ";";
 }
 
 std::string Assembler::assemble(FileAST& AST)

@@ -44,6 +44,8 @@ class ASTNode
 
             IF_STATEMENT,
 
+            RETURN_STATEMENT,
+
             UNDEFINED
 		};
 
@@ -211,6 +213,16 @@ class BracketedExpression : public ASTNode
 
 		// Contents
         std::unique_ptr<ASTNode> expr;
+};
+
+class ReturnStatement : public ASTNode
+{
+	public:
+		// Constructor
+		ReturnStatement() : ASTNode(NodeType::RETURN_STATEMENT) {}
+
+		// Contents
+		std::unique_ptr<ASTNode> expr;
 };
 
 class FunctionDeclaration
