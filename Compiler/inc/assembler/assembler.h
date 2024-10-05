@@ -22,6 +22,8 @@ class Assembler
 
 		std::string assembleUnaryOperation(UnaryOperation* op);
 
+		std::string assembleIfStatement(IfStatement* ifStmt);
+
 	public:
 		std::string assembleNode(std::unique_ptr<ASTNode>& node);
 

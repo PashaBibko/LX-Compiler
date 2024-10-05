@@ -40,6 +40,8 @@ class ASTNode
             FUNCTION_CALL,
             STRING_LITERAL,
 
+            IF_STATEMENT,
+
             UNDEFINED
 		};
 
@@ -170,6 +172,19 @@ class StringLiteral : public ASTNode
 
 		// Contents
 		std::string value;
+};
+
+class IfStatement : public ASTNode
+{
+	public:
+		// Constructor
+		IfStatement() : ASTNode(NodeType::IF_STATEMENT) {}
+
+		// Condition
+		std::unique_ptr<ASTNode> condition;
+
+        // Body
+        std::vector<std::unique_ptr<ASTNode>> body;
 };
 
 // Debug function

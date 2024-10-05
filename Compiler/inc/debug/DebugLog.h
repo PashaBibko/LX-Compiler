@@ -173,6 +173,24 @@ inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 			return;
 		}
 
+		case ASTNode::NodeType::IF_STATEMENT:
+		{
+			IfStatement* ifStatement = static_cast<IfStatement*>(node.get());
+
+			std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
+
+			DebugLog(ifStatement->condition, depth + 1);
+
+			std::cout << std::string(depth, '\t') << "Then: " << std::endl;
+
+			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			{
+				DebugLog(statement, depth + 1);
+			}
+
+			return;
+		}
+
 		case ASTNode::NodeType::UNDEFINED:
 		{
 			std::cout << std::string(depth, '\t') << "Undefined: " << (int)node->type << std::endl;
