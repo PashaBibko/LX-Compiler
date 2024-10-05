@@ -1,18 +1,26 @@
 
-func [int] main()
+func[int] add(int a, int b)
 {
+    return a + b
+}
+
+func[int] main()
+{
+    print("hello")
+    print(add(1, 2))
+
     if (true)
     {
-        print()
+        print ("all is normal")
     }
 
     elif (false)
     {
-        print()
+        print ("things are a bit weird")
     }
 
     else
     {
-        print()
+        print("YOU ARE IN THE MATRIX")
     }
 }
