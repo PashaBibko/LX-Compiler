@@ -8,12 +8,13 @@ const TransTable<std::string, TokenType> Lexer::keywords
 ({
 	// Variables
 	{ "int", TokenType::INT_DEC },
-	{ "str", TokenType::STR_DEC },
+	{ "string", TokenType::STR_DEC },
 
 	{ "const", TokenType::CONST },
 
 	// Control flow
 	{ "if", TokenType::IF },
+	{ "elif", TokenType::ELIF },
 	{ "else", TokenType::ELSE },
 
 	{ "for", TokenType::FOR },

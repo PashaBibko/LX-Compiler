@@ -13,6 +13,8 @@ class Parser
 		// Current index in the tokens
 		size_t currentIndex = 0;
 
+		std::vector<std::unique_ptr<ASTNode>> parseBlock();
+
 		std::unique_ptr<ASTNode> parsePrimary();
 
 		std::unique_ptr<ASTNode> parseUnaryOperation();
@@ -25,6 +27,8 @@ class Parser
 		std::unique_ptr<ASTNode> parseVariableDeclaration();
 
 		std::unique_ptr<ASTNode> parseIfStatement();
+
+		FunctionDeclaration parseFunctionDeclaration();
 
 	public:
 		Parser() {}

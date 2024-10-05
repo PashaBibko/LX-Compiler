@@ -41,9 +41,6 @@
     <ClCompile Include="src\lexer\lexer.cpp">
       <Filter>Source Files\lexer</Filter>
     </ClCompile>
-    <ClCompile Include="src\parser\ast.cpp">
-      <Filter>Source Files\parser</Filter>
-    </ClCompile>
     <ClCompile Include="src\parser\parser.cpp">
       <Filter>Source Files\parser</Filter>
     </ClCompile>

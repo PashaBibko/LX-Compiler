@@ -87,6 +87,81 @@ inline void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
 	DebugLog(assignment->val, depth + 1);
 }
 
+inline void DebugLog(IfStatement* ifStatement, int depth)
+{
+	switch (ifStatement->type)
+	{
+		case IfStatement::IfType::IF:
+		{
+			std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
+
+			DebugLog(ifStatement->condition, depth + 1);
+
+			std::cout << std::string(depth, '\t') << "Then: " << std::endl;
+
+			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			{
+				DebugLog(statement, depth + 1);
+			}
+
+			break;
+		}
+
+		case IfStatement::IfType::ELSE_IF:
+		{
+			std::cout << std::string(depth, '\t') << "Else If Statement: " << std::endl;
+
+			DebugLog(ifStatement->condition, depth + 1);
+
+			std::cout << std::string(depth, '\t') << "Then: " << std::endl;
+
+			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			{
+				DebugLog(statement, depth + 1);
+			}
+
+			break;
+		}
+
+		case IfStatement::IfType::ELSE:
+		{
+			std::cout << std::string(depth, '\t') << "Else Statement: " << std::endl;
+
+			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			{
+				DebugLog(statement, depth + 1);
+			}
+
+			break;
+		}
+	}
+
+	if (ifStatement->next != nullptr)
+	{
+		DebugLog(ifStatement->next.get(), depth);
+	}
+}
+
+inline void DebugLog(FunctionDeclaration* funcDecl, int depth)
+{
+	std::cout << std::string(depth, '\t') << "Function Declaration: " << funcDecl->name.name << std::endl;
+
+	for (Identifier& returnType : funcDecl->returnTypes)
+	{
+		std::cout << std::string(depth, '\t') << "Return Type: " << returnType.name << std::endl;
+	}
+	
+	for (std::unique_ptr<ASTNode>& arg: funcDecl->args)
+	{
+		DebugLog(arg, depth + 1);
+	}
+
+	for (std::unique_ptr<ASTNode>& statement : funcDecl->body)
+	{
+		DebugLog(statement, depth + 1);
+	}
+}
+
 inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 {
 	switch (node->type)
@@ -175,18 +250,7 @@ inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 
 		case ASTNode::NodeType::IF_STATEMENT:
 		{
-			IfStatement* ifStatement = static_cast<IfStatement*>(node.get());
-
-			std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
-
-			DebugLog(ifStatement->condition, depth + 1);
-
-			std::cout << std::string(depth, '\t') << "Then: " << std::endl;
-
-			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
-			{
-				DebugLog(statement, depth + 1);
-			}
+			DebugLog(static_cast<IfStatement*>(node.get()), depth);
 
 			return;
 		}
@@ -213,8 +277,8 @@ inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
 
 inline void DebugLog(FileAST& AST)
 {
-	for (const std::unique_ptr<ASTNode>& node : AST.script)
+	for (FunctionDeclaration& funcDecl : AST.functions)
 	{
-		DebugLog(node, 0);
+		DebugLog(&funcDecl, 0);
 	}
 }

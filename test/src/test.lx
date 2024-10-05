@@ -1,3 +1,5 @@
-# This is a comment #
 
-int var4 = 1 + (2 * 3)
+func [int] main()
+{
+    print("hi")
+}

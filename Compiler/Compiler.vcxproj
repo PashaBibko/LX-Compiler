@@ -24,7 +24,6 @@
     <ClCompile Include="src\combine.cpp" />
     <ClCompile Include="src\lexer\keywords.cpp" />
     <ClCompile Include="src\lexer\lexer.cpp" />
-    <ClCompile Include="src\parser\ast.cpp" />
     <ClCompile Include="src\parser\parser.cpp" />
   </ItemGroup>
   <ItemGroup>

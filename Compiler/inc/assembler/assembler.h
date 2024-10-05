@@ -6,6 +6,8 @@
 class Assembler
 {
 	private:
+		std::unordered_map<std::string, bool> includes;
+
 		std::string assembleFunctionCall(FunctionCall* call);
 
 		std::string assembleIdentifier(Identifier* id);
@@ -14,6 +16,7 @@ class Assembler
 
 		std::string assembleAssignment(Assignment* assign);
 
+		std::string assembleVarDecType(Identifier* t);
 		std::string assembleVarMods(VariableDeclaration* var);
 		std::string assembleVarDec(VariableDeclaration* var);
 

@@ -179,14 +179,28 @@ class StringLiteral : public ASTNode
 class IfStatement : public ASTNode
 {
 	public:
+        //
+        enum class IfType : char
+        {
+            IF,
+			ELSE_IF,
+			ELSE
+        };
+
 		// Constructor
-		IfStatement() : ASTNode(NodeType::IF_STATEMENT) {}
+		IfStatement(IfType t) : ASTNode(NodeType::IF_STATEMENT), type(t) {}
 
 		// Condition
 		std::unique_ptr<ASTNode> condition;
 
         // Body
         std::vector<std::unique_ptr<ASTNode>> body;
+
+        // Type
+        IfType type;
+
+        // Chain
+        std::unique_ptr<IfStatement> next;
 };
 
 class BracketedExpression : public ASTNode
@@ -199,8 +213,24 @@ class BracketedExpression : public ASTNode
         std::unique_ptr<ASTNode> expr;
 };
 
-// Debug function
-void displayAST(std::unique_ptr<ASTNode>& node, short depth = 0);
+class FunctionDeclaration
+{
+    public:
+        // Constructor
+        FunctionDeclaration() {}
+
+        // Name
+        Identifier name;
+
+        // Return type
+        std::vector<Identifier> returnTypes;
+
+        // Arguments
+        std::vector<std::unique_ptr<ASTNode>> args;
+
+        // Body
+        AST body;
+};
 
 /*
 * @brief Wrapper class for the AST of a file
@@ -211,14 +241,5 @@ void displayAST(std::unique_ptr<ASTNode>& node, short depth = 0);
 */
 struct FileAST
 {
-    AST script;
-
-    void display()
-    {
-        for (auto& node : script)
-        {
-            displayAST(node);
-            std::cout << std::endl;
-        }
-    }
+    std::vector<FunctionDeclaration> functions;
 };
