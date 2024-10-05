@@ -3,9 +3,10 @@
 #include <parser/ast.h>
 
 #include <debug/DebugLog.h>
-
-class Parser
+namespace lx 
 {
+	class Parser
+	{
 	private:
 		// Current tokens
 		const std::vector<Token>* currentTokens;
@@ -36,4 +37,5 @@ class Parser
 		Parser() {}
 
 		void parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode);
-};
+	};
+}

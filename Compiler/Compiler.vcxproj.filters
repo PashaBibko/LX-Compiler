@@ -24,14 +24,14 @@
     <Filter Include="Header Files\parser">
       <UniqueIdentifier>{34a03655-3dfc-4955-8ad0-b7fa29e2f658}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\misc">
-      <UniqueIdentifier>{82cb557b-4745-494f-a6b9-d5bc6922fa31}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\debug">
       <UniqueIdentifier>{357b2402-b392-4cd2-bea9-1d70e66d67d0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\assembler">
       <UniqueIdentifier>{f5396f81-302b-4f8d-bff8-c07f90cd22b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lexer\misc">
+      <UniqueIdentifier>{82cb557b-4745-494f-a6b9-d5bc6922fa31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -68,7 +68,7 @@
       <Filter>Header Files\lexer</Filter>
     </ClInclude>
     <ClInclude Include="inc\misc\fileRead.h">
-      <Filter>Header Files\misc</Filter>
+      <Filter>Header Files\lexer\misc</Filter>
     </ClInclude>
     <ClInclude Include="inc\parser\ast.h">
       <Filter>Header Files\parser</Filter>

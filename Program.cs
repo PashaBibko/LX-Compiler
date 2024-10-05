@@ -21,7 +21,7 @@ namespace LX
 
         // Includes the translate function from the DLL
         [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void translate(string srcMainDir, string srcSubDir, string filename, bool debug = false);
+        private static extern void Translate(string srcMainDir, string srcSubDir, string filename, bool debug = false);
 
         // Main function
         static void Main(string[] args)
@@ -83,7 +83,7 @@ namespace LX
                     foreach (string file in files)
                     {
                         // Translates the .lx file to a .cpp file
-                        translate(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
+                        Translate(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
 
                         // Compiles the .cpp file to a .obj file
                         var inpFileName = info.ProjectDir + "\\build\\" + Path.GetFileNameWithoutExtension(file) + ".lx.cpp";

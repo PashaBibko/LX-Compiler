@@ -6,26 +6,28 @@
 
 // Namespace to hold all the constexpr functions
 // This is to help split them up from the parser code
-namespace Constexprs
+namespace lx 
 {
-	constexpr bool isOperator(TokenType type)
+	namespace Constexprs
 	{
-		switch (type)
+		constexpr bool isOperator(TokenType type)
 		{
-			// Basic math operators
+			switch (type)
+			{
+				// Basic math operators
 			case TokenType::PLUS:
 			case TokenType::MINUS:
 			case TokenType::MULTIPLY:
 			case TokenType::DIVIDE:
 			case TokenType::MODULO:
 
-			// The rest of the operators
+				// The rest of the operators
 			case TokenType::PLUS_EQUALS:
 			case TokenType::MINUS_EQUALS:
 			case TokenType::MULTIPLY_EQUALS:
 			case TokenType::DIVIDE_EQUALS:
 
-			// Binary comparison operators
+				// Binary comparison operators
 			case TokenType::EQUALS:
 			case TokenType::LESS_THAN:
 			case TokenType::GREATER_THAN:
@@ -33,98 +35,98 @@ namespace Constexprs
 			case TokenType::GREATER_THAN_EQUALS:
 			case TokenType::NOT_EQUALS:
 
-			// Logial operators
+				// Logial operators
 			case TokenType::AND:
 			case TokenType::NOT:
 			case TokenType::OR:
 
-			// Unary operators
+				// Unary operators
 			case TokenType::INCREMENT:
 			case TokenType::DECREMENT:
 
-			// Returns true if the token is an operator
+				// Returns true if the token is an operator
 				return true;
 
-			// Default case
+				// Default case
 			default:
 				return false;
+			}
 		}
-	}
 
-	constexpr bool isUnaryOnlyOperator(TokenType type)
-	{
-		switch (type)
+		constexpr bool isUnaryOnlyOperator(TokenType type)
 		{
-			// Unary operators
+			switch (type)
+			{
+				// Unary operators
 			case TokenType::INCREMENT:
 			case TokenType::DECREMENT:
 			case TokenType::NOT:
 
-			// Returns true if the token is a unary operator
+				// Returns true if the token is a unary operator
 				return true;
 
-			// Default case
+				// Default case
 			default:
 				return false;
+			}
 		}
-	}
 
-	constexpr bool isUnaryOperator(TokenType type)
-	{
-		if (isUnaryOnlyOperator(type))
-			return true;
-
-		switch (type)
+		constexpr bool isUnaryOperator(TokenType type)
 		{
-			// Binary operators
+			if (isUnaryOnlyOperator(type))
+				return true;
+
+			switch (type)
+			{
+				// Binary operators
 			case TokenType::PLUS:
 			case TokenType::MINUS:
 
-			// Returns true if the token is a unary operator
+				// Returns true if the token is a unary operator
 				return true;
-			
-			// Default case
+
+				// Default case
 			default:
 				return false;
+			}
 		}
-	}
 
-	constexpr bool isVariableDeclaration(TokenType type)
-	{
-		switch (type)
+		constexpr bool isVariableDeclaration(TokenType type)
 		{
-			// Var Types
+			switch (type)
+			{
+				// Var Types
 			case TokenType::INT_DEC:
 			case TokenType::STR_DEC:
 
-			// Var Modifiers
+				// Var Modifiers
 			case TokenType::CONST:
 
-			// Returns true if the token is a variable declaration
+				// Returns true if the token is a variable declaration
 				return true;
 
-			// Default case
+				// Default case
 			default:
 				return false;
+			}
 		}
-	}
 
-	constexpr bool isVarModifier(TokenType type)
-	{
-		switch (type)
+		constexpr bool isVarModifier(TokenType type)
 		{
-			// Var Modifiers
+			switch (type)
+			{
+				// Var Modifiers
 			case TokenType::CONST:
 
-			// Returns true if the token is a variable modifier
+				// Returns true if the token is a variable modifier
 				return true;
 
-			// Default case
+				// Default case
 			default:
 				return false;
+			}
 		}
 	}
-}
 
 std::vector < std::unique_ptr<ASTNode>> Parser::parseBlock()
 {
@@ -178,11 +180,11 @@ std::vector < std::unique_ptr<ASTNode>> Parser::parseBlock()
 // - parseOperation
 // - parsePrimary - Should always be the last function called
 
-std::unique_ptr<ASTNode> Parser::parsePrimary()
-{
-	// Switch statement to handle the different types of primary expressions
-	switch (currentTokens->operator[](currentIndex).type)
+	std::unique_ptr<ASTNode> Parser::parsePrimary()
 	{
+		// Switch statement to handle the different types of primary expressions
+		switch (currentTokens->operator[](currentIndex).type)
+		{
 		case TokenType::STRING_LITERAL:
 		{
 			// Return a StringLiteral type
@@ -224,49 +226,13 @@ std::unique_ptr<ASTNode> Parser::parsePrimary()
 			std::cout << (int)currentTokens->operator[](currentIndex).type << std::endl;
 			return std::make_unique<ASTNode>(ASTNode::NodeType::UNDEFINED);
 		}
-	}
-}
-
-std::unique_ptr<ASTNode> Parser::parseUnaryOperation()
-{
-	// Create the output as an UnaryOperation type to allow access
-	std::unique_ptr<UnaryOperation> out = std::make_unique<UnaryOperation>();
-
-	// Set the operator
-	out->op = currentTokens->operator[](currentIndex).type;
-
-	// Skip the operator
-	currentIndex++;
-
-	// Parse the value
-	out->val = parseFunctionCall();
-
-	// Set the side of the operation
-	out->side = UnaryOperation::Sided::LEFT;
-
-	// Return the output
-	return out;
-}
-
-std::unique_ptr<ASTNode> Parser::parseOperation()
-{
-	// If the token is an operator, parse the unary operation
-	if (Constexprs::isUnaryOperator(currentTokens->operator[](currentIndex).type))
-	{
-		// Calls the unary operation parser
-		return parseUnaryOperation();
+		}
 	}
 
-	// Parses the lhs
-	std::unique_ptr<ASTNode> lhs = parsePrimary();
-
-	// Iterates to the next token
-	currentIndex++;
-
-	if (Constexprs::isOperator(currentTokens->operator[](currentIndex).type))
+	std::unique_ptr<ASTNode> Parser::parseUnaryOperation()
 	{
-		// Create the output as an Operation type to allow access
-		std::unique_ptr<Operation> out = std::make_unique<Operation>();
+		// Create the output as an UnaryOperation type to allow access
+		std::unique_ptr<UnaryOperation> out = std::make_unique<UnaryOperation>();
 
 		// Set the operator
 		out->op = currentTokens->operator[](currentIndex).type;
@@ -274,60 +240,96 @@ std::unique_ptr<ASTNode> Parser::parseOperation()
 		// Skip the operator
 		currentIndex++;
 
-		// Check if the operator is unary only
-		if (Constexprs::isUnaryOnlyOperator(out->op))
-		{
-			// Create the output as an UnaryOperation type to allow access
-			std::unique_ptr<UnaryOperation> unaryOut = std::make_unique<UnaryOperation>();
+		// Parse the value
+		out->val = parseFunctionCall();
 
-			// Moves the values to the unary operation
-			unaryOut->val = std::move(lhs);
-			unaryOut->op = out->op;
+		// Set the side of the operation
+		out->side = UnaryOperation::Sided::LEFT;
 
-			// Set the side of the operation
-			unaryOut->side = UnaryOperation::Sided::RIGHT;
-
-			// Return the output
-			return unaryOut;
-		}
-		
-		else
-		{
-			// Parse the rhs
-			out->rhs = parseFunctionCall();
-
-			// Set the lhs
-			out->lhs = std::move(lhs);
-
-			// Return the output
-			return out;
-		}
+		// Return the output
+		return out;
 	}
 
-	// Return the lhs if there is no operator
-	return lhs;
-}
-
-std::unique_ptr<ASTNode> Parser::parseFunctionCall()
-{
-	// Checks if the current tokens are a function call
-	if (currentTokens->operator[](currentIndex).type == TokenType::IDENTIFIER && currentTokens->operator[](currentIndex + 1).type == TokenType::LEFT_PAREN)
+	std::unique_ptr<ASTNode> Parser::parseOperation()
 	{
-		// Create the output as a FunctionCall type to allow access
-		std::unique_ptr<FunctionCall> out = std::make_unique<FunctionCall>();
-
-		// Set the function name
-		out->funcName.name = currentTokens->operator[](currentIndex).value;
-
-		// Skip the function name and the left parenthesis
-		currentIndex = currentIndex + 2;
-
-		// Loops through the arguments
-		while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+		// If the token is an operator, parse the unary operation
+		if (Constexprs::isUnaryOperator(currentTokens->operator[](currentIndex).type))
 		{
-			// Switch statement to handle the different types of arguments
-			switch (currentTokens->operator[](currentIndex).type)
+			// Calls the unary operation parser
+			return parseUnaryOperation();
+		}
+
+		// Parses the lhs
+		std::unique_ptr<ASTNode> lhs = parsePrimary();
+
+		// Iterates to the next token
+		currentIndex++;
+
+		if (Constexprs::isOperator(currentTokens->operator[](currentIndex).type))
+		{
+			// Create the output as an Operation type to allow access
+			std::unique_ptr<Operation> out = std::make_unique<Operation>();
+
+			// Set the operator
+			out->op = currentTokens->operator[](currentIndex).type;
+
+			// Skip the operator
+			currentIndex++;
+
+			// Check if the operator is unary only
+			if (Constexprs::isUnaryOnlyOperator(out->op))
 			{
+				// Create the output as an UnaryOperation type to allow access
+				std::unique_ptr<UnaryOperation> unaryOut = std::make_unique<UnaryOperation>();
+
+				// Moves the values to the unary operation
+				unaryOut->val = std::move(lhs);
+				unaryOut->op = out->op;
+
+				// Set the side of the operation
+				unaryOut->side = UnaryOperation::Sided::RIGHT;
+
+				// Return the output
+				return unaryOut;
+			}
+
+			else
+			{
+				// Parse the rhs
+				out->rhs = parseFunctionCall();
+
+				// Set the lhs
+				out->lhs = std::move(lhs);
+
+				// Return the output
+				return out;
+			}
+		}
+
+		// Return the lhs if there is no operator
+		return lhs;
+	}
+
+	std::unique_ptr<ASTNode> Parser::parseFunctionCall()
+	{
+		// Checks if the current tokens are a function call
+		if (currentTokens->operator[](currentIndex).type == TokenType::IDENTIFIER && currentTokens->operator[](currentIndex + 1).type == TokenType::LEFT_PAREN)
+		{
+			// Create the output as a FunctionCall type to allow access
+			std::unique_ptr<FunctionCall> out = std::make_unique<FunctionCall>();
+
+			// Set the function name
+			out->funcName.name = currentTokens->operator[](currentIndex).value;
+
+			// Skip the function name and the left parenthesis
+			currentIndex = currentIndex + 2;
+
+			// Loops through the arguments
+			while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			{
+				// Switch statement to handle the different types of arguments
+				switch (currentTokens->operator[](currentIndex).type)
+				{
 				case TokenType::COMMA:
 					// Iterate to skip the comma
 					currentIndex++;
@@ -350,14 +352,18 @@ std::unique_ptr<ASTNode> Parser::parseFunctionCall()
 					out->args.push_back(parseFunctionCall());
 					currentIndex++;
 					break;
+				}
 			}
+
+			// Skip the right parenthesis
+			currentIndex++;
+
+			// Returns the output
+			return out;
 		}
 
-		// Skip the right parenthesis
-		currentIndex++;
-
-		// Returns the output
-		return out;
+		// Goes down the call chain
+		return parseOperation();
 	}
 
 	// Goes down the call chain
@@ -395,49 +401,54 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
 
 	if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
 	{
-		// Create the output as an Assignment type to allow access
-		std::unique_ptr<Assignment> out = std::make_unique<Assignment>();
+		// Parses the first token
+		std::unique_ptr<ASTNode> asignee = parseFunctionCall();
 
-		// Checj if the asignee is an identifier
-		if (asignee->type != ASTNode::NodeType::IDENTIFIER)
+		if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
 		{
-			std::cerr << "ERROR: Assignment to non-identifier" << std::endl;
-			return nullptr;
+			// Create the output as an Assignment type to allow access
+			std::unique_ptr<Assignment> out = std::make_unique<Assignment>();
+
+			// Checj if the asignee is an identifier
+			if (asignee->type != ASTNode::NodeType::IDENTIFIER)
+			{
+				std::cerr << "ERROR: Assignment to non-identifier" << std::endl;
+				return nullptr;
+			}
+
+			// Sets the name of the assignment
+			out->name.name = dynamic_cast<Identifier*>(asignee.get())->name;
+
+			// Skip the assignment operator
+			currentIndex++;
+
+			// Parse the value
+			out->val = parseFunctionCall();
+
+			// Iterate to the next token
+			currentIndex++;
+
+			// Return the output
+			return out;
 		}
 
-		// Sets the name of the assignment
-		out->name.name = dynamic_cast<Identifier*>(asignee.get())->name;
-
-		// Skip the assignment operator
-		currentIndex++;
-
-		// Parse the value
-		out->val = parseFunctionCall();
-
-		// Iterate to the next token
-		currentIndex++;
-
-		// Return the output
-		return out;
+		// Go down the call chain
+		return asignee;
 	}
 
-	// Go down the call chain
-	return asignee;
-}
-
-std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
-{
-	// Checks wether token is var declaration relevant
-	if (Constexprs::isVariableDeclaration(currentTokens->operator[](currentIndex).type))
+	std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 	{
-		// Create the output as a VariableDeclaration type to allow access
-		std::unique_ptr<VariableDeclaration> out = std::make_unique<VariableDeclaration>();
-
-		// Loops through the variable modifiers
-		while (Constexprs::isVarModifier(currentTokens->operator[](currentIndex).type))
+		// Checks wether token is var declaration relevant
+		if (Constexprs::isVariableDeclaration(currentTokens->operator[](currentIndex).type))
 		{
-			switch (currentTokens->operator[](currentIndex).type)
+			// Create the output as a VariableDeclaration type to allow access
+			std::unique_ptr<VariableDeclaration> out = std::make_unique<VariableDeclaration>();
+
+			// Loops through the variable modifiers
+			while (Constexprs::isVarModifier(currentTokens->operator[](currentIndex).type))
 			{
+				switch (currentTokens->operator[](currentIndex).type)
+				{
 				case TokenType::CONST:
 					out->setConst();
 					break;
@@ -445,15 +456,15 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 				default:
 					std::cerr << "ERROR: Unknown variable modifier" << std::endl;
 					return nullptr;
+				}
+
+				// Iterate to the next token
+				currentIndex++;
 			}
 
-			// Iterate to the next token
-			currentIndex++;
-		}
-
-		// Set the type of the variable
-		switch (currentTokens->operator[](currentIndex).type)
-		{
+			// Set the type of the variable
+			switch (currentTokens->operator[](currentIndex).type)
+			{
 			case TokenType::INT_DEC:
 				out->varType.name = "int";
 				break;
@@ -461,45 +472,43 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration()
 			case TokenType::STR_DEC:
 				out->varType.name = "string";
 				break;
-		}
+			}
 
-		// Iterate to the next token
-		currentIndex++;
-
-		// Set the name of the variable
-		out->name.name = currentTokens->operator[](currentIndex).value;
-
-		//
-		currentIndex++;
-
-		// 
-		if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
-		{
-			// Skip the assignment operator
+			// Iterate to the next token
 			currentIndex++;
 
-			// Parse the value
-			out->val = std::make_unique<Assignment>();
+			// Set the name of the variable
+			out->name.name = currentTokens->operator[](currentIndex).value;
 
-			out->val->val = parseFunctionCall();
+			//
+			currentIndex++;
+
+			// 
+			if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
+			{
+				// Skip the assignment operator
+				currentIndex++;
+
+				// Parse the value
+				out->val = std::make_unique<Assignment>();
+
+				out->val->val = parseFunctionCall();
+			}
+
+			else
+			{
+				out->val = nullptr;
+			}
+
+			// Return the output
+			return out;
 		}
 
-		else
-		{
-			out->val = nullptr;
-		}
-
-		// Return the output
-		return out;
+		// Go up the call chain
+		return parseAssignment();
 	}
 
-	// Go up the call chain
-	return parseAssignment();
-}
-
-std::unique_ptr<ASTNode> Parser::parseIfStatement()
-{
-	if (currentTokens->operator[](currentIndex).type == TokenType::IF)
+	std::unique_ptr<ASTNode> Parser::parseIfStatement()
 	{
 		// Skip the if token
 		currentIndex++;
@@ -510,12 +519,11 @@ std::unique_ptr<ASTNode> Parser::parseIfStatement()
 		// Check for the left parenthesis
 		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
 		{
-			std::cerr << "ERROR: Expected left parenthesis" << std::endl;
-			return nullptr;
-		}
+			// Skip the if token
+			currentIndex++;
 
-		// Skip the left parenthesis
-		currentIndex++;
+			// Create the output as an IfStatement type to allow access
+			std::unique_ptr<IfStatement> out = std::make_unique<IfStatement>();
 
 		// Parse the condition
 		out->condition = parseFunctionCall();

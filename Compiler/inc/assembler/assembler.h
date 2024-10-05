@@ -3,8 +3,10 @@
 #include <assembler/lx-core.h>
 #include <parser/parser.h>
 
-class Assembler
+namespace lx 
 {
+	class Assembler
+	{
 	private:
 		std::unordered_map<std::string, bool> includes;
 
@@ -37,4 +39,6 @@ class Assembler
 		Assembler() = default;
 
 		std::string assemble(FileAST& AST);
-};
+	};
+}
+

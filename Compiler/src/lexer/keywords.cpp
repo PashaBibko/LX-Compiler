@@ -10,29 +10,30 @@ const TransTable<std::string, TokenType> Lexer::keywords
 	{ "int", TokenType::INT_DEC },
 	{ "string", TokenType::STR_DEC },
 
-	{ "const", TokenType::CONST },
+		{ "const", TokenType::CONST },
 
 	// Control flow
 	{ "if", TokenType::IF },
 	{ "elif", TokenType::ELIF },
 	{ "else", TokenType::ELSE },
 
-	{ "for", TokenType::FOR },
-	{ "while", TokenType::WHILE },
+		{ "for", TokenType::FOR },
+		{ "while", TokenType::WHILE },
 
-	{ "break", TokenType::BREAK },
-	{ "continue", TokenType::CONTINUE },
-	{ "return", TokenType::RETURN },
+		{ "break", TokenType::BREAK },
+		{ "continue", TokenType::CONTINUE },
+		{ "return", TokenType::RETURN },
 
-	{ "func", TokenType::FUNCTION },
-	{ "proc", TokenType::PROCEDURE },
+		{ "func", TokenType::FUNCTION },
+		{ "proc", TokenType::PROCEDURE },
 
-	// Logical
-	{ "&&", TokenType::AND },
-	{ "and", TokenType::AND },
+		// Logical
+		{ "&&", TokenType::AND },
+		{ "and", TokenType::AND },
 
-	{ "||", TokenType::OR },
-	{ "or", TokenType::OR },
+		{ "||", TokenType::OR },
+		{ "or", TokenType::OR },
 
-	{ "not", TokenType::NOT }
-});
+		{ "not", TokenType::NOT }
+		});
+}
