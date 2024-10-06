@@ -9,6 +9,7 @@ int main()
 	std::cout << add(1, 2);;
 	if (true)
 {
+<<<<<<< Updated upstream
 	std::cout << "all is normal";
 }
 else if (false)
@@ -18,6 +19,17 @@ else if (false)
 else
 {
 	std::cout << "YOU ARE IN THE MATRIX";
+=======
+	std::cout << "Things are normal";
+}
+else if (false)
+{
+	std::cout << "Time to go home";
+}
+else
+{
+	std::cout << "What has gone on here";
+>>>>>>> Stashed changes
 }
 
 }

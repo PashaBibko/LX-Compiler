@@ -6,8 +6,8 @@
 
 namespace lx
 {
-	const TransTable<std::string, TokenType> Lexer::keywords
-	({
+	const std::unordered_map<std::string, TokenType> Lexer::keywords =
+	{
 		// Variables
 		{ "int", TokenType::INT_DEC },
 		{ "string", TokenType::STR_DEC },
@@ -37,5 +37,5 @@ namespace lx
 		{ "or", TokenType::OR },
 
 		{ "not", TokenType::NOT }
-	});
+	};
 }

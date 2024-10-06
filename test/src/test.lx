@@ -1,5 +1,14 @@
 
+<<<<<<< Updated upstream
 func[int] add(int a, int b)
+=======
+func [int] add(int a, int b)
+{
+    return a + b
+}
+
+func [int] main()
+>>>>>>> Stashed changes
 {
     return a + b
 }
@@ -11,16 +20,28 @@ func[int] main()
 
     if (true)
     {
+<<<<<<< Updated upstream
         print ("all is normal")
+=======
+        print("Things are normal")
+>>>>>>> Stashed changes
     }
 
     elif (false)
     {
+<<<<<<< Updated upstream
         print ("things are a bit weird")
+=======
+        print("Time to go home")
+>>>>>>> Stashed changes
     }
 
     else
     {
+<<<<<<< Updated upstream
         print("YOU ARE IN THE MATRIX")
+=======
+        print("What has gone on here")
+>>>>>>> Stashed changes
     }
 }

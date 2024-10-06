@@ -17,22 +17,22 @@ namespace lx
 			size_t currentIndex = 0;
 
 			// Function for string literals
-			Token lexString();
+			std::string lexString();
 
 			// Seperate functions for each operator for higher efficiency
 
-			Token lexPlusOperator();
-			Token lexMinusOperator();
-			Token lexMultiplyOperator();
-			Token lexDivideOperator();
+			TokenType lexPlusOperator();
+			TokenType lexMinusOperator();
+			TokenType lexMultiplyOperator();
+			TokenType lexDivideOperator();
 
-			Token lexEqaulsOperator();
-			Token lexNotOperator();
+			TokenType lexEqualsOperator();
+			TokenType lexNotOperator();
 
-			Token lexLessThanOperator();
-			Token lexGreaterThanOperator();
+			TokenType lexLessThanOperator();
+			TokenType lexGreaterThanOperator();
 
-			Token lexColonOperator();
+			TokenType lexColonOperator();
 
 			// Multi-character operators
 
@@ -40,174 +40,10 @@ namespace lx
 
 		public:
 			// Translation table for keywords
-			static const TransTable<std::string, TokenType> keywords;
+			static const std::unordered_map<std::string, TokenType> keywords;
 
 			Lexer() : currentSource(nullptr) {}
 
 			std::vector<Token> lex(const std::string& input);
 	};
-
-	inline Token Lexer::lexPlusOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: ++, +=
-		switch (nextChar)
-		{
-		case '+':
-			currentIndex++;
-			return Token(TokenType::INCREMENT);
-
-		case '=':
-			currentIndex++;
-			return Token(TokenType::PLUS_EQUALS);
-
-		default:
-			return Token(TokenType::PLUS);
-		}
-	}
-
-	inline Token Lexer::lexMinusOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: --, -=, ->
-		switch (nextChar)
-		{
-		case '-':
-			currentIndex++;
-			return Token(TokenType::DECREMENT);
-
-		case '=':
-			currentIndex++;
-			return Token(TokenType::MINUS_EQUALS);
-
-		case '>':
-			currentIndex++;
-			return Token(TokenType::ARROW);
-
-		default:
-			return Token(TokenType::MINUS);
-		}
-	}
-
-	inline Token Lexer::lexMultiplyOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: *= **
-		switch (nextChar)
-		{
-		case '=':
-			currentIndex++;
-			return Token(TokenType::MULTIPLY_EQUALS);
-
-		case '*':
-			currentIndex++;
-			return Token(TokenType::POWER);
-
-		default:
-			return Token(TokenType::MULTIPLY);
-		}
-	}
-
-	inline Token Lexer::lexDivideOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: /=, //
-		switch (nextChar)
-		{
-		case '=':
-			currentIndex++;
-			return Token(TokenType::DIVIDE_EQUALS);
-
-		default:
-			return Token(TokenType::DIVIDE);
-		}
-	}
-
-	inline Token Lexer::lexEqaulsOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: ==, =>
-		switch (nextChar)
-		{
-		case '=':
-			currentIndex++;
-			return Token(TokenType::EQUALS);
-
-		case '>':
-			currentIndex++;
-			return Token(TokenType::DOUBLE_ARROW);
-
-		default:
-			return Token(TokenType::ASSIGN);
-		}
-	}
-
-	inline Token Lexer::lexNotOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: !=
-		switch (nextChar)
-		{
-		case '=':
-			currentIndex++;
-			return Token(TokenType::NOT_EQUALS);
-
-		default:
-			return Token(TokenType::NOT);
-		}
-	}
-
-	inline Token Lexer::lexLessThanOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: <=
-		switch (nextChar)
-		{
-		case '=':
-			currentIndex++;
-			return Token(TokenType::LESS_THAN_EQUALS);
-
-		default:
-			return Token(TokenType::LESS_THAN);
-		}
-	}
-
-	inline Token Lexer::lexGreaterThanOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: >=
-		switch (nextChar)
-		{
-		case '=':
-			currentIndex++;
-			return Token(TokenType::GREATER_THAN_EQUALS);
-
-		default:
-			return Token(TokenType::GREATER_THAN);
-		}
-	}
-
-	inline Token Lexer::lexColonOperator()
-	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
-
-		// Possible operators: ::
-		switch (nextChar)
-		{
-		case ':':
-			currentIndex++;
-			return Token(TokenType::DOUBLE_COLON);
-
-		default:
-			return Token(TokenType::COLON);
-		}
-	}
 }
