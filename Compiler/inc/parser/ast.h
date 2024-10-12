@@ -54,6 +54,7 @@ namespace lx
 			// Constructor
 			ASTNode(NodeType type) : type(type) {}
 
+			
 			// Node type for polymorphism
 			const NodeType type;
 
@@ -71,6 +72,7 @@ namespace lx
 			// Constructor
 			Identifier(std::string name = "") : ASTNode(NodeType::IDENTIFIER), name(name) {}
 
+
 			// Contents
 			std::string name;
 	};
@@ -81,6 +83,8 @@ namespace lx
 		public:
 			// Constructor
 			Assignment() : ASTNode(NodeType::ASSIGNMENT) {}
+
+			
 
 			// Contents
 			Identifier name;
