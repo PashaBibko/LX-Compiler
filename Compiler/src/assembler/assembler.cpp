@@ -213,23 +213,23 @@ namespace lx
 		switch (node->type)
 		{
 			// Casts the node to the correct type and calls the appropriate function
-		case ASTNode::NodeType::FUNCTION_CALL: { return assembleFunctionCall(static_cast<FunctionCall*>(node.get())); }
-		case ASTNode::NodeType::STRING_LITERAL: { return assembleStringLiteral(static_cast<StringLiteral*>(node.get())); }
-		case ASTNode::NodeType::IDENTIFIER: { return assembleIdentifier(static_cast<Identifier*>(node.get())); }
-		case ASTNode::NodeType::VARIABLE_DECLARATION: { return assembleVarDec(static_cast<VariableDeclaration*>(node.get())); }
-		case ASTNode::NodeType::ASSIGNMENT: { return assembleAssignment(static_cast<Assignment*>(node.get())); }
-		case ASTNode::NodeType::OPERATION: { return assembleOperation(static_cast<Operation*>(node.get())); }
-		case ASTNode::NodeType::UNARY_OPERATION: { return assembleUnaryOperation(static_cast<UnaryOperation*>(node.get())); }
-		case ASTNode::NodeType::IF_STATEMENT: { return assembleIfStatement(static_cast<IfStatement*>(node.get())); }
-		case ASTNode::NodeType::BRACKETED_EXPRESSION: { return assembleBracketExpression(static_cast<BracketedExpression*>(node.get())); }
-		case ASTNode::NodeType::RETURN_STATEMENT: { return assembleReturnStatement(static_cast<ReturnStatement*>(node.get())); }
+			case ASTNode::NodeType::FUNCTION_CALL: { return assembleFunctionCall(static_cast<FunctionCall*>(node.get())); }
+			case ASTNode::NodeType::STRING_LITERAL: { return assembleStringLiteral(static_cast<StringLiteral*>(node.get())); }
+			case ASTNode::NodeType::IDENTIFIER: { return assembleIdentifier(static_cast<Identifier*>(node.get())); }
+			case ASTNode::NodeType::VARIABLE_DECLARATION: { return assembleVarDec(static_cast<VariableDeclaration*>(node.get())); }
+			case ASTNode::NodeType::ASSIGNMENT: { return assembleAssignment(static_cast<Assignment*>(node.get())); }
+			case ASTNode::NodeType::OPERATION: { return assembleOperation(static_cast<Operation*>(node.get())); }
+			case ASTNode::NodeType::UNARY_OPERATION: { return assembleUnaryOperation(static_cast<UnaryOperation*>(node.get())); }
+			case ASTNode::NodeType::IF_STATEMENT: { return assembleIfStatement(static_cast<IfStatement*>(node.get())); }
+			case ASTNode::NodeType::BRACKETED_EXPRESSION: { return assembleBracketExpression(static_cast<BracketedExpression*>(node.get())); }
+			case ASTNode::NodeType::RETURN_STATEMENT: { return assembleReturnStatement(static_cast<ReturnStatement*>(node.get())); }
 
-												// If the node type is unknown, throw an error with the node type
-		default:
-		{
-			std::cerr << "Error: Unknown node type: " << (int)node->type << "\n" << std::endl;
-			return "";
-		}
+			// If the node type is unknown, throw an error with the node type
+			default:
+			{
+				std::cerr << "Error: Unknown node type: " << (int)node->type << "\n" << std::endl;
+				return "";
+			}
 		}
 	}
 

@@ -128,7 +128,7 @@ namespace lx
 		}
 	}
 
-	std::vector < std::unique_ptr<ASTNode>> Parser::parseBlock()
+	std::vector<std::unique_ptr<ASTNode>> Parser::parseBlock()
 	{
 		// Creates a vector to hold the output
 		std::vector<std::unique_ptr<ASTNode>> out;
@@ -147,18 +147,6 @@ namespace lx
 		{
 			// Parse the body
 			out.push_back(parseIfStatement());
-
-			// Check for end of file token
-			if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
-			{
-				throw std::runtime_error("Expected right brace");
-			}
-
-			// Early return
-			if (out.back() == nullptr)
-			{
-				throw std::runtime_error("Early Parser Return");
-			}
 		}
 
 		// Skip the right brace
@@ -185,47 +173,46 @@ namespace lx
 		// Switch statement to handle the different types of primary expressions
 		switch (currentTokens->operator[](currentIndex).type)
 		{
-		case TokenType::STRING_LITERAL:
-		{
-			// Return a StringLiteral type
-			return std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value);
-		}
-
-		case TokenType::IDENTIFIER:
-		{
-			// Return an Identifier type
-			return std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value);
-		}
-
-		case TokenType::LEFT_PAREN:
-		{
-			// Skip the left parenthesis
-			currentIndex++;
-
-			// Create the output as a BracketedExpression type to allow access
-			std::unique_ptr<BracketedExpression> out = std::make_unique<BracketedExpression>();
-
-			// Parse the value
-			out->expr = parseFunctionCall();
-
-			// Check for the right parenthesis
-			if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			case TokenType::STRING_LITERAL:
 			{
-				std::cerr << "ERROR: Expected right parenthesis" << std::endl;
-				return nullptr;
+				// Return a StringLiteral type
+				return std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value);
 			}
 
-			// Return the output
-			return out;
-		}
+			case TokenType::IDENTIFIER:
+			{
+				// Return an Identifier type
+				return std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value);
+			}
 
-		default:
-		{
-			// Throw an error if the token is unknown
-			std::cout << "WARNING: nullptr thrown at " << currentIndex << std::endl;
-			std::cout << (int)currentTokens->operator[](currentIndex).type << std::endl;
-			return std::make_unique<ASTNode>(ASTNode::NodeType::UNDEFINED);
-		}
+			case TokenType::LEFT_PAREN:
+			{
+				// Skip the left parenthesis
+				currentIndex++;
+
+				// Create the output as a BracketedExpression type to allow access
+				std::unique_ptr<BracketedExpression> out = std::make_unique<BracketedExpression>();
+
+				// Parse the value
+				out->expr = parseFunctionCall();
+
+				// Check for the right parenthesis
+				if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+				{
+					std::cerr << "ERROR: Expected right parenthesis" << std::endl;
+					return nullptr;
+				}
+
+				// Return the output
+				return out;
+			}
+
+			default:
+			{
+				// Throw an error if the token is unknown
+				std::cout << "WARNING: Passed default node at " << currentIndex << " of type: " << (int)currentTokens->operator[](currentIndex).type << std::endl;
+				return std::make_unique<Identifier>("DEFAULT");
+			}
 		}
 	}
 
@@ -330,28 +317,15 @@ namespace lx
 				// Switch statement to handle the different types of arguments
 				switch (currentTokens->operator[](currentIndex).type)
 				{
-				case TokenType::COMMA:
-					// Iterate to skip the comma
-					currentIndex++;
-					break;
+					case TokenType::COMMA:
+						// Iterate to skip the comma
+						currentIndex++;
+						break;
 
-				case TokenType::STRING_LITERAL:
-					// Add the string literal to the arguments (and iterate over it)
-					out->args.push_back(std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value));
-					currentIndex++;
-					break;
-
-				case TokenType::IDENTIFIER:
-					// Add the identifier to the arguments (and iterate over it)
-					out->args.push_back(std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value));
-					currentIndex++;
-					break;
-
-				default:
-					// Default case (follow the call chain)
-					out->args.push_back(parseFunctionCall());
-					currentIndex++;
-					break;
+					default:
+						// Default case (follow the call chain)
+						out->args.push_back(parseFunctionCall());
+						break;
 				}
 			}
 
@@ -378,9 +352,6 @@ namespace lx
 
 			// Parse the value
 			out->expr = parseFunctionCall();
-
-			// Iterate to the next token
-			//currentIndex++;
 
 			// Return the output
 			return out;
@@ -440,13 +411,13 @@ namespace lx
 			{
 				switch (currentTokens->operator[](currentIndex).type)
 				{
-				case TokenType::CONST:
-					out->setConst();
-					break;
+					case TokenType::CONST:
+						out->setConst();
+						break;
 
-				default:
-					std::cerr << "ERROR: Unknown variable modifier" << std::endl;
-					return nullptr;
+					default:
+						std::cerr << "ERROR: Unknown variable modifier" << std::endl;
+						return nullptr;
 				}
 
 				// Iterate to the next token
@@ -704,12 +675,6 @@ namespace lx
 			out.functions.push_back(parseFunctionDeclaration());
 
 			DebugLog(&out.functions.back(), 0);
-
-			if (out.functions.back().body.back() == nullptr)
-			{
-				std::cerr << "Early Parser Return" << std::endl;
-				return;
-			}
 		}
 	}
 }

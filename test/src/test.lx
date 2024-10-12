@@ -1,18 +1,26 @@
 
-func [int] main()
+func [int] add(int a, int b)
 {
+    return a + b
+}
+
+func[int] main()
+{
+    print("hello")
+    print(add(1, 2))
+
     if (true)
     {
-        print()
+        print("Things are normal")
     }
 
     elif (false)
     {
-        print()
+        print("Time to go home")
     }
 
     else
     {
-        print()
+        print("What has gone on here")
     }
 }

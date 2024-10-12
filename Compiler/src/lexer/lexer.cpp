@@ -7,7 +7,6 @@
 
 #include <Util/trans-table.h>
 
-
 static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
 static constexpr bool isEndOfComment(const char c) { return (c == '\n' || c == '#'); }
@@ -17,64 +16,207 @@ static constexpr bool isAlphaNumeric(const char c) { return isAlpha(c) || isNume
 
 namespace lx
 {
-	Token Lexer::lexString()
+	std::string Lexer::lexString()
 	{
-		// Creates the output token
-		Token out = { TokenType::STRING_LITERAL, "" };
-
-		// The length of the string
-		size_t lengthOfString = 1;
-
-		// Increments to avoid the first quote
-		currentIndex++;
+		// The start index of the string
+		size_t stringStartIndex = ++currentIndex;
 
 		// Loops through the source code until the end of the string is reached
-		while (currentIndex + lengthOfString < currentSource->length() && currentSource->operator[](currentIndex + lengthOfString) != '"')
-			lengthOfString++;
-
-		// Turns the string into a string
-		out.value = currentSource->substr(currentIndex, lengthOfString);
-
-		// Sets the current index to the end of the string
-		currentIndex = currentIndex + lengthOfString;
+		while (currentIndex < currentSource->length() && currentSource->operator[](currentIndex) != '"')
+			currentIndex++;
 
 		// Returns the output token
-		return out;
+		return currentSource->substr(stringStartIndex, currentIndex - stringStartIndex);
+	}
+
+	TokenType Lexer::lexPlusOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: ++, +=
+		switch (nextChar)
+		{
+		case '+':
+			currentIndex++;
+			return TokenType::INCREMENT;
+
+		case '=':
+			currentIndex++;
+			return TokenType::PLUS_EQUALS;
+
+		default:
+			return TokenType::PLUS;
+		}
+	}
+
+	TokenType Lexer::lexMinusOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: --, -=, ->
+		switch (nextChar)
+		{
+		case '-':
+			currentIndex++;
+			return TokenType::DECREMENT;
+
+		case '=':
+			currentIndex++;
+			return TokenType::MINUS_EQUALS;
+
+		case '>':
+			currentIndex++;
+			return TokenType::ARROW;
+
+		default:
+			return TokenType::MINUS;
+		}
+	}
+
+	TokenType Lexer::lexMultiplyOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: *= **
+		switch (nextChar)
+		{
+		case '=':
+			currentIndex++;
+			return TokenType::MULTIPLY_EQUALS;
+
+		case '*':
+			currentIndex++;
+			return TokenType::POWER;
+
+		default:
+			return TokenType::MULTIPLY;
+		}
+	}
+
+	TokenType Lexer::lexDivideOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: /=, //
+		switch (nextChar)
+		{
+		case '=':
+			currentIndex++;
+			return TokenType::DIVIDE_EQUALS;
+
+		default:
+			return TokenType::DIVIDE;
+		}
+	}
+
+	TokenType Lexer::lexEqualsOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: ==, =>
+		switch (nextChar)
+		{
+		case '=':
+			currentIndex++;
+			return TokenType::EQUALS;
+
+		case '>':
+			currentIndex++;
+			return TokenType::DOUBLE_ARROW;
+
+		default:
+			return TokenType::ASSIGN;
+		}
+	}
+
+	TokenType Lexer::lexNotOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: !=
+		switch (nextChar)
+		{
+		case '=':
+			currentIndex++;
+			return TokenType::NOT_EQUALS;
+
+		default:
+			return TokenType::NOT;
+		}
+	}
+
+	TokenType Lexer::lexLessThanOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: <=
+		switch (nextChar)
+		{
+		case '=':
+			currentIndex++;
+			return TokenType::LESS_THAN_EQUALS;
+
+		default:
+			return TokenType::LESS_THAN;
+		}
+	}
+
+	TokenType Lexer::lexGreaterThanOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: >=
+		switch (nextChar)
+		{
+		case '=':
+			currentIndex++;
+			return TokenType::GREATER_THAN_EQUALS;
+
+		default:
+			return TokenType::GREATER_THAN;
+		}
+	}
+
+	TokenType Lexer::lexColonOperator()
+	{
+		const char nextChar = currentSource->operator[](currentIndex + 1);
+
+		// Possible operators: ::
+		switch (nextChar)
+		{
+		case ':':
+			currentIndex++;
+			return TokenType::DOUBLE_COLON;
+
+		default:
+			return TokenType::COLON;
+		}
 	}
 
 	Token Lexer::lexMultiChar()
 	{
-		// Creates the output token
-		Token out;
-
 		// The length of the word
-		size_t lengthOfWord = 1;
+		size_t wordStartIndex = currentIndex;
 
 		// Loops through the source code until the whitespace is reached
-		while (currentIndex + lengthOfWord < currentSource->length() && isAlphaNumeric(currentSource->operator[](currentIndex + lengthOfWord)))
-			lengthOfWord++;
+		while (currentIndex < currentSource->length() && isAlphaNumeric(currentSource->operator[](currentIndex)))
+			currentIndex++;
 
 		// Turns the word into a string
-		const std::string word = currentSource->substr(currentIndex, lengthOfWord);
+		const std::string word = currentSource->substr(wordStartIndex, currentIndex - wordStartIndex);
+		currentIndex--;
 
-		TokenType tokenType = TokenType::UNDEFINED;
-
-		try
+		// Checks if the word is a keyword
+		if (keywords.find(word) == keywords.end())
 		{
-			tokenType = keywords[word];
+			return Token(TokenType::IDENTIFIER, word);
 		}
 
-		catch (std::out_of_range)
+		// Else, returns the identifier token
+		else
 		{
-			tokenType = TokenType::IDENTIFIER;
-			out.value = word;
+			return Token(keywords.at(word), "");
 		}
-
-		out.type = tokenType;
-
-		currentIndex = currentIndex + lengthOfWord - 1;
-
-		return out;
 	}
 
 	std::vector<Token> Lexer::lex(const std::string& input)
@@ -107,131 +249,99 @@ namespace lx
 			switch (currentChar)
 			{
 				// Skips whitespace
-			case '\n':
-				break;
-
-			case ' ':
-				break;
-
-			case '\t':
-				break;
-
-
-			case '\r':
-				break;
+				case '\n':
+				case ' ':
+				case '\t':
+				case '\r':
+					break;
 
 				// Skips comments
-			case '#':
-				do { currentIndex++; } while (currentIndex < sourceLength && !isEndOfComment(currentSource->operator[](currentIndex)));
-				break;
+				case '#':
+					do { currentIndex++; } while (currentIndex < sourceLength && !isEndOfComment(currentSource->operator[](currentIndex)));
+					break;
 
 				// Single character tokens
 				// These tokens do not matter if the next character is not whitespace
-			case ';':
-				tokens.push_back(Token(TokenType::SEMICOLON));
-				break;
+				case ';':
+					tokens.emplace_back(TokenType::SEMICOLON);
+					break;
 
-			case ',':
-				tokens.push_back(Token(TokenType::COMMA));
-				break;
+				case ',':
+					tokens.emplace_back(TokenType::COMMA);
+					break;
 
-			case '.':
-				tokens.push_back(Token(TokenType::DOT));
-				break;
+				case '.':
+					tokens.emplace_back(TokenType::DOT);
+					break;
 
-			case '%':
-				tokens.push_back(Token(TokenType::MODULO));
-				break;
+				case '%':
+					tokens.emplace_back(TokenType::MODULO);
+					break;
 
 				// Brackets
 				// Why are there three different types of brackets?
-			case '(':
-				tokens.push_back(Token(TokenType::LEFT_PAREN));
-				break;
+				case '(':
+					tokens.emplace_back(TokenType::LEFT_PAREN);
+					break;
 
-			case ')':
-				tokens.push_back(Token(TokenType::RIGHT_PAREN));
-				break;
+				case ')':
+					tokens.emplace_back(TokenType::RIGHT_PAREN);
+					break;
 
-			case '{':
-				tokens.push_back(Token(TokenType::LEFT_BRACE));
-				break;
+				case '{':
+					tokens.emplace_back(TokenType::LEFT_BRACE);
+					break;
 
-			case '}':
-				tokens.push_back(Token(TokenType::RIGHT_BRACE));
-				break;
+				case '}':
+					tokens.emplace_back(TokenType::RIGHT_BRACE);
+					break;
 
-			case '[':
-				tokens.push_back(Token(TokenType::LEFT_BRACKET));
-				break;
+				case '[':
+					tokens.emplace_back(TokenType::LEFT_BRACKET);
+					break;
 
-			case ']':
-				tokens.push_back(Token(TokenType::RIGHT_BRACKET));
-				break;
+				case ']':
+					tokens.emplace_back(TokenType::RIGHT_BRACKET);
+					break;
 
 				// Single character tokens that can be part of a multicharacter token
-			case '+':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::PLUS) : lexPlusOperator());
-				break;
-
-			case '-':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::MINUS) : lexMinusOperator());
-				break;
-
-			case '*':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::MULTIPLY) : lexMultiplyOperator());
-				break;
-
-			case '/':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::DIVIDE) : lexDivideOperator());
-				break;
-
-			case '=':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::ASSIGN) : lexEqaulsOperator());
-				break;
-
-			case '!':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::NOT) : lexNotOperator());
-				break;
-
-			case '<':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::LESS_THAN) : lexLessThanOperator());
-				break;
-
-			case '>':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::GREATER_THAN) : lexGreaterThanOperator());
-				break;
-
-			case ':':
-				tokens.push_back(isNextCharWhitespace ? Token(TokenType::COLON) : lexColonOperator());
-				break;
+				case '+': tokens.emplace_back(lexPlusOperator()); break;
+				case '-': tokens.emplace_back(lexMinusOperator()); break;
+				case '*': tokens.emplace_back(lexMultiplyOperator()); break;
+				case '/': tokens.emplace_back(lexDivideOperator()); break;
+				case '=': tokens.emplace_back(lexEqualsOperator()); break;
+				case '!': tokens.emplace_back(lexNotOperator()); break;
+				case '<': tokens.emplace_back(lexLessThanOperator()); break;
+				case '>': tokens.emplace_back(lexGreaterThanOperator()); break;
+				case ':': tokens.emplace_back(lexColonOperator()); break;
 
 				// String literals
-			case '"':
-				tokens.push_back(lexString());
-				break;
+				case '"':
+					tokens.emplace_back(TokenType::STRING_LITERAL, lexString());
+					break;
 
 				// Multicharacter tokens
-			default:
-				if (isAlphaNumeric(currentChar))
-				{
-					tokens.push_back(lexMultiChar());
-					break;
-				}
+				default:
+					if (isAlphaNumeric(currentChar))
+					{
+						tokens.push_back(lexMultiChar());
+						break;
+					}
 
-				else
-				{
-					std::cerr << "Unknown character: " << currentChar << std::endl;
-					return std::vector<Token>();
-				}
+					else
+					{
+						std::cerr << "Unknown character: " << currentChar << std::endl;
+						return std::vector<Token>();
+					}
 			}
+
 
 			// Increments the current index
 			currentIndex++;
 		}
 
 		// Adds EOF token
-		tokens.push_back(Token(TokenType::END_OF_FILE));
+		tokens.emplace_back(TokenType::END_OF_FILE, "");
 
 		// Returns the tokens
 		return tokens;
