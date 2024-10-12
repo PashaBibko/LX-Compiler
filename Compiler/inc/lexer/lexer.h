@@ -2,9 +2,9 @@
 
 #include <lexer/token.h>
 
+#include <unordered_map>
 #include <stdexcept>
 
-#include <Util/trans-table.h>
 namespace lx
 {
 	class Lexer
