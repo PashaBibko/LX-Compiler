@@ -5,8 +5,6 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <Util/trans-table.h>
-
 static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
 static constexpr bool isEndOfComment(const char c) { return (c == '\n' || c == '#'); }

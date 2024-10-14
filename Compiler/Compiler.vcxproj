@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\assembler\assemble-ast.cpp" />
     <ClCompile Include="src\assembler\assembler.cpp" />
     <ClCompile Include="src\assembler\lx-core.cpp" />
     <ClCompile Include="src\combine.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="src\parser\parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\assembler\assemble-ast.h" />
     <ClInclude Include="inc\assembler\assembler.h" />
     <ClInclude Include="inc\assembler\lx-core.h" />
     <ClInclude Include="inc\debug\DebugLog.h" />

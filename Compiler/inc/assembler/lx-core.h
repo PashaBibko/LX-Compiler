@@ -16,8 +16,8 @@ namespace lx
 
 	namespace core
 	{
-		std::string printFunction(FunctionCall* call, Assembler& assembler);
+		void printFunction(FunctionCall* call, Assembler& assembler);
 
-		extern std::unordered_map <std::string, std::function<std::string(FunctionCall*, Assembler&)>> funcMap;
+		extern std::unordered_map <std::string, std::function<void(FunctionCall*, Assembler&)>> funcMap;
 	};
 }

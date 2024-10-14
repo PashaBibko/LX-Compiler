@@ -2,8 +2,6 @@
 
 #include <lexer/token.h>
 
-#include <Util/trans-table.h>
-
 namespace lx
 {
 	const std::unordered_map<std::string, TokenType> Lexer::keywords =

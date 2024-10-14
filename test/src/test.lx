@@ -12,6 +12,8 @@ func[int] main()
     if (true)
     {
         print("Things are normal")
+
+        return 1 + 2
     }
 
     elif (false)
