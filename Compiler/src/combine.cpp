@@ -1,6 +1,5 @@
 #include <misc/fileRead.h>
 #include <lexer/lexer.h>
-#include <util/util.h>
 
 #include <parser/ast.h>
 #include <parser/parser.h>

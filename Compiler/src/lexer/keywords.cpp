@@ -2,7 +2,7 @@
 
 #include <lexer/token.h>
 
-#include <Util/trans-table.h>
+#include <unordered_map>
 
 namespace lx
 {
