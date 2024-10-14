@@ -30,7 +30,6 @@ namespace lx
 			// Creates all necessary objects
 			Lexer lexer;
 			Parser parser;
-			Assembler assembler;
 
 			std::vector<Token> tokens; // Output Tokens
 			FileAST AST; // Output Abstract Syntax Tree
@@ -49,16 +48,20 @@ namespace lx
 			// Parsing
 			parser.parse(tokens, AST, debugMode);
 
-			// Creates the output file (if it doesn't exist)
+			// Creates the output folder (if it doesn't exist)
 			std::string outputDir = std::string(folder) + std::string("/build");
 			std::filesystem::create_directory(outputDir);
 
-			// Creates the output file name
-			std::string outputFileName = outputDir + std::string("/") + srcFileName + std::string(".cpp");
+			std::cout << "Functions: " << AST.functions.size() << "\n";
 
-			// Opens the output file and writes the assembly code
-			std::ofstream out(outputFileName);
-			out << assembler.assemble(AST);
+			// Loops through all functions and assembles them
+			for (FunctionDeclaration& func : AST.functions)
+			{
+				Assembler assembler;
+
+				assembler.assemble(func, outputDir, srcFileName);
+				std::cout << "Function: " << func.name.name << " assembled\n";
+			}
 		}
 
 		// Error handling
@@ -66,7 +69,34 @@ namespace lx
 		// and the C# debugger can't catch C++ exceptions
 		catch (const std::exception& e)
 		{
-			std::cerr << e.what() << std::endl;
+			std::cerr << "C++ ERROR: " << e.what() << std::endl;
 		}
+
+		catch (...) // Catch all
+		{
+			std::cerr << "An unknown error occurred" << std::endl;
+		}
+	}
+
+	DLL_FUNC void CreateHeaderFile(const char* folder)
+	{
+		std::ofstream headerFile(folder + std::string("/build/functions.h"));
+
+		std::cout << "Creating header file: " << folder + std::string("/build/functions.h") << "\n";
+
+		if (headerFile.is_open() == false)
+		{
+			std::cerr << "Failed to create header file\n";
+			return;
+		}
+
+		headerFile << "#pragma once\n\n";
+
+		for (std::string& funcHeader : Assembler::funcHeaders)
+		{
+			headerFile << funcHeader << ";\n";
+		}
+
+		headerFile.close();
 	}
 }

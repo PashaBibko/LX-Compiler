@@ -32,6 +32,8 @@ namespace LX
         {
             res = new MSVC_VS_22_Compiler();
 
+            res.projectDir = Path.GetDirectoryName(buildInfoPath);
+
             // Gets the Visual Studio location
             string VS_Location;
             if (ReadFromJSON("dir", ref compilerJSON, out VS_Location))

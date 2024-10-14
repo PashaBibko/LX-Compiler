@@ -14,6 +14,7 @@ namespace LX
     // Class to control the MSVC compiler
     public abstract class MSVC_Compiler : CPPCompilerI
     {
+        public string projectDir { get; set; }
 
         // Path to the MSVC compiler
         protected string MSVCLocation;
@@ -45,9 +46,9 @@ namespace LX
 
                 // Arguments
                 Arguments =
-                $"/I \"{MSVCIncludePath}\" /I \"{UCRTIncludePath}\" /I \"{sharedIncludePath}\" /I \"{UMIncludePath}\" "         // Include paths
-                + extraArgs                                                                                                     // Passed in arguments
-                + $" /LIBPATH:\"{MSVCLibPath}\" /LIBPATH:\"{UCRTLibPath}\" /LIBPATH:\"{UMLibPath}\"",                           // Library paths
+                $"/I \"{MSVCIncludePath}\" /I \"{UCRTIncludePath}\" /I \"{sharedIncludePath}\" /I \"{UMIncludePath}\" /I \"{projectDir + "/build"}\"" // Include paths
+                + extraArgs                                                                                                                           // Passed in arguments
+                + $" /LIBPATH:\"{MSVCLibPath}\" /LIBPATH:\"{UCRTLibPath}\" /LIBPATH:\"{UMLibPath}\"",                                                 // Library paths
 
                 // Default values
                 UseShellExecute = false,

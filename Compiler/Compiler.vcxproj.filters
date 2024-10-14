@@ -53,6 +53,9 @@
     <ClCompile Include="src\assembler\lx-core.cpp">
       <Filter>Source Files\assembler</Filter>
     </ClCompile>
+    <ClCompile Include="src\assembler\assemble-ast.cpp">
+      <Filter>Source Files\assembler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\assembler\assembler.h">
@@ -78,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="inc\debug\DebugLog.h">
       <Filter>Header Files\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\assembler\assemble-ast.h">
+      <Filter>Header Files\assembler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

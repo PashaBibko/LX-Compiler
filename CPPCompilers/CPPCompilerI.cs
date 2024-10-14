@@ -8,6 +8,8 @@ namespace LX
     // All compilers will inherit from this class
     public interface CPPCompilerI
     {
+        public string projectDir { get; set; }
+
         // Function to compile a .cpp file to a .obj file
         public bool CompileToObj(string fileName, out string error);
 

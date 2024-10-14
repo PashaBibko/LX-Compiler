@@ -23,6 +23,9 @@ namespace LX
         [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Translate(string srcMainDir, string srcSubDir, string filename, bool debug = false);
 
+        [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void CreateHeaderFile(string srcMainDir);
+
         // Main function
         static void Main(string[] args)
         {
@@ -84,15 +87,21 @@ namespace LX
                     {
                         // Translates the .lx file to a .cpp file
                         Translate(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
+                    }
+                }
 
-                        // Compiles the .cpp file to a .obj file
-                        var inpFileName = info.ProjectDir + "\\build\\" + Path.GetFileNameWithoutExtension(file) + ".lx.cpp";
-                        if (c.CompileToObj(inpFileName, out error))
-                        {
-                            Console.WriteLine($"An error occured whilst compiling {inpFileName}: ");
-                            Console.WriteLine(error);
-                            return;
-                        }
+                // Creates a header file
+                CreateHeaderFile(info.ProjectDir);
+
+                // Loop through all the .cpp files in the project directory
+                foreach (string file in Directory.GetFiles(Path.Combine(info.ProjectDir, "build"), "*.cpp"))
+                {
+                    // Compiles the .cpp file to a .obj file
+                    if (c.CompileToObj(file, out error))
+                    {
+                        Console.WriteLine($"An error occured during compilation: ");
+                        Console.WriteLine(error);
+                        return;
                     }
                 }
 

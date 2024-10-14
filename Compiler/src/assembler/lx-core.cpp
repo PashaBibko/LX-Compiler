@@ -10,19 +10,23 @@
 #include <assembler/assembler.h>
 namespace lx 
 {
-	std::string core::printFunction(FunctionCall* call, Assembler& assembler)
+	void core::printFunction(FunctionCall* call, Assembler& assembler)
 	{
-		std::string output = "std::cout";
+		assembler.includes.insert("iostream");
+		assembler.out << "std::cout";
 
 		for (std::unique_ptr<ASTNode>& arg : call->args)
-			output = output + " << " + assembler.assembleNode(arg);
+		{
+			assembler.out << " << ";
+			assembler.assembleNode(arg.get());
+		}
 
-		return output + ";";
+		assembler.out << " << std::endl;\n";
 	}
 
 	// Core function map
 
-	std::unordered_map <std::string, std::function<std::string(FunctionCall*, Assembler&)>> core::funcMap =
+	std::unordered_map <std::string, std::function<void(FunctionCall*, Assembler&)>> core::funcMap =
 	{
 		{"print", printFunction}
 	};
