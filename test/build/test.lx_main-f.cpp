@@ -1,4 +1,6 @@
 #include <iostream>
+#include <functions.h>
+
 int main()
 {
 std::cout << "hello" << std::endl;

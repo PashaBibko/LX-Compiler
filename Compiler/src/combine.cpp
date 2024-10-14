@@ -77,4 +77,26 @@ namespace lx
 			std::cerr << "An unknown error occurred" << std::endl;
 		}
 	}
+
+	DLL_FUNC void CreateHeaderFile(const char* folder)
+	{
+		std::ofstream headerFile(folder + std::string("/build/functions.h"));
+
+		std::cout << "Creating header file: " << folder + std::string("/build/functions.h") << "\n";
+
+		if (headerFile.is_open() == false)
+		{
+			std::cerr << "Failed to create header file\n";
+			return;
+		}
+
+		headerFile << "#pragma once\n\n";
+
+		for (std::string& funcHeader : Assembler::funcHeaders)
+		{
+			headerFile << funcHeader << ";\n";
+		}
+
+		headerFile.close();
+	}
 }

@@ -13,6 +13,7 @@ namespace lx
 	{
 		public:
 			static std::vector<std::string> funcList;
+			static std::vector<std::string> funcHeaders;
 
 			std::set<std::string> includes;
 			std::ostringstream out;

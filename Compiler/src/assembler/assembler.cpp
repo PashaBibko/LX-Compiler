@@ -10,6 +10,7 @@
 namespace lx
 {
 	std::vector<std::string> Assembler::funcList;
+	std::vector<std::string> Assembler::funcHeaders;
 
 	void Assembler::assembleNode(ASTNode* node)
 	{
@@ -45,6 +46,9 @@ namespace lx
 
 		funcDecl += ")";
 
+		// Adds the function declaration to the header list
+		funcHeaders.push_back(funcDecl);
+
 		// Adds the function declaration to the output stream
 		out << funcDecl << "\n{\n";
 
@@ -76,6 +80,7 @@ namespace lx
 		// Combines the includes
 		std::ostringstream includeStream;
 		for (const std::string& include : includes) { includeStream << "#include <" << include << ">\n"; }
+		includeStream << "#include <functions.h>\n\n";
 
 		// Writes to the file
 		std::ofstream file(fileName);
