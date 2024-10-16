@@ -60,37 +60,39 @@ namespace lx
 		assembler.out << ";";
 	}
 
-	static std::string getOperator(TokenType op)
+	static const std::unordered_map<TokenType, std::string> operatorMap = 
 	{
-		switch (op)
-		{
-			case TokenType::PLUS: return "+";
-			case TokenType::MINUS: return "-";
-			case TokenType::MULTIPLY: return "*";
-			case TokenType::DIVIDE: return "/";
-			case TokenType::MODULO: return "%";
+		{TokenType::PLUS, "+"},
+		{TokenType::MINUS, "-"},
+		{TokenType::MULTIPLY, "*"},
+		{TokenType::DIVIDE, "/"},
+		{TokenType::MODULO, "%"},
 
-			case TokenType::PLUS_EQUALS: return "+=";
-			case TokenType::MINUS_EQUALS: return "-=";
-			case TokenType::MULTIPLY_EQUALS: return "*=";
-			case TokenType::DIVIDE_EQUALS: return "/=";
+		{TokenType::PLUS_EQUALS, "+="},
+		{TokenType::MINUS_EQUALS, "-="},
+		{TokenType::MULTIPLY_EQUALS, "*="},
+		{TokenType::DIVIDE_EQUALS, "/="},
 
-			case TokenType::EQUALS: return "==";
-			case TokenType::NOT_EQUALS: return "!=";
-			case TokenType::LESS_THAN: return "<";
-			case TokenType::GREATER_THAN: return ">";
-			case TokenType::LESS_THAN_EQUALS: return "<=";
-			case TokenType::GREATER_THAN_EQUALS: return ">=";
+		{TokenType::EQUALS, "=="},
+		{TokenType::NOT_EQUALS, "!="},
 
-			case TokenType::AND: return "&&";
-			case TokenType::OR: return "||";
-			case TokenType::NOT: return "!";
+		{TokenType::LESS_THAN, "<"},
+		{TokenType::LESS_THAN_EQUALS, "<="},
 
-			case TokenType::INCREMENT: return "++";
-			case TokenType::DECREMENT: return "--";
+		{TokenType::GREATER_THAN, ">"},
+		{TokenType::GREATER_THAN_EQUALS, ">="},
 
-			default: throw std::runtime_error("Invalid operator");
-		}
+		{TokenType::AND, "&&"},
+		{TokenType::OR, "||"},
+		{TokenType::NOT, "!"},
+
+		{TokenType::INCREMENT, "++"},
+		{TokenType::DECREMENT, "--"}
+	};
+
+	static inline std::string getOperator(TokenType op)
+	{
+		return operatorMap.at(op);
 	}
 
 	void assembleOperation(Assembler& assembler, ASTNode* node)
@@ -125,7 +127,6 @@ namespace lx
 
 		if (lx::core::funcMap.find(functionCall->funcName.name) != lx::core::funcMap.end())
 		{
-			std::cout << "Found function: " << functionCall->funcName.name << std::endl;
 			lx::core::funcMap[functionCall->funcName.name](functionCall, assembler);
 			return;
 		}
@@ -171,52 +172,45 @@ namespace lx
 			{
 				case IfStatement::IfType::IF:
 				{
-					assembler.out << "if (";
-					assembler.assembleNode(ifStatement->condition.get());
-					assembler.out << ")\n{\n";
-
-					for (const std::unique_ptr<ASTNode>& statement : ifStatement->body)
-					{
-						assembler.assembleNode(statement.get());
-					}
-
-					assembler.out << "\n}\n";
-
-					ifStatement = ifStatement->next.get();
+					assembler.out << "if";
 					break;
 				}
 
 				case IfStatement::IfType::ELSE_IF:
 				{
-					assembler.out << "else if (";
-					assembler.assembleNode(ifStatement->condition.get());
-					assembler.out << ")\n{\n";
-
-					for (const std::unique_ptr<ASTNode>& statement : ifStatement->body)
-					{
-						assembler.assembleNode(statement.get());
-					}
-
-					assembler.out << "\n}\n";
-
-					ifStatement = ifStatement->next.get();
+					assembler.out << "else if";
 					break;
 				}
 
 				case IfStatement::IfType::ELSE:
 				{
-					assembler.out << "else\n{\n";
-
-					for (const std::unique_ptr<ASTNode>& statement : ifStatement->body)
-					{
-						assembler.assembleNode(statement.get());
-					}
-
-					assembler.out << "\n}\n";
-
-					ifStatement = nullptr;
+					assembler.out << "else";
 					break;
 				}
+			}
+
+			if (ifStatement->condition != nullptr)
+			{
+				assembler.out << "(";
+				assembler.assembleNode(ifStatement->condition.get());
+				assembler.out << ")";
+			}
+
+			assembler.out << "\n{\n";
+			for (const std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			{
+				assembler.assembleNode(statement.get());
+			}
+			assembler.out << "\n}\n";
+
+			if (ifStatement->next != nullptr)
+			{
+				ifStatement = dynamic_cast<IfStatement*>(ifStatement->next.get());
+			}
+
+			else
+			{
+				ifStatement = nullptr;
 			}
 		}
 	}
