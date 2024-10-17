@@ -31,11 +31,8 @@ namespace lx
 			Lexer lexer;
 			Parser parser;
 
-			std::vector<Token> tokens; // Output Tokens
+			const std::vector<Token> tokens = lexer.lex(fileContents); // Output tokens
 			FileAST AST; // Output Abstract Syntax Tree
-
-			// Lexical Analysis
-			tokens = lexer.lex(fileContents);
 
 			// Print tokens if in debug mode
 			if (debugMode)
