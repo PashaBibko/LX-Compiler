@@ -20,8 +20,7 @@ namespace lx
 		size_t stringStartIndex = ++currentIndex;
 
 		// Loops through the source code until the end of the string is reached
-		while (currentIndex < currentSource->length() && currentSource->operator[](currentIndex) != '"')
-			currentIndex++;
+		while (currentIndex < currentSource->length() && (*currentSource)[++currentIndex] != '"');
 
 		// Returns the output token
 		return currentSource->substr(stringStartIndex, currentIndex - stringStartIndex);
@@ -29,7 +28,7 @@ namespace lx
 
 	TokenType Lexer::lexPlusOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: ++, +=
 		switch (nextChar)
@@ -49,7 +48,7 @@ namespace lx
 
 	TokenType Lexer::lexMinusOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: --, -=, ->
 		switch (nextChar)
@@ -73,7 +72,7 @@ namespace lx
 
 	TokenType Lexer::lexMultiplyOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: *= **
 		switch (nextChar)
@@ -93,7 +92,7 @@ namespace lx
 
 	TokenType Lexer::lexDivideOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: /=, //
 		switch (nextChar)
@@ -109,7 +108,7 @@ namespace lx
 
 	TokenType Lexer::lexEqualsOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: ==, =>
 		switch (nextChar)
@@ -129,7 +128,7 @@ namespace lx
 
 	TokenType Lexer::lexNotOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: !=
 		switch (nextChar)
@@ -145,7 +144,7 @@ namespace lx
 
 	TokenType Lexer::lexLessThanOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: <=
 		switch (nextChar)
@@ -161,7 +160,7 @@ namespace lx
 
 	TokenType Lexer::lexGreaterThanOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: >=
 		switch (nextChar)
@@ -177,7 +176,7 @@ namespace lx
 
 	TokenType Lexer::lexColonOperator()
 	{
-		const char nextChar = currentSource->operator[](currentIndex + 1);
+		const char nextChar = (*currentSource)[currentIndex + 1];
 
 		// Possible operators: ::
 		switch (nextChar)
@@ -197,29 +196,24 @@ namespace lx
 		size_t wordStartIndex = currentIndex;
 
 		// Loops through the source code until the whitespace is reached
-		while (currentIndex < currentSource->length() && isAlphaNumeric(currentSource->operator[](currentIndex)))
-			currentIndex++;
+		while (currentIndex < currentSource->length() && isAlphaNumeric((*currentSource)[++currentIndex]));
 
 		// Turns the word into a string
 		const std::string word = currentSource->substr(wordStartIndex, currentIndex - wordStartIndex);
 		currentIndex--;
 
-		// Checks if the word is a keyword
-		if (keywords.find(word) == keywords.end())
-		{
-			return Token(TokenType::IDENTIFIER, word);
-		}
+		auto it = keywords.find(word);
 
-		// Else, returns the identifier token
-		else
-		{
-			return Token(keywords.at(word), "");
-		}
+		if (it == keywords.end())
+			return Token(TokenType::IDENTIFIER, word);
+
+		return Token(it->second, "");
 	}
 
-	std::vector<Token> Lexer::lex(const std::string& input)
+	const std::vector<Token> Lexer::lex(const std::string& input)
 	{
 		std::vector<Token> tokens;
+		tokens.reserve(input.length() / 5);
 
 		// The current source code (passed by reference for performance)
 		currentSource = &input;
@@ -233,7 +227,7 @@ namespace lx
 		while (currentIndex < sourceLength)
 		{
 			//  Gets the current character
-			const char currentChar = currentSource->operator[](currentIndex);
+			const char currentChar = (*currentSource)[currentIndex];
 
 			// Checks if the next character is whitespace
 			bool isNextCharWhitespace = false;
@@ -241,7 +235,7 @@ namespace lx
 			size_t nextIndex = currentIndex + 1;
 
 			if (nextIndex < sourceLength)
-				isNextCharWhitespace = isWhitespace(currentSource->operator[](nextIndex));
+				isNextCharWhitespace = isWhitespace((*currentSource)[nextIndex]);
 
 			// Switch statement for the current character
 			switch (currentChar)
@@ -255,7 +249,7 @@ namespace lx
 
 				// Skips comments
 				case '#':
-					do { currentIndex++; } while (currentIndex < sourceLength && !isEndOfComment(currentSource->operator[](currentIndex)));
+					do { currentIndex++; } while (currentIndex < sourceLength && !isEndOfComment((*currentSource)[currentIndex]));
 					break;
 
 				// Single character tokens
@@ -333,13 +327,13 @@ namespace lx
 					}
 			}
 
-
 			// Increments the current index
 			currentIndex++;
 		}
 
 		// Adds EOF token
 		tokens.emplace_back(TokenType::END_OF_FILE, "");
+		tokens.shrink_to_fit(); // Shrinks the vector to fit the number of tokens (may not be available in all compilers)
 
 		// Returns the tokens
 		return tokens;

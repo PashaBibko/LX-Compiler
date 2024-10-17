@@ -44,6 +44,6 @@ namespace lx
 
 			Lexer() : currentSource(nullptr) {}
 
-			std::vector<Token> lex(const std::string& input);
+			const std::vector<Token> lex(const std::string& input);
 	};
 }
