@@ -10,9 +10,7 @@ namespace lx
 {
 	void assembleIdentifier(Assembler& assembler, ASTNode* node)
 	{
-		Identifier* identifier = dynamic_cast<Identifier*>(node);
-
-		assembler.out << identifier->name;
+		assembler.out << dynamic_cast<Identifier*>(node)->name;
 	}
 
 	void assembleVariableDeclaration(Assembler& assembler, ASTNode* node)
@@ -148,9 +146,7 @@ namespace lx
 
 	void assembleStringLiteral(Assembler& assembler, ASTNode* node)
 	{
-		StringLiteral* stringLiteral = dynamic_cast<StringLiteral*>(node);
-
-		assembler.out << "\"" << stringLiteral->value << "\"";
+		assembler.out << "\"" << dynamic_cast<StringLiteral*>(node)->value << "\"";
 	}
 
 	void assembleBracketedExpression(Assembler& assembler, ASTNode* node)
