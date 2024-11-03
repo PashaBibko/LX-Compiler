@@ -90,6 +90,9 @@ namespace LX
                     }
                 }
 
+                #pragma warning disable CS0162
+                return;
+
                 // Creates a header file
                 CreateHeaderFile(info.ProjectDir);
 
@@ -113,6 +116,7 @@ namespace LX
                     return;
                 }
             }
+            
             catch (Exception e)
             {
                 Console.WriteLine("FATAL ERROR in: " + e.TargetSite);

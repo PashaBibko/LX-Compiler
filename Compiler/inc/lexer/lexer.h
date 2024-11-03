@@ -2,48 +2,56 @@
 
 #include <lexer/token.h>
 
+#include <error.h>
+
 #include <unordered_map>
 #include <stdexcept>
 
 namespace lx
 {
+	enum class SectType
+	{
+		FUNCTION,
+		MACRO,
+
+		UNDEFINED = -1
+	};
+
+	struct LexerStreamSect
+	{
+		static std::unordered_map<std::string, SectType> sectTypeMap;
+
+		LexerStreamSect(std::string_view identifier, std::string_view block);
+
+		std::string_view identifier;
+		std::string_view block;
+
+		std::string info;
+
+		SectType type = SectType::UNDEFINED;
+	};
+
 	class Lexer
 	{
 		private:
-			// Current source code being lexed
-			const std::string* currentSource;
+			const std::string& currentSource;
 
-			// Current index in the source code
-			size_t currentIndex = 0;
+			std::vector<LexerStreamSect> fullStream;
 
-			// Function for string literals
-			std::string lexString();
+			void createBlocks();
 
-			// Seperate functions for each operator for higher efficiency
-
-			TokenType lexPlusOperator();
-			TokenType lexMinusOperator();
-			TokenType lexMultiplyOperator();
-			TokenType lexDivideOperator();
-
-			TokenType lexEqualsOperator();
-			TokenType lexNotOperator();
-
-			TokenType lexLessThanOperator();
-			TokenType lexGreaterThanOperator();
-
-			TokenType lexColonOperator();
-
-			// Multi-character operators
-
-			Token lexMultiChar();
+			void lexFunctionSect(const LexerStreamSect& sect);
+			void lexMacroSect(const LexerStreamSect& sect);
 
 		public:
-			// Translation table for keywords
-			static const std::unordered_map<std::string, TokenType> keywords;
+			Lexer() : currentSource("")
+			{
+				THROW_ERROR("Lexer must be initialized with a source code string");
+			}
 
-			Lexer() : currentSource(nullptr) {}
+			Lexer(const std::string&  source);
 
-			const std::vector<Token> lex(const std::string& input);
+			~Lexer()
+			{}
 	};
 }

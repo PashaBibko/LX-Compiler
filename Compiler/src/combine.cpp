@@ -28,10 +28,11 @@ namespace lx
 			std::string fileContents = readFileToString(fullSrcFileName);
 
 			// Creates all necessary objects
-			Lexer lexer;
+			Lexer lexer (fileContents); // Output tokens
+
 			Parser parser;
 
-			const std::vector<Token> tokens = lexer.lex(fileContents); // Output tokens
+			const std::vector<Token> tokens;
 			FileAST AST; // Output Abstract Syntax Tree
 
 			// Print tokens if in debug mode
@@ -41,6 +42,8 @@ namespace lx
 				DebugLog(tokens);
 				std::cout << "\n";
 			}
+
+			return;
 
 			// Parsing
 			parser.parse(tokens, AST, debugMode);
@@ -67,6 +70,11 @@ namespace lx
 		catch (const std::exception& e)
 		{
 			std::cerr << "C++ ERROR: " << e.what() << std::endl;
+		}
+
+		catch (const lx::Error& e)
+		{
+			e.display();
 		}
 
 		catch (...) // Catch all

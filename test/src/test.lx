@@ -4,6 +4,19 @@ func[int] add(int a, int b)
     return a + b
 }
 
+class Test
+{}
+
+func[void] bar()
+{
+    print("bar")
+}
+
+func foo()
+{
+    print("foo")
+}
+
 func[int] main()
 {
     print("hello")

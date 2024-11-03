@@ -35,9 +35,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\lexer\keywords.cpp">
-      <Filter>Source Files\lexer</Filter>
-    </ClCompile>
     <ClCompile Include="src\lexer\lexer.cpp">
       <Filter>Source Files\lexer</Filter>
     </ClCompile>
@@ -84,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="inc\assembler\assemble-ast.h">
       <Filter>Header Files\assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\error.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
