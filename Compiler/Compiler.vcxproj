@@ -29,7 +29,6 @@
     <ClCompile Include="src\lexer\modules\functionLexer.cpp" />
     <ClCompile Include="src\lexer\modules\macroLexer.cpp" />
     <ClCompile Include="src\lexer\modules\shaderLexer.cpp" />
-    <ClCompile Include="src\lexer\modules\structLexer.cpp" />
     <ClCompile Include="src\parser\parser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +137,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Compiler\inc;$(SolutionDIr)Compiler\inc\util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

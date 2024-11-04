@@ -3,16 +3,6 @@ func[int] add(int a, int b)
     return a + b
 }
 
-func[void] bar()
-{
-    print("bar")
-}
-
-func foo()
-{
-    print("foo")
-}
-
 func[int] main()
 {
     print("hello")

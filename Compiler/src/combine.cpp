@@ -49,22 +49,22 @@ namespace lx
 			Lexer lexer (fileContents); // Output tokens
 
 			Parser parser;
-
-			const std::vector<Token> tokens;
 			FileAST AST; // Output Abstract Syntax Tree
 
 			// Print tokens if in debug mode
 			if (debugMode)
 			{
-				std::cout << "Tokens of: " + fullSrcFileName + "\n";
-				DebugLog(tokens);
+				std::cout << "Tokens of: " << fullSrcFileName << " (" << (int)lexer.getFunctionTokens().size() << ")\n";
+				DebugLog(lexer.getFunctionTokens());
 				std::cout << "\n";
 			}
 
-			return;
+			std::cin.get();
 
 			// Parsing
-			parser.parse(tokens, AST, debugMode);
+			parser.parse(lexer.getFunctionTokens(), AST, debugMode);
+
+			return;
 
 			// Creates the output folder (if it doesn't exist)
 			std::string outputDir = std::string(folder) + std::string("/build");

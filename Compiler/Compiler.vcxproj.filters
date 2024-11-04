@@ -71,9 +71,6 @@
     <ClCompile Include="src\lexer\modules\shaderLexer.cpp">
       <Filter>Source Files\lexer\modules</Filter>
     </ClCompile>
-    <ClCompile Include="src\lexer\modules\structLexer.cpp">
-      <Filter>Source Files\lexer\modules</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\assembler\assembler.h">

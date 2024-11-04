@@ -90,7 +90,6 @@ namespace LX
                     }
                 }
 
-                #pragma warning disable CS0162
                 return;
 
                 // Creates a header file

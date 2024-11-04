@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lexer/lexer.h>
+
 #include <error.h>
 
 namespace lx
@@ -11,7 +13,6 @@ namespace lx
 
 	void lexFunction(LexerStreamSect& sect);
 	void lexShader(LexerStreamSect& sect);
-	void lexStruct(LexerStreamSect& sect);
 	void lexMacro(LexerStreamSect& sect);
 	void lexClass(LexerStreamSect& sect);
 	void lexEnum(LexerStreamSect& sect);

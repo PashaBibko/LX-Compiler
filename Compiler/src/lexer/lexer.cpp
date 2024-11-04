@@ -30,13 +30,13 @@ namespace lx
 	{
 		{ SectType::FUNCTION, lexFunction },
 		{ SectType::SHADER, lexShader },
-		{ SectType::STRUCT, lexStruct },
+		{ SectType::STRUCT, lexClass },
 		{ SectType::MACRO, lexMacro },
 		{ SectType::CLASS, lexClass },
 		{ SectType::ENUM, lexEnum }
 	};
 
-	LexerStreamSect::LexerStreamSect(std::string_view identifier, std::string_view block, const Lexer& creator) : identifier(identifier), block(block), creator(creator)
+	LexerStreamSect::LexerStreamSect(std::string_view identifier, std::string_view block, Lexer& creator) : identifier(identifier), block(block), creator(creator)
 	{
 		// Gets length of the whitespace at the start of the identifier
 		size_t id_start = std::find_if(identifier.begin(), identifier.end(),
@@ -140,6 +140,8 @@ namespace lx
 
 		// Variables to keep track of the current line and column
 		// These are not used by the lexer itself and are only to make debugging easier for the user
+		// Will be passed onto the LexerStreamSect to help with that section of debugging (ADD LATER)
+		// Not actually used at all within this function yet
 		size_t currentLine = 1;
 		size_t currentColumn = 0;
 
@@ -205,7 +207,7 @@ namespace lx
 						// Generates the tokens (automatically adds them to the relevant vector)
 						s.generateTokens();
 
-						s.debugDisplay();
+						//s.debugDisplay();
 
 						endOfLastBlock = currentIndex + 1;
 					}
