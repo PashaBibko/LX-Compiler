@@ -30,8 +30,11 @@
     <Filter Include="Source Files\assembler">
       <UniqueIdentifier>{f5396f81-302b-4f8d-bff8-c07f90cd22b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\lexer\misc">
-      <UniqueIdentifier>{82cb557b-4745-494f-a6b9-d5bc6922fa31}</UniqueIdentifier>
+    <Filter Include="Header Files\lexer\modules">
+      <UniqueIdentifier>{33f10bc6-b6f2-4b7a-b22b-5ab8d8c5a501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lexer\modules">
+      <UniqueIdentifier>{70f0464d-f6d0-437f-9236-1a03b6c4f6ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +56,24 @@
     <ClCompile Include="src\assembler\assemble-ast.cpp">
       <Filter>Source Files\assembler</Filter>
     </ClCompile>
+    <ClCompile Include="src\lexer\modules\classLexer.cpp">
+      <Filter>Source Files\lexer\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lexer\modules\enumLexer.cpp">
+      <Filter>Source Files\lexer\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lexer\modules\functionLexer.cpp">
+      <Filter>Source Files\lexer\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lexer\modules\macroLexer.cpp">
+      <Filter>Source Files\lexer\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lexer\modules\shaderLexer.cpp">
+      <Filter>Source Files\lexer\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lexer\modules\structLexer.cpp">
+      <Filter>Source Files\lexer\modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\assembler\assembler.h">
@@ -66,9 +87,6 @@
     </ClInclude>
     <ClInclude Include="inc\lexer\token.h">
       <Filter>Header Files\lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\misc\fileRead.h">
-      <Filter>Header Files\lexer\misc</Filter>
     </ClInclude>
     <ClInclude Include="inc\parser\ast.h">
       <Filter>Header Files\parser</Filter>
@@ -84,6 +102,9 @@
     </ClInclude>
     <ClInclude Include="inc\error.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\lexer\modules\modules.h">
+      <Filter>Header Files\lexer\modules</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,27 +1,42 @@
 #include <lexer/lexer.h>
 
+#include <lexer/modules/modules.h>
 #include <lexer/token.h>
 
+#include <error.h>
+
+#include <unordered_map>
+#include <functional>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
 
 static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
-static constexpr bool isEndOfComment(const char c) { return (c == '\n' || c == '#'); }
-static constexpr bool isNumeric(const char c) { return (c >= '0' && c <= '9'); }
-
-static constexpr bool isAlphaNumeric(const char c) { return isAlpha(c) || isNumeric(c); }
 
 namespace lx
 {
-	std::unordered_map<std::string, SectType> LexerStreamSect::sectTypeMap =
+	const std::unordered_map<std::string, SectType> LexerStreamSect::sectTypeMap =
 	{
 		{ "func", SectType::FUNCTION },
-		{ "alias", SectType::MACRO }
+		{ "shader", SectType::SHADER },
+		{ "struct", SectType::STRUCT },
+		{ "alias", SectType::MACRO },
+		{ "class", SectType::CLASS },
+		{ "enum", SectType::ENUM }
 	};
 
-	LexerStreamSect::LexerStreamSect(std::string_view identifier, std::string_view block) : identifier(identifier), block(block)
+	const std::unordered_map<SectType, std::function<void(LexerStreamSect&)>> LexerStreamSect::modules =
+	{
+		{ SectType::FUNCTION, lexFunction },
+		{ SectType::SHADER, lexShader },
+		{ SectType::STRUCT, lexStruct },
+		{ SectType::MACRO, lexMacro },
+		{ SectType::CLASS, lexClass },
+		{ SectType::ENUM, lexEnum }
+	};
+
+	LexerStreamSect::LexerStreamSect(std::string_view identifier, std::string_view block, const Lexer& creator) : identifier(identifier), block(block), creator(creator)
 	{
 		// Gets length of the whitespace at the start of the identifier
 		size_t id_start = std::find_if(identifier.begin(), identifier.end(),
@@ -38,15 +53,11 @@ namespace lx
 
 		// Gets the size of the first word
 		size_t wordSize = std::find_if(identifier.begin(), identifier.end(),
-			[](char c) { return !isAlpha(c); }) - identifier.begin();
+			[](char c) { return isWhitespace(c) || c == '['; }) - identifier.begin();
 
-		// The first word of the block
+		// The first word of the block (which is the type of the block)
 		// Ends when it reaches a non-alphabetical character
 		std::string_view blockType = identifier.substr(0, wordSize);
-
-		// The info inside the <> block
-		// If none is found it is set to "void"
-		std::string info;
 
 		// The info inside <> is optinional but is still needed to be got before the lexer function is called
 		if (identifier[blockType.size()] == '[')
@@ -58,7 +69,7 @@ namespace lx
 			// Throws an error if the end of the <> block is not found
 			if (endOfInfo == std::string::npos)
 			{
-				THROW_ERROR("Expected '[' to end the '[]' block");
+				THROW_ERROR("Expected a '[' to end the '[]' block");
 			}
 
 			// Sets the info to the block
@@ -72,26 +83,51 @@ namespace lx
 		}
 
 		// Sets the type of the block
-		auto it = sectTypeMap.find(std::string(blockType));
+		if (auto it = sectTypeMap.find(std::string(blockType)); it != sectTypeMap.end()) { type = it->second; }
 
-		if (it != sectTypeMap.end())
-		{
-			type = it->second;
-		}
-
-		else
-		{
-			THROW_ERROR("Unknown block type: " + std::string(blockType));
-		}
+		// Throws an error if the block type is not found
+		else { THROW_ERROR("Unknown block type: " + std::string(blockType)); }
 	}
 
-	// Function to create the blocks for the lexer to handle
-	void Lexer::createBlocks()
+	void LexerStreamSect::generateTokens()
 	{
+		// Tries to find the module for the block type
+		if (auto it = modules.find(type); it != modules.end()) { it->second(*this); }
+
+		// If none is found throws an error
+		else { THROW_ERROR("No lexer module found for block type: " + std::to_string(static_cast<int>(type))); }
+	}
+
+	void LexerStreamSect::debugDisplay() const
+	{
+		// Fancy debug display
+		std::cout << "=============================================================== " << std::endl;
+		std::cout << "LexerStreamSect Debug Display\n" << std::endl;
+		std::cout << "Info: " << info << std::endl;
+		std::cout << "Type: " << static_cast<int>(type) << std::endl;
+		std::cout << "----------------------------- Identifier ---------------------- " << std::endl;
+		std::cout << identifier << std::endl;
+		std::cout << "----------------------------- Block --------------------------- " << std::endl;
+		std::cout << block << std::endl;
+		std::cout << "=============================================================== " << std::endl;
+
+	}
+
+	Lexer::Lexer(const std::string& source) : currentSource(source)
+	{
+		// Checks that the source is not empty
+		if (source.empty())
+		{
+			THROW_ERROR("Lexer must be initialized with a source code string");
+		}
+
+		// If the source is not empty, then it will create the blocks
+		// The creation of the blocks will also turn them into tokens and add them to the the respective vectors
+
 		// How many braces deep we are
 		// Only the top level blocks are considered when added to the full stream
 		// They are things like different types of functions, structs, etc.
-		// This will be need to be called again for classes becuase they can have nested blocks q	
+		// This will be need to be called again for classes becuase they can have nested blocks
 		int depth = 0;
 
 		// Variables to keep track of the std::string_view size
@@ -108,7 +144,7 @@ namespace lx
 		size_t currentColumn = 0;
 
 		// Block loop
-		// It is escaped via a goto statement (yes its cursed but its easy)
+		// It is escaped via return
 		while (true)
 		{
 			// The current character
@@ -146,6 +182,7 @@ namespace lx
 				case '{':
 				{
 					// If the depth is 0, then we are at the top level block
+					// Else we are in a nested block so it does nothing to blockStart
 					blockStart = ((depth == 0) ? currentIndex + 1 : blockStart);
 					depth++;
 
@@ -157,8 +194,19 @@ namespace lx
 					// If the depth is 1, then we are at the end of the top level block
 					if (depth == 1)
 					{
-						// Adds the block to the full streamn (a vector of LexerStreamSects)
-						fullStream.emplace_back(std::string_view(currentSource.data() + endOfLastBlock, blockStart - endOfLastBlock - 1), std::string_view(currentSource.data() + blockStart, currentIndex - blockStart));
+						// Creates the block
+						LexerStreamSect s
+						(
+							std::string_view(currentSource.data() + endOfLastBlock, blockStart - endOfLastBlock - 1),
+							std::string_view(currentSource.data() + blockStart, currentIndex - blockStart),
+							*this
+						);
+
+						// Generates the tokens (automatically adds them to the relevant vector)
+						s.generateTokens();
+
+						s.debugDisplay();
+
 						endOfLastBlock = currentIndex + 1;
 					}
 
@@ -177,53 +225,6 @@ namespace lx
 			// Iterates the index and column
 			currentColumn++;
 			currentIndex++;
-		}
-	}
-	
-	void Lexer::lexFunctionSect(const LexerStreamSect& sect)
-	{}
-
-	void Lexer::lexMacroSect(const LexerStreamSect& sect)
-	{}
-
-	Lexer::Lexer(const std::string& source) : currentSource(source)
-	{
-		// Checks that the source is not empty
-		if (source.empty())
-		{
-			THROW_ERROR("Lexer must be initialized with a source code string");
-		}
-
-		// Future PASHA:
-		// This can be optimized later by having a single LexerStreamSect that is set and then lexed
-		// This would mean that the LexerStreamSect would be stack allocared and not heap allocated + other performance benefits
-		// Splits the source into blocks
-		// This allows the correct lexer function to be called on each block
-		createBlocks();
-
-		// Lexes the contents of the blocks
-		// Calls the correct lexer function based on the type of the block
-		for (LexerStreamSect& section : fullStream)
-		{
-			switch (section.type)
-			{
-				case SectType::FUNCTION:
-				{
-					lexFunctionSect(section);
-					break;
-				} 
-
-				case SectType::MACRO:
-				{
-					lexMacroSect(section);
-					break;
-				}
-
-				default:
-				{
-					THROW_ERROR("Unknown block type");
-				}
-			}
 		}
 	}
 }

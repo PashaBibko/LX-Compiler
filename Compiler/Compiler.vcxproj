@@ -24,6 +24,12 @@
     <ClCompile Include="src\assembler\lx-core.cpp" />
     <ClCompile Include="src\combine.cpp" />
     <ClCompile Include="src\lexer\lexer.cpp" />
+    <ClCompile Include="src\lexer\modules\classLexer.cpp" />
+    <ClCompile Include="src\lexer\modules\enumLexer.cpp" />
+    <ClCompile Include="src\lexer\modules\functionLexer.cpp" />
+    <ClCompile Include="src\lexer\modules\macroLexer.cpp" />
+    <ClCompile Include="src\lexer\modules\shaderLexer.cpp" />
+    <ClCompile Include="src\lexer\modules\structLexer.cpp" />
     <ClCompile Include="src\parser\parser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,8 +39,8 @@
     <ClInclude Include="inc\debug\DebugLog.h" />
     <ClInclude Include="inc\error.h" />
     <ClInclude Include="inc\lexer\lexer.h" />
+    <ClInclude Include="inc\lexer\modules\modules.h" />
     <ClInclude Include="inc\lexer\token.h" />
-    <ClInclude Include="inc\misc\fileRead.h" />
     <ClInclude Include="inc\parser\ast.h" />
     <ClInclude Include="inc\parser\parser.h" />
   </ItemGroup>
