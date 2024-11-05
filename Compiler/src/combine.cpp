@@ -59,12 +59,8 @@ namespace lx
 				std::cout << "\n";
 			}
 
-			std::cin.get();
-
 			// Parsing
 			parser.parse(lexer.getFunctionTokens(), AST, debugMode);
-
-			return;
 
 			// Creates the output folder (if it doesn't exist)
 			std::string outputDir = std::string(folder) + std::string("/build");

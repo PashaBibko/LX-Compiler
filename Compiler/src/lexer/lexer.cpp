@@ -176,6 +176,9 @@ namespace lx
 
 				case '\0':
 				{
+					// Adds EOF token so the parser knows when to stop
+					functionTokens.emplace_back(TokenType::END_OF_FILE);
+
 					// Breaks out of the loop
 					return;
 				}

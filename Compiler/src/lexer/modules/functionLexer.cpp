@@ -100,6 +100,9 @@ namespace lx
 						// ^ Written on 04/11/24. Please dont be a year later when I come back to this
 						while (currentIndex < currentLength && (*current)[currentIndex++] != '"');
 
+						// Decrements to avoid skipping the next character
+						currentIndex--;
+
 						// Uses emplace instead of push to avoid copying
 						// Unsure if std::string_view would be more efficient as this has a higher cache hit rate
 						t.emplace_back(TokenType::STRING_LITERAL, std::string(current->substr(stringStart, currentIndex - stringStart)));

@@ -90,8 +90,6 @@ namespace LX
                     }
                 }
 
-                return;
-
                 // Creates a header file
                 CreateHeaderFile(info.ProjectDir);
 
