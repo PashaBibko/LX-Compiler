@@ -37,6 +37,9 @@ namespace lx
 				UNDEFINED = -1
 			};
 
+			// Friends the std::make_unique function
+			friend std::unique_ptr<Node> std::make_unique<Node, NodeType&>(NodeType& _Args);
+
 			// Adds a child to the node
 			// Returns a pointer to the created child
 			// Will return a nullptr if the child already exists (scopes will always be created)
@@ -48,6 +51,13 @@ namespace lx
 			// Static instance of the class 
 			// Called the globalScope or identifier tree
 			static Node globalScope;
+
+			// The type of the node
+			const NodeType type = NodeType::UNDEFINED;
+
+			// Default Constructor
+			// Only here to stop the compiler erors - Throws an error if called at runtime
+			Node() { THROW_ERROR("USE createChild FUNCTION TO MAKE NODES NOT THE CONSTRUCTOR"); }
 
 		private:
 			// Counter for the ammount of scopes created within this scope
@@ -61,9 +71,6 @@ namespace lx
 			// Map of all the children of this node
 			// Only is not null if the node is a scope or namespace
 			std::unique_ptr<std::unordered_map<std::string, std::unique_ptr<Node>>> children;
-
-			// The type of the node
-			NodeType type = NodeType::UNDEFINED;
 
 			// Constructor that takes the type of the node
 			// Private to make sure that the createChild function is used so new nodes are assigned to the global scope
