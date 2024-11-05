@@ -42,7 +42,6 @@ namespace lx
 
 		if (varDecl->val != nullptr)
 		{
-			assembler.out << " = ";
 			assembleAssignment(assembler, varDecl->val.get());
 		}
 	}

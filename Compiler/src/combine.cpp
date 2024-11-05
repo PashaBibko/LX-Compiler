@@ -1,4 +1,3 @@
-#include <misc/fileRead.h>
 #include <lexer/lexer.h>
 
 #include <parser/ast.h>
@@ -15,6 +14,25 @@
 
 namespace lx
 {
+	static std::string readFileToString(const std::string& filePath)
+	{
+		// Create an input file stream
+		std::ifstream file(filePath);
+
+		// Check if the file opened successfully
+		if (!file.is_open()) {
+			std::cerr << "Error opening file: " << filePath << std::endl;
+			return "";
+		}
+
+		// Create a stringstream to hold the file contents
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+
+		// Return the contents as a string
+		return buffer.str();
+	}
+
 	DLL_FUNC void Translate(const char* folder, const char* srcDir, const char* srcFileName, bool debugMode)
 	{
 		// Error checking
@@ -28,22 +46,21 @@ namespace lx
 			std::string fileContents = readFileToString(fullSrcFileName);
 
 			// Creates all necessary objects
-			Lexer lexer;
-			Parser parser;
+			Lexer lexer (fileContents); // Output tokens
 
-			const std::vector<Token> tokens = lexer.lex(fileContents); // Output tokens
+			Parser parser;
 			FileAST AST; // Output Abstract Syntax Tree
 
 			// Print tokens if in debug mode
 			if (debugMode)
 			{
-				std::cout << "Tokens of: " + fullSrcFileName + "\n";
-				DebugLog(tokens);
+				std::cout << "Tokens of: " << fullSrcFileName << " (" << (int)lexer.getFunctionTokens().size() << ")\n";
+				DebugLog(lexer.getFunctionTokens());
 				std::cout << "\n";
 			}
 
 			// Parsing
-			parser.parse(tokens, AST, debugMode);
+			parser.parse(lexer.getFunctionTokens(), AST, debugMode);
 
 			// Creates the output folder (if it doesn't exist)
 			std::string outputDir = std::string(folder) + std::string("/build");
@@ -67,6 +84,11 @@ namespace lx
 		catch (const std::exception& e)
 		{
 			std::cerr << "C++ ERROR: " << e.what() << std::endl;
+		}
+
+		catch (const lx::Error& e)
+		{
+			e.display();
 		}
 
 		catch (...) // Catch all

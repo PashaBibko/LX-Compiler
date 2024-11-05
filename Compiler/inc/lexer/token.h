@@ -116,12 +116,12 @@ namespace lx
 
 	class Token
 	{
-	public:
-		Token() = default;
-		Token(TokenType type, const std::string value = "") : value(value), type(type) {}
+		public:
+			Token() = default;
+			Token(TokenType type, const std::string value = "") : value(value), type(type) {}
 
-		std::string value;
-		TokenType type = TokenType::UNDEFINED;
+			std::string value;
+			TokenType type = TokenType::UNDEFINED;
 	};
 
 }
