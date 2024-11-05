@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lexer/modules/modules.h>
+#include <lexer/identifier-tree.h>
 #include <lexer/token.h>
 
 #include <error.h>

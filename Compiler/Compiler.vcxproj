@@ -23,6 +23,7 @@
     <ClCompile Include="src\assembler\assembler.cpp" />
     <ClCompile Include="src\assembler\lx-core.cpp" />
     <ClCompile Include="src\combine.cpp" />
+    <ClCompile Include="src\lexer\identifier-tree.cpp" />
     <ClCompile Include="src\lexer\lexer.cpp" />
     <ClCompile Include="src\lexer\modules\classLexer.cpp" />
     <ClCompile Include="src\lexer\modules\enumLexer.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="inc\assembler\lx-core.h" />
     <ClInclude Include="inc\debug\DebugLog.h" />
     <ClInclude Include="inc\error.h" />
+    <ClInclude Include="inc\lexer\identifier-tree.h" />
     <ClInclude Include="inc\lexer\lexer.h" />
     <ClInclude Include="inc\lexer\modules\modules.h" />
     <ClInclude Include="inc\lexer\token.h" />

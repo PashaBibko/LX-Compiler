@@ -71,6 +71,9 @@
     <ClCompile Include="src\lexer\modules\shaderLexer.cpp">
       <Filter>Source Files\lexer\modules</Filter>
     </ClCompile>
+    <ClCompile Include="src\lexer\identifier-tree.cpp">
+      <Filter>Source Files\lexer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\assembler\assembler.h">
@@ -102,6 +105,9 @@
     </ClInclude>
     <ClInclude Include="inc\lexer\modules\modules.h">
       <Filter>Header Files\lexer\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\lexer\identifier-tree.h">
+      <Filter>Header Files\lexer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
