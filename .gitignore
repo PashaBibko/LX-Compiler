@@ -1,21 +1,26 @@
-# Folder locations to exclude
+### Folder locations to exclude ###
+
+# Uneccesary IDE files
 
 .vs/
 .git/
 .vscode/
 
-bin/
+# Compiled Object folders
+
 obj/
+bin/
 
 x64/
 
-# Ignore Version JSON file
+### Ignore Version JSON file ###
 
 version.json
 
-# Ignore precompiled binaries
+### Ignore precompiled binaries ###
 
 *.exe
 *.dll
+*.lib
 *.pdb
 *.obj
