@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ast.h>
+#include <cdt/ast.h>
 
-#include <DebugLog.h>
+#include <debug/DebugLog.h>
 
 namespace lx 
 {

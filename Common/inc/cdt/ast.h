@@ -1,6 +1,6 @@
 #pragma once
 
-#include <token.h>
+#include <cdt/token.h>
 
 #include <iostream>
 #include <memory>
@@ -11,7 +11,7 @@
 // Foward declarations
 namespace lx
 {
-
+	// Forward declarations
 	class ASTNode;
 
 	// Typedefs for this file

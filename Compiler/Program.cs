@@ -15,15 +15,21 @@ namespace LX
     // Main class
     public class Program
     {
-        // Path to the C++ compiler DLL
-        public const string DLL_CompilerLocation = "../../../../bin/Debug/Translator.dll";
-
         // Includes the translate function from the DLL
-        [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void Translate(string srcMainDir, string srcSubDir, string filename, bool debug = false);
+        [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void lexSource(string folder, string srcDir, string fileName, bool debug);
 
-        [DllImport(DLL_CompilerLocation, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void CreateHeaderFile(string srcMainDir);
+        //
+        [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void parseTokens();
+
+        // 
+        [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void assembleAST(string folder, string filename);
+
+        //
+        [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void CreateHeaderFile(string folder);
 
         // Main function
         static void Main(string[] args)
@@ -84,8 +90,9 @@ namespace LX
                     // Loops through all the .lx files
                     foreach (string file in files)
                     {
-                        // Translates the .lx file to a .cpp file
-                        Translate(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
+                        lexSource(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
+                        parseTokens();
+                        assembleAST(info.ProjectDir, Path.GetFileNameWithoutExtension(file) + ".lx");
                     }
                 }
 

@@ -5,7 +5,7 @@ int main()
 {
 std::cout << "hello" << std::endl;
 std::cout << add(1, 2) << std::endl;
-add(2, 3)hello()if(true)
+if(true)
 {
 std::cout << "Things are normal" << std::endl;
 return 1 + 2;

@@ -1,15 +1,19 @@
 #include <lexer.h>
 
 #include <modules/modules.h>
-#include <token.h>
+#include <cdt/token.h>
 
-#include <error.h>
+#include <debug/error.h>
+#include <debug/DebugLog.h>
 
 #include <unordered_map>
 #include <functional>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
+
+#include <fstream>
+#include <sstream>
 
 static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
@@ -177,7 +181,7 @@ namespace lx
 				case '\0':
 				{
 					// Adds EOF token so the parser knows when to stop
-					functionTokens.emplace_back(TokenType::END_OF_FILE);
+					funcTokens.emplace_back(TokenType::END_OF_FILE);
 
 					// Breaks out of the loop
 					return;

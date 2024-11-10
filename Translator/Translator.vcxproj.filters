@@ -31,8 +31,5 @@
     <ClCompile Include="src\lx-core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\combine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4dfdbfe3-a334-4d75-acf6-287a1853e659}</ProjectGuid>
-    <RootNamespace>Parser</RootNamespace>
+    <ProjectGuid>{b7f947e2-3579-4e27-aa1e-69c1da7f7da4}</ProjectGuid>
+    <RootNamespace>Common</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -107,14 +107,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Compiler\bin\$(Configuration)\net8.0</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,10 +132,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="inc\parser.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\parser.cpp" />
+    <ClInclude Include="inc\cdt\ast.h" />
+    <ClInclude Include="inc\cdt\data.h" />
+    <ClInclude Include="inc\cdt\token.h" />
+    <ClInclude Include="inc\data-storage\data.h" />
+    <ClInclude Include="inc\debug\DebugLog.h" />
+    <ClInclude Include="inc\debug\error.h" />
+    <ClInclude Include="inc\macro\dll-func.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

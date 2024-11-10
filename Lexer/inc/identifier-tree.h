@@ -1,8 +1,8 @@
 #pragma once
 
-#include <token.h>
+#include <cdt/token.h>
 
-#include <error.h>
+#include <debug/error.h>
 
 #include <unordered_map>
 #include <memory>

@@ -11,12 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\parser.cpp">
+    <ClCompile Include="src\interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

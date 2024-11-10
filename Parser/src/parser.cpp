@@ -1,8 +1,12 @@
 #include <parser.h>
 
-#include <ast.h>
+#include <cdt/ast.h>
 
-#include <DebugLog.h>
+#include <debug/error.h>
+
+#include <macro/dll-func.h>
+
+#include <debug/DebugLog.h>
 
 namespace lx
 {
@@ -15,41 +19,41 @@ namespace lx
 			switch (type)
 			{
 				// Basic math operators
-			case TokenType::PLUS:
-			case TokenType::MINUS:
-			case TokenType::MULTIPLY:
-			case TokenType::DIVIDE:
-			case TokenType::MODULO:
+				case TokenType::PLUS:
+				case TokenType::MINUS:
+				case TokenType::MULTIPLY:
+				case TokenType::DIVIDE:
+				case TokenType::MODULO:
 
 				// The rest of the operators
-			case TokenType::PLUS_EQUALS:
-			case TokenType::MINUS_EQUALS:
-			case TokenType::MULTIPLY_EQUALS:
-			case TokenType::DIVIDE_EQUALS:
+				case TokenType::PLUS_EQUALS:
+				case TokenType::MINUS_EQUALS:
+				case TokenType::MULTIPLY_EQUALS:
+				case TokenType::DIVIDE_EQUALS:
 
 				// Binary comparison operators
-			case TokenType::EQUALS:
-			case TokenType::LESS_THAN:
-			case TokenType::GREATER_THAN:
-			case TokenType::LESS_THAN_EQUALS:
-			case TokenType::GREATER_THAN_EQUALS:
-			case TokenType::NOT_EQUALS:
+				case TokenType::EQUALS:
+				case TokenType::LESS_THAN:
+				case TokenType::GREATER_THAN:
+				case TokenType::LESS_THAN_EQUALS:
+				case TokenType::GREATER_THAN_EQUALS:
+				case TokenType::NOT_EQUALS:
 
 				// Logial operators
-			case TokenType::AND:
-			case TokenType::NOT:
-			case TokenType::OR:
+				case TokenType::AND:
+				case TokenType::NOT:
+				case TokenType::OR:
 
 				// Unary operators
-			case TokenType::INCREMENT:
-			case TokenType::DECREMENT:
+				case TokenType::INCREMENT:
+				case TokenType::DECREMENT:
 
 				// Returns true if the token is an operator
-				return true;
+					return true;
 
 				// Default case
-			default:
-				return false;
+				default:
+					return false;
 			}
 		}
 
@@ -669,8 +673,14 @@ namespace lx
 		// Initialize
 		currentTokens = &tokens;
 
+		// Throws error if there are no tokens
+		if (tokens.size() == 0)
+		{
+			THROW_ERROR("Token vector is empty");
+		}
+
 		// Loop through the tokens
-		while (currentTokens->operator[](currentIndex).type != TokenType::END_OF_FILE)
+		while ((*currentTokens)[currentIndex].type != TokenType::END_OF_FILE)
 		{
 			out.functions.push_back(parseFunctionDeclaration());
 

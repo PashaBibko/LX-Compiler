@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lx-core.h>
-#include <parser.h>
+#include <cdt/ast.h>
 
 #include <sstream>
 #include <fstream>

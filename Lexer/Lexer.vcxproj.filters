@@ -23,9 +23,6 @@
     <ClInclude Include="inc\lexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\token.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\modules\modules.h">
       <Filter>Header Files\modules</Filter>
     </ClInclude>

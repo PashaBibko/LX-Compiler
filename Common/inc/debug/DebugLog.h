@@ -1,7 +1,7 @@
 #pragma once
 
-#include <../Lexer/inc/token.h>
-#include <../Parser/inc/ast.h>
+#include <cdt/token.h>
+#include <cdt/ast.h>
 
 #include <iostream>
 #include <vector>

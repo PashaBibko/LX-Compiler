@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\cdt">
+      <UniqueIdentifier>{32dbaa60-a55c-4d82-aea7-0006988f8f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\macro">
+      <UniqueIdentifier>{864358b1-6e66-48ee-bd72-8e2866d33a8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\debug">
+      <UniqueIdentifier>{2a2bb5ec-2e42-4a32-89c5-fd4817a61e3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\data-storage">
+      <UniqueIdentifier>{88ef14b9-6d1e-4c54-976c-cfa56d083879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data-storage">
+      <UniqueIdentifier>{ed2504df-c185-4702-a583-521fa6cb96a4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\cdt\ast.h">
+      <Filter>Header Files\cdt</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\cdt\token.h">
+      <Filter>Header Files\cdt</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\debug\DebugLog.h">
+      <Filter>Header Files\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\debug\error.h">
+      <Filter>Header Files\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\data-storage\data.h">
+      <Filter>Header Files\data-storage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\macro\dll-func.h">
+      <Filter>Header Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\cdt\data.h">
+      <Filter>Header Files\cdt</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

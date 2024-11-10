@@ -2,9 +2,9 @@
 
 #include <modules/modules.h>
 #include <identifier-tree.h>
-#include <token.h>
+#include <cdt/token.h>
 
-#include <error.h>
+#include <debug/error.h>
 
 #include <unordered_map>
 #include <functional>
@@ -96,14 +96,11 @@ namespace lx
 			// Reference to the source code
 			const std::string& currentSource;
 
-			// Vectors of different token types (currently only function tokens)
+			// Token vectors for each of the token types
 
-			std::vector<Token> functionTokens;
+			std::vector<Token> funcTokens;
 
 		public:
-			// Default constructor - Should not be called - Only here to stop compilaton errors
-			Lexer() : currentSource("") { THROW_ERROR("Lexer must be initialized with a source code string"); }
-
 			// Constructor that takes the source code string
 			// It will do everything needed to lex the source code
 			// The output for each of the token types will be stored in thier respective vectors
@@ -115,7 +112,7 @@ namespace lx
 			// Returns the function tokens
 			inline std::vector<Token>& getFunctionTokens()
 			{
-				return functionTokens;
+				return funcTokens;
 			}
 	};
 }

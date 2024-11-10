@@ -1,6 +1,6 @@
 #include <modules/modules.h>
 
-#include <error.h>
+#include <debug/error.h>
 
 namespace lx
 {

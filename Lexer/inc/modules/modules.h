@@ -2,7 +2,7 @@
 
 #include <lexer.h>
 
-#include <error.h>
+#include <debug/error.h>
 
 namespace lx
 {

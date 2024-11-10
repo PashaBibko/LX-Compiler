@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-#include <ast.h>
+#include <cdt/ast.h>
 
 #include <assembler.h>
 

@@ -79,7 +79,9 @@ namespace LX
                 // If the process failed, throw an exception
                 if (p.ExitCode != 0)
                 {
-                    error = "MSVC failed at linking the objs.";
+                    error = "MSVC failed at linking the objs.\n" +
+                            "Exit code: " + p.ExitCode 
+                            + "\n" + p.StandardOutput.ReadToEnd();
                     return true;
                 }
             }
