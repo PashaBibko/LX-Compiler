@@ -25,7 +25,7 @@ namespace LX
 
         // 
         [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void assembleAST(string folder, string filename);
+        private static extern void translateAST(string folder, string filename);
 
         //
         [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -92,7 +92,7 @@ namespace LX
                     {
                         lexSource(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
                         parseTokens();
-                        assembleAST(info.ProjectDir, Path.GetFileNameWithoutExtension(file) + ".lx");
+                        translateAST(info.ProjectDir, Path.GetFileNameWithoutExtension(file) + ".lx");
                     }
                 }
 
