@@ -7,27 +7,27 @@
 
 #include <cdt/ast.h>
 
-#include <assembler.h>
+#include <translator.h>
 
 namespace LX::Translator
 {
-	void Core::printFunction(LX::Parser::FunctionCall* call, Assembler& assembler)
+	void Core::printFunction(LX::Parser::FunctionCall* call, Translator& translator)
 	{
-		assembler.includes.insert("iostream");
-		assembler.out << "std::cout";
+		translator.includes.insert("iostream");
+		translator.out << "std::cout";
 
 		for (std::unique_ptr<LX::Parser::ASTNode>& arg : call->args)
 		{
-			assembler.out << " << ";
-			assembler.assembleNode(arg.get());
+			translator.out << " << ";
+			translator.assembleNode(arg.get());
 		}
 
-		assembler.out << " << std::endl;\n";
+		translator.out << " << std::endl;\n";
 	}
 
 	// Core function map
 
-	std::unordered_map <std::string, std::function<void(LX::Parser::FunctionCall*, Assembler&)>> Core::funcMap =
+	std::unordered_map <std::string, std::function<void(LX::Parser::FunctionCall*, Translator&)>> Core::funcMap =
 	{
 		{"print", printFunction}
 	};

@@ -134,13 +134,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="inc\assemble-ast.h" />
-    <ClInclude Include="inc\assembler.h" />
+    <ClInclude Include="inc\translate-ast.h" />
+    <ClInclude Include="inc\translator.h" />
     <ClInclude Include="inc\lx-core.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\assemble-ast.cpp" />
-    <ClCompile Include="src\assembler.cpp" />
+    <ClCompile Include="src\translate-ast.cpp" />
+    <ClCompile Include="src\translator.cpp" />
     <ClCompile Include="src\lx-core.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

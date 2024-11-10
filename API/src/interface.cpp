@@ -1,6 +1,6 @@
 #include <lexer.h>
 #include <parser.h>
-#include <assembler.h>
+#include <translator.h>
 
 #include <macro/dll-func.h>
 
@@ -63,15 +63,15 @@ namespace LX::API
 	}
 
 	// Translator function call
-	DLL_FUNC void assembleAST(const char* folder, const char* filename)
+	DLL_FUNC void translateAST(const char* folder, const char* filename)
 	{
-		LX::Translator::Assembler assembler;
+		LX::Translator::Translator translator;
 
 		std::string outDir = std::string(folder) + "/build";
 
 		for (LX::Parser::FunctionDeclaration& func : astMap[0].functions)
 		{
-			assembler.assemble(func, outDir, filename);
+			translator.assemble(func, outDir, filename);
 		}
 	}
 
@@ -82,7 +82,7 @@ namespace LX::API
 
 		headerFile << "#pragma once\n\n";
 
-		for (std::string& header : LX::Translator::Assembler::funcHeaders)
+		for (std::string& header : LX::Translator::Translator::funcHeaders)
 		{
 			headerFile << header << ";\n";
 		}

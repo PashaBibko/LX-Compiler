@@ -1,6 +1,6 @@
-#include <assemble-ast.h>
+#include <translate-ast.h>
 
-#include <assembler.h>
+#include <translator.h>
 
 #include <cdt/ast.h>
 
@@ -8,53 +8,53 @@
 
 namespace LX::Translator
 {
-	void assembleIdentifier(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleIdentifier(Translator& translator, LX::Parser::ASTNode* node)
 	{
-		assembler.out << dynamic_cast<LX::Parser::Identifier*>(node)->name;
+		translator.out << dynamic_cast<LX::Parser::Identifier*>(node)->name;
 	}
 
-	void assembleVariableDeclaration(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleVariableDeclaration(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::VariableDeclaration* varDecl = dynamic_cast<LX::Parser::VariableDeclaration*>(node);
 
 		// Variable modifiers
 
-		if (varDecl->isConst()) { assembler.out << "const "; }
+		if (varDecl->isConst()) { translator.out << "const "; }
 
 		// Variable type
 
 		if (varDecl->varType.name == "string")
 		{
-			assembler.includes.insert("string");
-			assembler.out << "std::string ";
+			translator.includes.insert("string");
+			translator.out << "std::string ";
 		}
 
 		else
 		{
-			assembler.out << varDecl->varType.name << " ";
+			translator.out << varDecl->varType.name << " ";
 		}
 
 		// Variable name
 
-		assembleIdentifier(assembler, &varDecl->name);
+		assembleIdentifier(translator, &varDecl->name);
 
 		// Variable value
 
 		if (varDecl->val != nullptr)
 		{
-			assembleAssignment(assembler, varDecl->val.get());
+			assembleAssignment(translator, varDecl->val.get());
 		}
 	}
 
-	void assembleAssignment(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleAssignment(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::Assignment* assignment = dynamic_cast<LX::Parser::Assignment*>(node);
 
-		assembleIdentifier(assembler, &assignment->name);
+		assembleIdentifier(translator, &assignment->name);
 
-		assembler.out << " = ";
-		assembler.assembleNode(assignment->val.get());
-		assembler.out << ";";
+		translator.out << " = ";
+		translator.assembleNode(assignment->val.get());
+		translator.out << ";";
 	}
 
 	static const std::unordered_map<LX::Lexer::TokenType, std::string> operatorMap = 
@@ -92,72 +92,72 @@ namespace LX::Translator
 		return operatorMap.at(op);
 	}
 
-	void assembleOperation(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleOperation(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::Operation* operation = dynamic_cast<LX::Parser::Operation*>(node);
 
-		assembler.assembleNode(operation->lhs.get());
-		assembler.out << " " << getOperator(operation->op) << " ";
-		assembler.assembleNode(operation->rhs.get());
+		translator.assembleNode(operation->lhs.get());
+		translator.out << " " << getOperator(operation->op) << " ";
+		translator.assembleNode(operation->rhs.get());
 	}
 
-	void assembleUnaryOperation(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleUnaryOperation(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::UnaryOperation* unaryOperation = dynamic_cast<LX::Parser::UnaryOperation*>(node);
 
 		if (unaryOperation->side == LX::Parser::UnaryOperation::Sided::LEFT)
 		{
-			assembler.out << getOperator(unaryOperation->op) << " ";
-			assembler.assembleNode(unaryOperation->val.get());
+			translator.out << getOperator(unaryOperation->op) << " ";
+			translator.assembleNode(unaryOperation->val.get());
 		}
 
 		else
 		{
-			assembler.assembleNode(unaryOperation->val.get());
-			assembler.out << " " << getOperator(unaryOperation->op);
+			translator.assembleNode(unaryOperation->val.get());
+			translator.out << " " << getOperator(unaryOperation->op);
 		}
 	}
 
-	void assembleFunctionCall(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleFunctionCall(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::FunctionCall* functionCall = dynamic_cast<LX::Parser::FunctionCall*>(node);
 
 		if (Core::funcMap.find(functionCall->funcName.name) != Core::funcMap.end())
 		{
-			Core::funcMap[functionCall->funcName.name](functionCall, assembler);
+			Core::funcMap[functionCall->funcName.name](functionCall, translator);
 			return;
 		}
 
-		assembleIdentifier(assembler, &functionCall->funcName);
-		assembler.out << "(";
+		assembleIdentifier(translator, &functionCall->funcName);
+		translator.out << "(";
 
 		bool firstArg = true;
 
 		for (const std::unique_ptr<LX::Parser::ASTNode>& arg : functionCall->args)
 		{
-			if (!firstArg) { assembler.out << ", "; }
+			if (!firstArg) { translator.out << ", "; }
 			else { firstArg = false; }
-			assembler.assembleNode(arg.get());
+			translator.assembleNode(arg.get());
 		}
 
-		assembler.out << ")";
+		translator.out << ")";
 	}
 
-	void assembleStringLiteral(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleStringLiteral(Translator& translator, LX::Parser::ASTNode* node)
 	{
-		assembler.out << "\"" << dynamic_cast<LX::Parser::StringLiteral*>(node)->value << "\"";
+		translator.out << "\"" << dynamic_cast<LX::Parser::StringLiteral*>(node)->value << "\"";
 	}
 
-	void assembleBracketedExpression(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleBracketedExpression(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::BracketedExpression* bracketedExpression = dynamic_cast<LX::Parser::BracketedExpression*>(node);
 
-		assembler.out << "(";
-		assembler.assembleNode(bracketedExpression->expr.get());
-		assembler.out << ")";
+		translator.out << "(";
+		translator.assembleNode(bracketedExpression->expr.get());
+		translator.out << ")";
 	}
 
-	void assembleIfStatement(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleIfStatement(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::IfStatement* ifStatement = dynamic_cast<LX::Parser::IfStatement*>(node);
 
@@ -167,36 +167,36 @@ namespace LX::Translator
 			{
 				case LX::Parser::IfStatement::IfType::IF:
 				{
-					assembler.out << "if";
+					translator.out << "if";
 					break;
 				}
 
 				case LX::Parser::IfStatement::IfType::ELSE_IF:
 				{
-					assembler.out << "else if";
+					translator.out << "else if";
 					break;
 				}
 
 				case LX::Parser::IfStatement::IfType::ELSE:
 				{
-					assembler.out << "else";
+					translator.out << "else";
 					break;
 				}
 			}
 
 			if (ifStatement->condition != nullptr)
 			{
-				assembler.out << "(";
-				assembler.assembleNode(ifStatement->condition.get());
-				assembler.out << ")";
+				translator.out << "(";
+				translator.assembleNode(ifStatement->condition.get());
+				translator.out << ")";
 			}
 
-			assembler.out << "\n{\n";
+			translator.out << "\n{\n";
 			for (const std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
 			{
-				assembler.assembleNode(statement.get());
+				translator.assembleNode(statement.get());
 			}
-			assembler.out << "\n}\n";
+			translator.out << "\n}\n";
 
 			if (ifStatement->next != nullptr)
 			{
@@ -210,22 +210,22 @@ namespace LX::Translator
 		}
 	}
 
-	void assembleReturnStatement(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleReturnStatement(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		LX::Parser::ReturnStatement* returnStatement = dynamic_cast<LX::Parser::ReturnStatement*>(node);
 
-		assembler.out << "return";
+		translator.out << "return";
 
 		if (returnStatement->expr != nullptr)
 		{
-			assembler.out << " ";
-			assembler.assembleNode(returnStatement->expr.get());
+			translator.out << " ";
+			translator.assembleNode(returnStatement->expr.get());
 		}
 
-		assembler.out << ";";
+		translator.out << ";";
 	}
 
-	void assembleUndefined(Assembler& assembler, LX::Parser::ASTNode* node)
+	void assembleUndefined(Translator& translator, LX::Parser::ASTNode* node)
 	{
 		throw std::runtime_error("Have fun debugging loser!");
 	}

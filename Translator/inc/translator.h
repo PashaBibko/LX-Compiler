@@ -9,7 +9,7 @@
 
 namespace LX::Translator
 {
-	class Assembler
+	class Translator
 	{
 		public:
 			static std::vector<std::string> funcList;
@@ -18,9 +18,9 @@ namespace LX::Translator
 			std::set<std::string> includes;
 			std::ostringstream out;
 
-			static std::unordered_map<LX::Parser::ASTNode::NodeType, std::function<void(Assembler&, LX::Parser::ASTNode*)>> nodeAssemblers;
+			static std::unordered_map<LX::Parser::ASTNode::NodeType, std::function<void(Translator&, LX::Parser::ASTNode*)>> nodeTranslators;
 
-			Assembler() = default;
+			Translator() = default;
 
 			void assembleNode(LX::Parser::ASTNode* node);
 

@@ -1,4 +1,4 @@
-#include <assembler.h>
+#include <translator.h>
 
 #include <lx-core.h>
 #include <cdt/ast.h>
@@ -9,15 +9,15 @@
 
 namespace LX::Translator
 {
-	std::vector<std::string> Assembler::funcList;
-	std::vector<std::string> Assembler::funcHeaders;
+	std::vector<std::string> Translator::funcList;
+	std::vector<std::string> Translator::funcHeaders;
 
-	void Assembler::assembleNode(LX::Parser::ASTNode* node)
+	void Translator::assembleNode(LX::Parser::ASTNode* node)
 	{
-		nodeAssemblers[node->type](*this, node);
+		nodeTranslators[node->type](*this, node);
 	}
 
-	void Assembler::assemble(LX::Parser::FunctionDeclaration& AST, const std::string outputDir, const std::string lx_fileName)
+	void Translator::assemble(LX::Parser::FunctionDeclaration& AST, const std::string outputDir, const std::string lx_fileName)
 	{
 		// Adds the function to the function list
 		std::string funcDecl = AST.returnTypes[0].name + " " + AST.name.name + "(";
@@ -90,11 +90,11 @@ namespace LX::Translator
 	}
 }
 
-#include <assemble-ast.h>
+#include <translate-ast.h>
 
 namespace LX::Translator
 {
-	std::unordered_map<LX::Parser::ASTNode::NodeType, std::function<void(Assembler&, LX::Parser::ASTNode*)>> Assembler::nodeAssemblers =
+	std::unordered_map<LX::Parser::ASTNode::NodeType, std::function<void(Translator&, LX::Parser::ASTNode*)>> Translator::nodeTranslators =
 	{
 		{ LX::Parser::ASTNode::NodeType::IDENTIFIER,					 assembleIdentifier					},
 		{ LX::Parser::ASTNode::NodeType::VARIABLE_DECLARATION,			 assembleVariableDeclaration		},

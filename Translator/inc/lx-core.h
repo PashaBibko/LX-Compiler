@@ -10,14 +10,14 @@
 namespace LX::Translator
 {
 	// Forward declarations
-	class Assembler;
+	class Translator;
 
 	// Standard library functions
 
 	namespace Core
 	{
-		void printFunction(LX::Parser::FunctionCall* call, Assembler& assembler);
+		void printFunction(LX::Parser::FunctionCall* call, Translator& assembler);
 
-		extern std::unordered_map <std::string, std::function<void(LX::Parser::FunctionCall*, Assembler&)>> funcMap;
+		extern std::unordered_map <std::string, std::function<void(LX::Parser::FunctionCall*, Translator&)>> funcMap;
 	};
 }

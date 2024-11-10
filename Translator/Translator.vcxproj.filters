@@ -11,10 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\assemble-ast.h">
+    <ClInclude Include="inc\translate-ast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\assembler.h">
+    <ClInclude Include="inc\translator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\lx-core.h">
@@ -22,10 +22,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\assemble-ast.cpp">
+    <ClCompile Include="src\translate-ast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\assembler.cpp">
+    <ClCompile Include="src\translator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\lx-core.cpp">
