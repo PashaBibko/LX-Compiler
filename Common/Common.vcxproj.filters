@@ -32,11 +32,17 @@
     <ClInclude Include="inc\debug\error.h">
       <Filter>Header Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="inc\macro\dll-func.h">
+    <ClInclude Include="inc\macro\dll.h">
       <Filter>Header Files\macro</Filter>
     </ClInclude>
-    <ClInclude Include="inc\cdt\data.h">
-      <Filter>Header Files\cdt</Filter>
+    <ClInclude Include="inc\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\std-libs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\macro\flag.h">
+      <Filter>Header Files\macro</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

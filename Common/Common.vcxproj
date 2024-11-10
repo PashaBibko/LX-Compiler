@@ -133,11 +133,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\cdt\ast.h" />
-    <ClInclude Include="inc\cdt\data.h" />
     <ClInclude Include="inc\cdt\token.h" />
+    <ClInclude Include="inc\common.h" />
     <ClInclude Include="inc\debug\Log.h" />
     <ClInclude Include="inc\debug\error.h" />
-    <ClInclude Include="inc\macro\dll-func.h" />
+    <ClInclude Include="inc\macro\dll.h" />
+    <ClInclude Include="inc\macro\flag.h" />
+    <ClInclude Include="inc\std-libs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
