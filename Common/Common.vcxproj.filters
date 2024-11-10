@@ -18,12 +18,6 @@
     <Filter Include="Header Files\debug">
       <UniqueIdentifier>{2a2bb5ec-2e42-4a32-89c5-fd4817a61e3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\data-storage">
-      <UniqueIdentifier>{88ef14b9-6d1e-4c54-976c-cfa56d083879}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\data-storage">
-      <UniqueIdentifier>{ed2504df-c185-4702-a583-521fa6cb96a4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\cdt\ast.h">
@@ -37,9 +31,6 @@
     </ClInclude>
     <ClInclude Include="inc\debug\error.h">
       <Filter>Header Files\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\data-storage\data.h">
-      <Filter>Header Files\data-storage</Filter>
     </ClInclude>
     <ClInclude Include="inc\macro\dll-func.h">
       <Filter>Header Files\macro</Filter>

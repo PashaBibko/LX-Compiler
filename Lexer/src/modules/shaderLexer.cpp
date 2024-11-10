@@ -2,7 +2,7 @@
 
 #include <debug/error.h>
 
-namespace lx
+namespace LX::Lexer
 {
 	void lexShader(LexerStreamSect& sect)
 	{

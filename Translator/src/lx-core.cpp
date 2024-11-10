@@ -9,14 +9,14 @@
 
 #include <assembler.h>
 
-namespace lx 
+namespace LX::Translator
 {
-	void core::printFunction(FunctionCall* call, Assembler& assembler)
+	void Core::printFunction(LX::Parser::FunctionCall* call, Assembler& assembler)
 	{
 		assembler.includes.insert("iostream");
 		assembler.out << "std::cout";
 
-		for (std::unique_ptr<ASTNode>& arg : call->args)
+		for (std::unique_ptr<LX::Parser::ASTNode>& arg : call->args)
 		{
 			assembler.out << " << ";
 			assembler.assembleNode(arg.get());
@@ -27,7 +27,7 @@ namespace lx
 
 	// Core function map
 
-	std::unordered_map <std::string, std::function<void(FunctionCall*, Assembler&)>> core::funcMap =
+	std::unordered_map <std::string, std::function<void(LX::Parser::FunctionCall*, Assembler&)>> Core::funcMap =
 	{
 		{"print", printFunction}
 	};

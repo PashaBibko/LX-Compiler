@@ -2,7 +2,7 @@
 
 #include <debug/error.h>
 
-namespace lx
+namespace LX::Lexer
 {
 	// Constepr functions to check if a character is a letter or number
 	static bool constexpr isAlphaNumeric(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'); }

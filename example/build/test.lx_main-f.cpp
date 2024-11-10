@@ -4,7 +4,6 @@
 int main()
 {
 std::cout << "hello" << std::endl;
-std::cout << add(1, 2) << std::endl;
 if(true)
 {
 std::cout << "Things are normal" << std::endl;

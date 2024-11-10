@@ -7,17 +7,17 @@
 
 #include <cdt/ast.h>
 
-namespace lx 
+namespace LX::Translator
 {
 	// Forward declarations
 	class Assembler;
 
 	// Standard library functions
 
-	namespace core
+	namespace Core
 	{
-		void printFunction(FunctionCall* call, Assembler& assembler);
+		void printFunction(LX::Parser::FunctionCall* call, Assembler& assembler);
 
-		extern std::unordered_map <std::string, std::function<void(FunctionCall*, Assembler&)>> funcMap;
+		extern std::unordered_map <std::string, std::function<void(LX::Parser::FunctionCall*, Assembler&)>> funcMap;
 	};
 }

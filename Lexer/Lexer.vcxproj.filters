@@ -17,9 +17,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\identifier-tree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\lexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -28,9 +25,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\identifier-tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\lexer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

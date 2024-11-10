@@ -6,11 +6,11 @@
 #include <iostream>
 #include <vector>
 
-#define TOKEN_CASE(tokenCase) case tokenCase: std::cout << #tokenCase << ": " << token.value << std::endl; break;
+#define TOKEN_CASE(tokenCase) case LX::Lexer::tokenCase: std::cout << #tokenCase << ": " << token.value << std::endl; break;
 
-namespace lx
+namespace LX::Debug
 {
-	inline void DebugLog(const Token& token)
+	inline void DebugLog(const LX::Lexer::Token& token)
 	{
 		switch (token.type)
 		{
@@ -69,11 +69,11 @@ namespace lx
 		}
 	}
 
-	inline void DebugLog(const std::vector<Token>& tokens)
+	inline void DebugLog(const std::vector<LX::Lexer::Token>& tokens)
 	{
 		int counter = 0;
 
-		for (const Token& token : tokens)
+		for (const LX::Lexer::Token& token : tokens)
 		{
 			std::cout << counter << ": ";
 			DebugLog(token);
@@ -81,61 +81,61 @@ namespace lx
 		}
 	}
 
-	void DebugLog(const std::unique_ptr<ASTNode>& node, int depth);
+	void DebugLog(const std::unique_ptr<LX::Parser::ASTNode>& node, int depth);
 
-	inline void DebugLogA(std::unique_ptr<Assignment>& assignment, int depth)
+	inline void DebugLogA(std::unique_ptr<LX::Parser::Assignment>& assignment, int depth)
 	{
 		std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
 		DebugLog(assignment->val, depth + 1);
 	}
 
-	inline void DebugLog(IfStatement* ifStatement, int depth)
+	inline void DebugLog(LX::Parser::IfStatement* ifStatement, int depth)
 	{
 		switch (ifStatement->type)
 		{
-		case IfStatement::IfType::IF:
-		{
-			std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
-
-			DebugLog(ifStatement->condition, depth + 1);
-
-			std::cout << std::string(depth, '\t') << "Then: " << std::endl;
-
-			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			case LX::Parser::IfStatement::IfType::IF:
 			{
-				DebugLog(statement, depth + 1);
+				std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
+
+				DebugLog(ifStatement->condition, depth + 1);
+
+				std::cout << std::string(depth, '\t') << "Then: " << std::endl;
+
+				for (std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
+				{
+					DebugLog(statement, depth + 1);
+				}
+
+				break;
 			}
 
-			break;
-		}
-
-		case IfStatement::IfType::ELSE_IF:
-		{
-			std::cout << std::string(depth, '\t') << "Else If Statement: " << std::endl;
-
-			DebugLog(ifStatement->condition, depth + 1);
-
-			std::cout << std::string(depth, '\t') << "Then: " << std::endl;
-
-			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			case LX::Parser::IfStatement::IfType::ELSE_IF:
 			{
-				DebugLog(statement, depth + 1);
+				std::cout << std::string(depth, '\t') << "Else If Statement: " << std::endl;
+
+				DebugLog(ifStatement->condition, depth + 1);
+
+				std::cout << std::string(depth, '\t') << "Then: " << std::endl;
+
+				for (std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
+				{
+					DebugLog(statement, depth + 1);
+				}
+
+				break;
 			}
 
-			break;
-		}
-
-		case IfStatement::IfType::ELSE:
-		{
-			std::cout << std::string(depth, '\t') << "Else Statement: " << std::endl;
-
-			for (std::unique_ptr<ASTNode>& statement : ifStatement->body)
+			case LX::Parser::IfStatement::IfType::ELSE:
 			{
-				DebugLog(statement, depth + 1);
-			}
+				std::cout << std::string(depth, '\t') << "Else Statement: " << std::endl;
 
-			break;
-		}
+				for (std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
+				{
+					DebugLog(statement, depth + 1);
+				}
+
+				break;
+			}
 		}
 
 		if (ifStatement->next != nullptr)
@@ -144,42 +144,42 @@ namespace lx
 		}
 	}
 
-	inline void DebugLog(FunctionDeclaration* funcDecl, int depth)
+	inline void DebugLog(LX::Parser::FunctionDeclaration* funcDecl, int depth)
 	{
 		std::cout << std::string(depth, '\t') << "Function Declaration: " << funcDecl->name.name << std::endl;
 
-		for (Identifier& returnType : funcDecl->returnTypes)
+		for (LX::Parser::Identifier& returnType : funcDecl->returnTypes)
 		{
 			std::cout << std::string(depth, '\t') << "Return Type: " << returnType.name << std::endl;
 		}
 
-		for (std::unique_ptr<ASTNode>& arg : funcDecl->args)
+		for (std::unique_ptr<LX::Parser::ASTNode>& arg : funcDecl->args)
 		{
 			DebugLog(arg, depth + 1);
 		}
 
-		for (std::unique_ptr<ASTNode>& statement : funcDecl->body)
+		for (std::unique_ptr<LX::Parser::ASTNode>& statement : funcDecl->body)
 		{
 			DebugLog(statement, depth + 1);
 		}
 	}
 
-	inline void DebugLog(const std::unique_ptr<ASTNode>& node, int depth)
+	inline void DebugLog(const std::unique_ptr<LX::Parser::ASTNode>& node, int depth)
 	{
 		switch (node->type)
 		{
-			case ASTNode::NodeType::IDENTIFIER:
+			case LX::Parser::ASTNode::NodeType::IDENTIFIER:
 			{
-				Identifier* identifier = static_cast<Identifier*>(node.get());
+				LX::Parser::Identifier* identifier = static_cast<LX::Parser::Identifier*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Identifier: " << identifier->name << std::endl;
 
 				return;
 			}
 
-			case ASTNode::NodeType::VARIABLE_DECLARATION:
+			case LX::Parser::ASTNode::NodeType::VARIABLE_DECLARATION:
 			{
-				VariableDeclaration* varDecl = static_cast<VariableDeclaration*>(node.get());
+				LX::Parser::VariableDeclaration* varDecl = static_cast<LX::Parser::VariableDeclaration*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Variable Declaration: type {" << varDecl->varType.name << "} name {" << varDecl->name.name << "}" << std::endl;
 				std::cout << std::string(depth + 1, '\t') << "Const: " << (varDecl->isConst() ? "true" : "false") << std::endl;
@@ -192,9 +192,9 @@ namespace lx
 				return;
 			}
 
-			case ASTNode::NodeType::ASSIGNMENT:
+			case LX::Parser::ASTNode::NodeType::ASSIGNMENT:
 			{
-				Assignment* assignment = static_cast<Assignment*>(node.get());
+				LX::Parser::Assignment* assignment = static_cast<LX::Parser::Assignment*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
 				DebugLog(assignment->val, depth + 1);
@@ -202,9 +202,9 @@ namespace lx
 				return;
 			}
 
-			case ASTNode::NodeType::OPERATION:
+			case LX::Parser::ASTNode::NodeType::OPERATION:
 			{
-				Operation* operation = static_cast<Operation*>(node.get());
+				LX::Parser::Operation* operation = static_cast<LX::Parser::Operation*>(node.get());
 
 				DebugLog(operation->lhs, depth + 1);
 				std::cout << std::string(depth, '\t') << "Operation: ";
@@ -214,26 +214,26 @@ namespace lx
 				return;
 			}
 
-			case ASTNode::NodeType::UNARY_OPERATION:
+			case LX::Parser::ASTNode::NodeType::UNARY_OPERATION:
 			{
-				UnaryOperation* unaryOperation = static_cast<UnaryOperation*>(node.get());
+				LX::Parser::UnaryOperation* unaryOperation = static_cast<LX::Parser::UnaryOperation*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Unary Operation: ";
 				DebugLog(unaryOperation->op);
 				DebugLog(unaryOperation->val, depth + 1);
 
-				std::cout << std::string(depth, '\t') << (unaryOperation->side == UnaryOperation::Sided::LEFT ? "Left" : "Right") << " sided" << std::endl;
+				std::cout << std::string(depth, '\t') << (unaryOperation->side == LX::Parser::UnaryOperation::Sided::LEFT ? "Left" : "Right") << " sided" << std::endl;
 
 				return;
 			}
 
-			case ASTNode::NodeType::FUNCTION_CALL:
+			case LX::Parser::ASTNode::NodeType::FUNCTION_CALL:
 			{
-				FunctionCall* functionCall = static_cast<FunctionCall*>(node.get());
+				LX::Parser::FunctionCall* functionCall = static_cast<LX::Parser::FunctionCall*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Function Call: " << functionCall->funcName.name << std::endl;
 
-				for (std::unique_ptr<ASTNode>& arg : functionCall->args)
+				for (std::unique_ptr<LX::Parser::ASTNode>& arg : functionCall->args)
 				{
 					DebugLog(arg, depth + 1);
 				}
@@ -241,25 +241,25 @@ namespace lx
 				return;
 			}
 
-			case ASTNode::NodeType::STRING_LITERAL:
+			case LX::Parser::ASTNode::NodeType::STRING_LITERAL:
 			{
-				StringLiteral* stringLiteral = static_cast<StringLiteral*>(node.get());
+				LX::Parser::StringLiteral* stringLiteral = static_cast<LX::Parser::StringLiteral*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "String Literal: " << stringLiteral->value << std::endl;
 
 				return;
 			}
 
-			case ASTNode::NodeType::IF_STATEMENT:
+			case LX::Parser::ASTNode::NodeType::IF_STATEMENT:
 			{
-				DebugLog(static_cast<IfStatement*>(node.get()), depth);
+				DebugLog(static_cast<LX::Parser::IfStatement*>(node.get()), depth);
 
 				return;
 			}
 
-			case ASTNode::NodeType::RETURN_STATEMENT:
+			case LX::Parser::ASTNode::NodeType::RETURN_STATEMENT:
 			{
-				ReturnStatement* returnStatement = static_cast<ReturnStatement*>(node.get());
+				LX::Parser::ReturnStatement* returnStatement = static_cast<LX::Parser::ReturnStatement*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Return Statement: " << std::endl;
 
@@ -268,9 +268,9 @@ namespace lx
 				return;
 			}
 
-			case ASTNode::NodeType::BRACKETED_EXPRESSION:
+			case LX::Parser::ASTNode::NodeType::BRACKETED_EXPRESSION:
 			{
-				BracketedExpression* bracketedExpression = static_cast<BracketedExpression*>(node.get());
+				LX::Parser::BracketedExpression* bracketedExpression = static_cast<LX::Parser::BracketedExpression*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Bracketed Expression: " << std::endl;
 
@@ -288,9 +288,9 @@ namespace lx
 		}
 	}
 
-	inline void DebugLog(FileAST& AST)
+	inline void DebugLog(LX::Parser::FileAST& AST)
 	{
-		for (FunctionDeclaration& funcDecl : AST.functions)
+		for (LX::Parser::FunctionDeclaration& funcDecl : AST.functions)
 		{
 			DebugLog(&funcDecl, 0);
 		}

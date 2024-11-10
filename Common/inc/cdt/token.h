@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace lx
+namespace LX::Lexer
 {
 	enum class TokenType : short
 	{

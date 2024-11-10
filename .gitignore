@@ -6,6 +6,8 @@
 .git/
 .vscode/
 
+*.user
+
 # Compiled Object folders
 
 obj/

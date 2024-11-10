@@ -11,7 +11,7 @@
 
 #define DLL_FUNC extern "C" DLL_EXPORT
 
-namespace LX_API
+namespace LX::API
 {
 	static std::string readFileToString(const std::string& filePath)
 	{
@@ -32,8 +32,8 @@ namespace LX_API
 		return buffer.str();
 	}
 
-	std::unordered_map<int, std::vector<lx::Token>> funcTokenMap;
-	std::unordered_map<int, lx::FileAST> astMap;
+	std::unordered_map<int, std::vector<LX::Lexer::Token>> funcTokenMap;
+	std::unordered_map<int, LX::Parser::FileAST> astMap;
 
 	// Lexer function call
 	DLL_FUNC void lexSource(const char* folder, const char* srcDir, const char* filename, bool debug)
@@ -41,7 +41,7 @@ namespace LX_API
 		std::string fullPath = std::string(folder) + "/" + std::string(srcDir) + "/" + std::string(filename);
 		std::string source = readFileToString(fullPath);
 
-		lx::Lexer lexer(source);
+		LX::Lexer::Lexer lexer(source);
 
 		funcTokenMap[0] = lexer.getFunctionTokens();
 
@@ -49,7 +49,7 @@ namespace LX_API
 		{
 			for (const auto& token : funcTokenMap[0])
 			{
-				lx::DebugLog(token);
+				LX::Debug::DebugLog(token);
 			}
 		}
 	}
@@ -57,7 +57,7 @@ namespace LX_API
 	// Parser function call
 	DLL_FUNC void parseTokens()
 	{
-		lx::Parser parser;
+		LX::Parser::Parser parser;
 
 		parser.parse(funcTokenMap[0], astMap[0], true);
 	}
@@ -65,11 +65,11 @@ namespace LX_API
 	// Translator function call
 	DLL_FUNC void assembleAST(const char* folder, const char* filename)
 	{
-		lx::Assembler assembler;
+		LX::Translator::Assembler assembler;
 
 		std::string outDir = std::string(folder) + "/build";
 
-		for (lx::FunctionDeclaration& func : astMap[0].functions)
+		for (LX::Parser::FunctionDeclaration& func : astMap[0].functions)
 		{
 			assembler.assemble(func, outDir, filename);
 		}
@@ -82,7 +82,7 @@ namespace LX_API
 
 		headerFile << "#pragma once\n\n";
 
-		for (std::string& header : lx::Assembler::funcHeaders)
+		for (std::string& header : LX::Translator::Assembler::funcHeaders)
 		{
 			headerFile << header << ";\n";
 		}

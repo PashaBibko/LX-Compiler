@@ -18,7 +18,7 @@
 static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
 
-namespace lx
+namespace LX::Lexer
 {
 	const std::unordered_map<std::string, SectType> LexerStreamSect::sectTypeMap =
 	{

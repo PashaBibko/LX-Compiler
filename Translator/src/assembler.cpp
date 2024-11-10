@@ -7,17 +7,17 @@
 #include <fstream>
 #include <set>
 
-namespace lx
+namespace LX::Translator
 {
 	std::vector<std::string> Assembler::funcList;
 	std::vector<std::string> Assembler::funcHeaders;
 
-	void Assembler::assembleNode(ASTNode* node)
+	void Assembler::assembleNode(LX::Parser::ASTNode* node)
 	{
 		nodeAssemblers[node->type](*this, node);
 	}
 
-	void Assembler::assemble(FunctionDeclaration& AST, const std::string outputDir, const std::string lx_fileName)
+	void Assembler::assemble(LX::Parser::FunctionDeclaration& AST, const std::string outputDir, const std::string lx_fileName)
 	{
 		// Adds the function to the function list
 		std::string funcDecl = AST.returnTypes[0].name + " " + AST.name.name + "(";
@@ -26,7 +26,7 @@ namespace lx
 		{
 			if (i != 0) { funcDecl += ", "; }
 
-			VariableDeclaration* arg = static_cast<VariableDeclaration*>(AST.args[i].get());
+			LX::Parser::VariableDeclaration* arg = static_cast<LX::Parser::VariableDeclaration*>(AST.args[i].get());
 
 			if (arg->isConst()) { funcDecl += "const "; }
 
@@ -52,7 +52,7 @@ namespace lx
 		// Adds the function declaration to the output stream
 		out << funcDecl << "\n{\n";
 
-		for (std::unique_ptr<ASTNode>& node : AST.body)
+		for (std::unique_ptr<LX::Parser::ASTNode>& node : AST.body)
 		{
 			assembleNode(node.get());
 		}
@@ -92,20 +92,20 @@ namespace lx
 
 #include <assemble-ast.h>
 
-namespace lx
+namespace LX::Translator
 {
-	std::unordered_map<ASTNode::NodeType, std::function<void(Assembler&, ASTNode*)>> Assembler::nodeAssemblers =
+	std::unordered_map<LX::Parser::ASTNode::NodeType, std::function<void(Assembler&, LX::Parser::ASTNode*)>> Assembler::nodeAssemblers =
 	{
-		{ ASTNode::NodeType::IDENTIFIER,					 assembleIdentifier					},
-		{ ASTNode::NodeType::VARIABLE_DECLARATION,			 assembleVariableDeclaration		},
-		{ ASTNode::NodeType::ASSIGNMENT,					 assembleAssignment					},
-		{ ASTNode::NodeType::OPERATION,						 assembleOperation					},
-		{ ASTNode::NodeType::UNARY_OPERATION,				 assembleUnaryOperation				},
-		{ ASTNode::NodeType::FUNCTION_CALL,					 assembleFunctionCall				},
-		{ ASTNode::NodeType::STRING_LITERAL,				 assembleStringLiteral				},
-		{ ASTNode::NodeType::BRACKETED_EXPRESSION,			 assembleBracketedExpression		},
-		{ ASTNode::NodeType::IF_STATEMENT,					 assembleIfStatement				},
-		{ ASTNode::NodeType::RETURN_STATEMENT,				 assembleReturnStatement			},
-		{ ASTNode::NodeType::UNDEFINED,						 assembleUndefined					}
+		{ LX::Parser::ASTNode::NodeType::IDENTIFIER,					 assembleIdentifier					},
+		{ LX::Parser::ASTNode::NodeType::VARIABLE_DECLARATION,			 assembleVariableDeclaration		},
+		{ LX::Parser::ASTNode::NodeType::ASSIGNMENT,					 assembleAssignment					},
+		{ LX::Parser::ASTNode::NodeType::OPERATION,						 assembleOperation					},
+		{ LX::Parser::ASTNode::NodeType::UNARY_OPERATION,				 assembleUnaryOperation				},
+		{ LX::Parser::ASTNode::NodeType::FUNCTION_CALL,					 assembleFunctionCall				},
+		{ LX::Parser::ASTNode::NodeType::STRING_LITERAL,				 assembleStringLiteral				},
+		{ LX::Parser::ASTNode::NodeType::BRACKETED_EXPRESSION,			 assembleBracketedExpression		},
+		{ LX::Parser::ASTNode::NodeType::IF_STATEMENT,					 assembleIfStatement				},
+		{ LX::Parser::ASTNode::NodeType::RETURN_STATEMENT,				 assembleReturnStatement			},
+		{ LX::Parser::ASTNode::NodeType::UNDEFINED,						 assembleUndefined					}
 	};
 }

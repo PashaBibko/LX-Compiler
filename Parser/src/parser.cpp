@@ -8,14 +8,16 @@
 
 #include <debug/DebugLog.h>
 
-namespace lx
+namespace LX::Parser
 {
 	// Namespace to hold all the constexpr functions
 	// This is to help split them up from the parser code
 	namespace Constexprs
 	{
-		constexpr bool isOperator(TokenType type)
+		constexpr bool isOperator(LX::Lexer::TokenType type)
 		{
+			using namespace LX::Lexer;
+
 			switch (type)
 			{
 				// Basic math operators
@@ -57,8 +59,10 @@ namespace lx
 			}
 		}
 
-		constexpr bool isUnaryOnlyOperator(TokenType type)
+		constexpr bool isUnaryOnlyOperator(LX::Lexer::TokenType type)
 		{
+			using namespace LX::Lexer;
+
 			switch (type)
 			{
 				// Unary operators
@@ -75,8 +79,10 @@ namespace lx
 			}
 		}
 
-		constexpr bool isUnaryOperator(TokenType type)
+		constexpr bool isUnaryOperator(LX::Lexer::TokenType type)
 		{
+			using namespace LX::Lexer;
+
 			if (isUnaryOnlyOperator(type))
 				return true;
 
@@ -95,8 +101,10 @@ namespace lx
 			}
 		}
 
-		constexpr bool isVariableDeclaration(TokenType type)
+		constexpr bool isVariableDeclaration(LX::Lexer::TokenType type)
 		{
+			using namespace LX::Lexer;
+
 			switch (type)
 			{
 				// Var Types
@@ -115,8 +123,10 @@ namespace lx
 			}
 		}
 
-		constexpr bool isVarModifier(TokenType type)
+		constexpr bool isVarModifier(LX::Lexer::TokenType type)
 		{
+			using namespace LX::Lexer;
+
 			switch (type)
 			{
 				// Var Modifiers
@@ -138,7 +148,7 @@ namespace lx
 		std::vector<std::unique_ptr<ASTNode>> out;
 
 		// Check for the left brace
-		if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_BRACE)
+		if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::LEFT_BRACE)
 		{
 			throw std::runtime_error("Expected left brace");
 		}
@@ -147,7 +157,7 @@ namespace lx
 		currentIndex++;
 
 		// Loop through the body
-		while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACE)
+		while (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_BRACE)
 		{
 			// Parse the body
 			out.push_back(parseIfStatement());
@@ -177,19 +187,19 @@ namespace lx
 		// Switch statement to handle the different types of primary expressions
 		switch (currentTokens->operator[](currentIndex).type)
 		{
-			case TokenType::STRING_LITERAL:
+			case LX::Lexer::TokenType::STRING_LITERAL:
 			{
 				// Return a StringLiteral type
 				return std::make_unique<StringLiteral>(currentTokens->operator[](currentIndex).value);
 			}
 
-			case TokenType::IDENTIFIER:
+			case LX::Lexer::TokenType::IDENTIFIER:
 			{
 				// Return an Identifier type
 				return std::make_unique<Identifier>(currentTokens->operator[](currentIndex).value);
 			}
 
-			case TokenType::LEFT_PAREN:
+			case LX::Lexer::TokenType::LEFT_PAREN:
 			{
 				// Skip the left parenthesis
 				currentIndex++;
@@ -201,7 +211,7 @@ namespace lx
 				out->expr = parseFunctionCall();
 
 				// Check for the right parenthesis
-				if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+				if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_PAREN)
 				{
 					std::cerr << "ERROR: Expected right parenthesis" << std::endl;
 					return nullptr;
@@ -304,7 +314,7 @@ namespace lx
 	std::unique_ptr<ASTNode> Parser::parseFunctionCall()
 	{
 		// Checks if the current tokens are a function call
-		if (currentTokens->operator[](currentIndex).type == TokenType::IDENTIFIER && currentTokens->operator[](currentIndex + 1).type == TokenType::LEFT_PAREN)
+		if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::IDENTIFIER && currentTokens->operator[](currentIndex + 1).type == LX::Lexer::TokenType::LEFT_PAREN)
 		{
 			// Create the output as a FunctionCall type to allow access
 			std::unique_ptr<FunctionCall> out = std::make_unique<FunctionCall>();
@@ -316,12 +326,12 @@ namespace lx
 			currentIndex = currentIndex + 2;
 
 			// Loops through the arguments
-			while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			while (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_PAREN)
 			{
 				// Switch statement to handle the different types of arguments
 				switch (currentTokens->operator[](currentIndex).type)
 				{
-					case TokenType::COMMA:
+					case LX::Lexer::TokenType::COMMA:
 						// Iterate to skip the comma
 						currentIndex++;
 						break;
@@ -346,7 +356,7 @@ namespace lx
 
 	std::unique_ptr<ASTNode> Parser::parseReturnStatement()
 	{
-		if (currentTokens->operator[](currentIndex).type == TokenType::RETURN)
+		if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::RETURN)
 		{
 			// Skip the return token
 			currentIndex++;
@@ -370,7 +380,7 @@ namespace lx
 		// Parses the first token
 		std::unique_ptr<ASTNode> asignee = parseReturnStatement();
 
-		if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
+		if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::ASSIGN)
 		{
 			// Create the output as an Assignment type to allow access
 			std::unique_ptr<Assignment> out = std::make_unique<Assignment>();
@@ -415,7 +425,7 @@ namespace lx
 			{
 				switch (currentTokens->operator[](currentIndex).type)
 				{
-					case TokenType::CONST:
+					case LX::Lexer::TokenType::CONST:
 						out->setConst();
 						break;
 
@@ -431,11 +441,11 @@ namespace lx
 			// Set the type of the variable
 			switch (currentTokens->operator[](currentIndex).type)
 			{
-			case TokenType::INT_DEC:
+			case LX::Lexer::TokenType::INT_DEC:
 				out->varType.name = "int";
 				break;
 
-			case TokenType::STR_DEC:
+			case LX::Lexer::TokenType::STR_DEC:
 				out->varType.name = "string";
 				break;
 			}
@@ -450,7 +460,7 @@ namespace lx
 			currentIndex++;
 
 			// 
-			if (currentTokens->operator[](currentIndex).type == TokenType::ASSIGN)
+			if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::ASSIGN)
 			{
 				// Skip the assignment operator
 				currentIndex++;
@@ -476,7 +486,7 @@ namespace lx
 
 	std::unique_ptr<ASTNode> Parser::parseIfStatement()
 	{
-		if (currentTokens->operator[](currentIndex).type == TokenType::IF)
+		if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::IF)
 		{
 			// Skip the if token
 			currentIndex++;
@@ -485,7 +495,7 @@ namespace lx
 			std::unique_ptr<IfStatement> out = std::make_unique<IfStatement>(IfStatement::IfType::IF);
 
 			// Check for the left parenthesis
-			if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+			if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::LEFT_PAREN)
 			{
 				std::cerr << "ERROR: Expected left parenthesis" << std::endl;
 				return nullptr;
@@ -498,7 +508,7 @@ namespace lx
 			out->condition = parseFunctionCall();
 
 			// Check for the right parenthesis
-			if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_PAREN)
 			{
 				std::cerr << "ERROR: Expected right parenthesis" << std::endl;
 				return nullptr;
@@ -514,7 +524,7 @@ namespace lx
 			IfStatement* currentIf = out.get();
 
 			// Checks for the elif token
-			while (currentTokens->operator[](currentIndex).type == TokenType::ELIF)
+			while (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::ELIF)
 			{
 				// Skip the elif token
 				currentIndex++;
@@ -523,7 +533,7 @@ namespace lx
 				currentIf->next = std::make_unique<IfStatement>(IfStatement::IfType::ELSE_IF);
 
 				// Check for the left parenthesis
-				if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+				if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::LEFT_PAREN)
 				{
 					std::cerr << "ERROR: Expected left parenthesis" << std::endl;
 					return nullptr;
@@ -536,7 +546,7 @@ namespace lx
 				currentIf->next->condition = parseFunctionCall();
 
 				// Check for the right parenthesis
-				if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+				if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_PAREN)
 				{
 					std::cerr << "ERROR: Expected right parenthesis" << std::endl;
 					return nullptr;
@@ -553,7 +563,7 @@ namespace lx
 			}
 
 			// Checks for the else token
-			if (currentTokens->operator[](currentIndex).type == TokenType::ELSE)
+			if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::ELSE)
 			{
 				// Skip the else token
 				currentIndex++;
@@ -573,7 +583,7 @@ namespace lx
 
 	FunctionDeclaration Parser::parseFunctionDeclaration()
 	{
-		if (currentTokens->operator[](currentIndex).type == TokenType::FUNCTION)
+		if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::FUNCTION)
 		{
 			// Skip the function token
 			currentIndex++;
@@ -582,17 +592,17 @@ namespace lx
 			FunctionDeclaration out;
 
 			// Check for return type
-			if (currentTokens->operator[](currentIndex).type == TokenType::LEFT_BRACKET)
+			if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::LEFT_BRACKET)
 			{
 				currentIndex++;
 
 				switch (currentTokens->operator[](currentIndex).type)
 				{
-					case TokenType::INT_DEC:
+					case LX::Lexer::TokenType::INT_DEC:
 						out.returnTypes.push_back(Identifier("int"));
 						break;
 
-					case TokenType::STR_DEC:
+					case LX::Lexer::TokenType::STR_DEC:
 						out.returnTypes.push_back(Identifier("std::string"));
 						break;
 
@@ -603,7 +613,7 @@ namespace lx
 				// Check for the closing bracket
 				currentIndex++;
 
-				if (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_BRACKET)
+				if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_BRACKET)
 				{
 					std::cerr << "ERROR: Expected closing bracket" << std::endl;
 					return FunctionDeclaration();
@@ -612,7 +622,7 @@ namespace lx
 				currentIndex++;
 			}
 
-			if (currentTokens->operator[](currentIndex).type != TokenType::IDENTIFIER)
+			if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::IDENTIFIER)
 			{
 				std::cerr << "ERROR: Expected function name" << std::endl;
 				return FunctionDeclaration();
@@ -625,7 +635,7 @@ namespace lx
 			currentIndex++;
 
 			// Check for the left parenthesis
-			if (currentTokens->operator[](currentIndex).type != TokenType::LEFT_PAREN)
+			if (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::LEFT_PAREN)
 			{
 				std::cerr << "ERROR: Expected left parenthesis" << std::endl;
 				return FunctionDeclaration();
@@ -633,9 +643,9 @@ namespace lx
 
 			currentIndex++;
 
-			while (currentTokens->operator[](currentIndex).type != TokenType::RIGHT_PAREN)
+			while (currentTokens->operator[](currentIndex).type != LX::Lexer::TokenType::RIGHT_PAREN)
 			{
-				if (currentTokens->operator[](currentIndex).type == TokenType::END_OF_FILE)
+				if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::END_OF_FILE)
 				{
 					std::cerr << "ERROR: Expected right parenthesis" << std::endl;
 					return FunctionDeclaration();
@@ -648,7 +658,7 @@ namespace lx
 					return FunctionDeclaration();
 				}
 
-				if (currentTokens->operator[](currentIndex).type == TokenType::COMMA)
+				if (currentTokens->operator[](currentIndex).type == LX::Lexer::TokenType::COMMA)
 				{
 					currentIndex++;
 				}
@@ -668,7 +678,7 @@ namespace lx
 		}
 	}
 
-	void Parser::parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode)
+	void Parser::parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out, bool debugMode)
 	{
 		// Initialize
 		currentTokens = &tokens;
@@ -680,11 +690,11 @@ namespace lx
 		}
 
 		// Loop through the tokens
-		while ((*currentTokens)[currentIndex].type != TokenType::END_OF_FILE)
+		while ((*currentTokens)[currentIndex].type != LX::Lexer::TokenType::END_OF_FILE)
 		{
 			out.functions.push_back(parseFunctionDeclaration());
 
-			DebugLog(&out.functions.back(), 0);
+			LX::Debug::DebugLog(&out.functions.back(), 0);
 		}
 	}
 }

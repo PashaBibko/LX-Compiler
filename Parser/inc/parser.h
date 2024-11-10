@@ -4,13 +4,13 @@
 
 #include <debug/DebugLog.h>
 
-namespace lx 
+namespace LX::Parser
 {
 	class Parser
 	{
 	private:
 		// Current tokens
-		const std::vector<Token>* currentTokens;
+		const std::vector<LX::Lexer::Token>* currentTokens;
 
 		// Current index in the tokens
 		size_t currentIndex = 0;
@@ -37,6 +37,6 @@ namespace lx
 	public:
 		Parser() {}
 
-		void parse(const std::vector<Token>& tokens, FileAST& out, bool debugMode);
+		void parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out, bool debugMode);
 	};
 }

@@ -9,7 +9,7 @@
 #include <tuple>
 
 // Foward declarations
-namespace lx
+namespace LX::Parser
 {
 	// Forward declarations
 	class ASTNode;
@@ -19,11 +19,11 @@ namespace lx
 	typedef unsigned char Flags;
 	typedef std::vector<std::unique_ptr<ASTNode>> AST;
 
-#define FLAG_VAL(name, value) static constexpr Flags name = value;
-#define FLAG_SET(name) inline void set##name() { flags |= name##FlagVal; }
-#define FLAG_GET(name) inline bool is##name() const { return flags & name##FlagVal; }
+	#define FLAG_VAL(name, value) static constexpr Flags name = value;
+	#define FLAG_SET(name) inline void set##name() { flags |= name##FlagVal; }
+	#define FLAG_GET(name) inline bool is##name() const { return flags & name##FlagVal; }
 
-#define FLAG_DEF(name, value) FLAG_VAL(name##FlagVal, value) FLAG_SET(name) FLAG_GET(name)
+	#define FLAG_DEF(name, value) FLAG_VAL(name##FlagVal, value) FLAG_SET(name) FLAG_GET(name)
 
 	/*
 	* @brief Base class for all AST nodes
@@ -127,7 +127,7 @@ namespace lx
 			std::unique_ptr<ASTNode> lhs;
 			std::unique_ptr<ASTNode> rhs;
 
-			TokenType op;
+			LX::Lexer::TokenType op;
 	};
 
 	class UnaryOperation : public ASTNode
@@ -146,7 +146,7 @@ namespace lx
 			// Contents of the operation
 			std::unique_ptr<ASTNode> val;
 
-			TokenType op;
+			LX::Lexer::TokenType op;
 			Sided side;
 	};
 

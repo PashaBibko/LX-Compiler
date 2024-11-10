@@ -134,12 +134,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="inc\identifier-tree.h" />
     <ClInclude Include="inc\lexer.h" />
     <ClInclude Include="inc\modules\modules.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\identifier-tree.cpp" />
     <ClCompile Include="src\lexer.cpp" />
     <ClCompile Include="src\modules\classLexer.cpp" />
     <ClCompile Include="src\modules\enumLexer.cpp" />

@@ -7,16 +7,16 @@
 
 #include <unordered_map>
 
-namespace Common
+namespace LX::Common
 {
 	struct LexerOutput
 	{
-		std::vector<lx::Token> funcTokens;
+		std::vector<LX::Lexer::Token> funcTokens;
 	};
 
 	struct ParserOutput
 	{
-		lx::FileAST ast;
+		LX::Parser::FileAST ast;
 	};
 
 	struct DataStorage

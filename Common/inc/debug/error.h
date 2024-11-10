@@ -6,7 +6,7 @@
 
 #define NL "\n"
 
-namespace lx
+namespace LX::Debug
 {
 	struct Error
 	{
@@ -25,10 +25,10 @@ namespace lx
 		void display() const
 		{
 			std::cerr << "LX ERROR: " << NL;
-			std::cerr << "Thrown from: " << fileName << " at line: " << lineNum << NL;
-			std::cerr << "Message: " << errorMessage << NL << NL;
+			std::cerr << "Thrown from: " << fileName << " at line: " << lineNum << "\n";
+			std::cerr << "Message: " << errorMessage << "\n\n";
 		}
 	};
 }
 
-#define THROW_ERROR(msg) throw Error(__FILE__, __LINE__, msg)
+#define THROW_ERROR(msg) throw LX::Debug::Error(__FILE__, __LINE__, msg)

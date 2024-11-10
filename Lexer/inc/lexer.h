@@ -1,7 +1,6 @@
 #pragma once
 
 #include <modules/modules.h>
-#include <identifier-tree.h>
 #include <cdt/token.h>
 
 #include <debug/error.h>
@@ -12,7 +11,7 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace lx
+namespace LX::Lexer
 {
 	enum class SectType
 	{

@@ -7,7 +7,7 @@
 #include <fstream>
 #include <set>
 
-namespace lx 
+namespace LX::Translator
 {
 	class Assembler
 	{
@@ -18,12 +18,12 @@ namespace lx
 			std::set<std::string> includes;
 			std::ostringstream out;
 
-			static std::unordered_map<ASTNode::NodeType, std::function<void(Assembler&, ASTNode*)>> nodeAssemblers;
+			static std::unordered_map<LX::Parser::ASTNode::NodeType, std::function<void(Assembler&, LX::Parser::ASTNode*)>> nodeAssemblers;
 
 			Assembler() = default;
 
-			void assembleNode(ASTNode* node);
+			void assembleNode(LX::Parser::ASTNode* node);
 
-			void assemble(FunctionDeclaration& AST, const std::string outputDir, const std::string lx_fileName);
+			void assemble(LX::Parser::FunctionDeclaration& AST, const std::string outputDir, const std::string lx_fileName);
 	};
 }
