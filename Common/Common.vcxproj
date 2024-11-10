@@ -135,7 +135,7 @@
     <ClInclude Include="inc\cdt\ast.h" />
     <ClInclude Include="inc\cdt\data.h" />
     <ClInclude Include="inc\cdt\token.h" />
-    <ClInclude Include="inc\debug\DebugLog.h" />
+    <ClInclude Include="inc\debug\Log.h" />
     <ClInclude Include="inc\debug\error.h" />
     <ClInclude Include="inc\macro\dll-func.h" />
   </ItemGroup>

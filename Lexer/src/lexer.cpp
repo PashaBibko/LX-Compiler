@@ -4,7 +4,7 @@
 #include <cdt/token.h>
 
 #include <debug/error.h>
-#include <debug/DebugLog.h>
+#include <debug/Log.h>
 
 #include <unordered_map>
 #include <functional>
@@ -117,7 +117,7 @@ namespace LX::Lexer
 
 	}
 
-	Lexer::Lexer(const std::string& source) : currentSource(source)
+	Lexer::Lexer(const std::string& source, const bool debug) : currentSource(source), debug(debug)
 	{
 		// Checks that the source is not empty
 		if (source.empty())
@@ -213,8 +213,9 @@ namespace LX::Lexer
 
 						// Generates the tokens (automatically adds them to the relevant vector)
 						s.generateTokens();
-
-						//s.debugDisplay();
+						
+						// If debug is enabled, then it will add the block to the debug vector
+						if (debug) { sections.push_back(s); }
 
 						endOfLastBlock = currentIndex + 1;
 					}

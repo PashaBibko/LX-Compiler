@@ -17,19 +17,19 @@ namespace LX
     {
         // Includes the translate function from the DLL
         [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void lexSource(string folder, string srcDir, string fileName, bool debug);
+        private static extern int lexSource(string folder, string srcDir, string fileName, bool debug);
 
         //
         [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void parseTokens();
+        private static extern bool parseTokens(bool debug, int id);
 
         // 
         [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void translateAST(string folder, string filename);
+        private static extern bool translateAST(string folder, string filename, bool debug, int id);
 
         //
         [DllImport("API.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void CreateHeaderFile(string folder);
+        private static extern bool CreateHeaderFile(string folder);
 
         // Main function
         static void Main(string[] args)
@@ -54,6 +54,9 @@ namespace LX
                 Console.WriteLine("Only accepts one argument, received " + args.Length);
             }
 
+            // Foward declaration of the debug variable
+            bool debug = false;
+
             try
             {
                 // Creates a new BuildInfo object
@@ -77,7 +80,6 @@ namespace LX
                 }
 
                 // Determines if the program is in debug mode
-                bool debug = false;
                 try { debug = info.JsonDoc.RootElement.GetProperty("debug").GetBoolean(); }
                 catch (KeyNotFoundException) { /* Should be empty */ }
 
@@ -90,14 +92,37 @@ namespace LX
                     // Loops through all the .lx files
                     foreach (string file in files)
                     {
-                        lexSource(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
-                        parseTokens();
-                        translateAST(info.ProjectDir, Path.GetFileNameWithoutExtension(file) + ".lx");
+                        int ID = lexSource(info.ProjectDir, Path.GetFileNameWithoutExtension(srcDir), Path.GetFileNameWithoutExtension(file) + ".lx", debug);
+
+                        if (ID == -1)
+                        {
+                            throw new Exception("An error occured during lexing");
+                        }
+
+                        if (parseTokens(debug, ID) == false)
+                        {
+                            throw new Exception("An error occured during parsing");
+                        }
+                    }
+
+                    int nextID = 0;
+
+                    foreach (string file in files)
+                    {
+                        if (translateAST(info.ProjectDir, Path.GetFileNameWithoutExtension(file) + ".lx", debug, nextID) == false)
+                        {
+                            throw new Exception("An error occured during translation");
+                        }
+
+                        nextID++;
                     }
                 }
 
                 // Creates a header file
-                CreateHeaderFile(info.ProjectDir);
+                if (CreateHeaderFile(info.ProjectDir) == false)
+                {
+                    throw new Exception("An error occured during header file creation");
+                }
 
                 // Loop through all the .cpp files in the project directory
                 foreach (string file in Directory.GetFiles(Path.Combine(info.ProjectDir, "build"), "*.cpp"))
@@ -122,11 +147,20 @@ namespace LX
             
             catch (Exception e)
             {
-                Console.WriteLine("FATAL ERROR in: " + e.TargetSite);
+                if (debug == true)
+                {
+                    Console.WriteLine("FATAL ERROR in: " + e.TargetSite);
+                }
+
+                // All neccessary info should be displayed here unless trying to debug the compiler itself
                 Console.WriteLine("ERROR: " + e.Message);
-                Console.WriteLine();
-                Console.WriteLine("Call Stack:");
-                Console.WriteLine(e.StackTrace);
+
+                if (debug == true)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Call Stack:");
+                    Console.WriteLine(e.StackTrace);
+                }
             }
         }
     }

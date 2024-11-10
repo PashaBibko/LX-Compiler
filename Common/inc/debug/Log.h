@@ -10,7 +10,7 @@
 
 namespace LX::Debug
 {
-	inline void DebugLog(const LX::Lexer::Token& token)
+	inline void Log(const LX::Lexer::Token& token)
 	{
 		switch (token.type)
 		{
@@ -69,27 +69,27 @@ namespace LX::Debug
 		}
 	}
 
-	inline void DebugLog(const std::vector<LX::Lexer::Token>& tokens)
+	inline void Log(const std::vector<LX::Lexer::Token>& tokens)
 	{
 		int counter = 0;
 
 		for (const LX::Lexer::Token& token : tokens)
 		{
 			std::cout << counter << ": ";
-			DebugLog(token);
+			Log(token);
 			counter++;
 		}
 	}
 
-	void DebugLog(const std::unique_ptr<LX::Parser::ASTNode>& node, int depth);
+	void Log(const std::unique_ptr<LX::Parser::ASTNode>& node, int depth);
 
-	inline void DebugLogA(std::unique_ptr<LX::Parser::Assignment>& assignment, int depth)
+	inline void LogA(std::unique_ptr<LX::Parser::Assignment>& assignment, int depth)
 	{
 		std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
-		DebugLog(assignment->val, depth + 1);
+		Log(assignment->val, depth + 1);
 	}
 
-	inline void DebugLog(LX::Parser::IfStatement* ifStatement, int depth)
+	inline void Log(LX::Parser::IfStatement* ifStatement, int depth)
 	{
 		switch (ifStatement->type)
 		{
@@ -97,13 +97,13 @@ namespace LX::Debug
 			{
 				std::cout << std::string(depth, '\t') << "If Statement: " << std::endl;
 
-				DebugLog(ifStatement->condition, depth + 1);
+				Log(ifStatement->condition, depth + 1);
 
 				std::cout << std::string(depth, '\t') << "Then: " << std::endl;
 
 				for (std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
 				{
-					DebugLog(statement, depth + 1);
+					Log(statement, depth + 1);
 				}
 
 				break;
@@ -113,13 +113,13 @@ namespace LX::Debug
 			{
 				std::cout << std::string(depth, '\t') << "Else If Statement: " << std::endl;
 
-				DebugLog(ifStatement->condition, depth + 1);
+				Log(ifStatement->condition, depth + 1);
 
 				std::cout << std::string(depth, '\t') << "Then: " << std::endl;
 
 				for (std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
 				{
-					DebugLog(statement, depth + 1);
+					Log(statement, depth + 1);
 				}
 
 				break;
@@ -131,7 +131,7 @@ namespace LX::Debug
 
 				for (std::unique_ptr<LX::Parser::ASTNode>& statement : ifStatement->body)
 				{
-					DebugLog(statement, depth + 1);
+					Log(statement, depth + 1);
 				}
 
 				break;
@@ -140,11 +140,11 @@ namespace LX::Debug
 
 		if (ifStatement->next != nullptr)
 		{
-			DebugLog(ifStatement->next.get(), depth);
+			Log(ifStatement->next.get(), depth);
 		}
 	}
 
-	inline void DebugLog(LX::Parser::FunctionDeclaration* funcDecl, int depth)
+	inline void Log(LX::Parser::FunctionDeclaration* funcDecl, int depth)
 	{
 		std::cout << std::string(depth, '\t') << "Function Declaration: " << funcDecl->name.name << std::endl;
 
@@ -155,16 +155,16 @@ namespace LX::Debug
 
 		for (std::unique_ptr<LX::Parser::ASTNode>& arg : funcDecl->args)
 		{
-			DebugLog(arg, depth + 1);
+			Log(arg, depth + 1);
 		}
 
 		for (std::unique_ptr<LX::Parser::ASTNode>& statement : funcDecl->body)
 		{
-			DebugLog(statement, depth + 1);
+			Log(statement, depth + 1);
 		}
 	}
 
-	inline void DebugLog(const std::unique_ptr<LX::Parser::ASTNode>& node, int depth)
+	inline void Log(const std::unique_ptr<LX::Parser::ASTNode>& node, int depth)
 	{
 		switch (node->type)
 		{
@@ -186,7 +186,7 @@ namespace LX::Debug
 
 				if (varDecl->val != nullptr)
 				{
-					DebugLogA(varDecl->val, depth + 1);
+					LogA(varDecl->val, depth + 1);
 				}
 
 				return;
@@ -197,7 +197,7 @@ namespace LX::Debug
 				LX::Parser::Assignment* assignment = static_cast<LX::Parser::Assignment*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Assignment: " << assignment->name.name << std::endl;
-				DebugLog(assignment->val, depth + 1);
+				Log(assignment->val, depth + 1);
 
 				return;
 			}
@@ -206,10 +206,10 @@ namespace LX::Debug
 			{
 				LX::Parser::Operation* operation = static_cast<LX::Parser::Operation*>(node.get());
 
-				DebugLog(operation->lhs, depth + 1);
+				Log(operation->lhs, depth + 1);
 				std::cout << std::string(depth, '\t') << "Operation: ";
-				DebugLog(operation->op);
-				DebugLog(operation->rhs, depth + 1);
+				Log(operation->op);
+				Log(operation->rhs, depth + 1);
 
 				return;
 			}
@@ -219,8 +219,8 @@ namespace LX::Debug
 				LX::Parser::UnaryOperation* unaryOperation = static_cast<LX::Parser::UnaryOperation*>(node.get());
 
 				std::cout << std::string(depth, '\t') << "Unary Operation: ";
-				DebugLog(unaryOperation->op);
-				DebugLog(unaryOperation->val, depth + 1);
+				Log(unaryOperation->op);
+				Log(unaryOperation->val, depth + 1);
 
 				std::cout << std::string(depth, '\t') << (unaryOperation->side == LX::Parser::UnaryOperation::Sided::LEFT ? "Left" : "Right") << " sided" << std::endl;
 
@@ -235,7 +235,7 @@ namespace LX::Debug
 
 				for (std::unique_ptr<LX::Parser::ASTNode>& arg : functionCall->args)
 				{
-					DebugLog(arg, depth + 1);
+					Log(arg, depth + 1);
 				}
 
 				return;
@@ -252,7 +252,7 @@ namespace LX::Debug
 
 			case LX::Parser::ASTNode::NodeType::IF_STATEMENT:
 			{
-				DebugLog(static_cast<LX::Parser::IfStatement*>(node.get()), depth);
+				Log(static_cast<LX::Parser::IfStatement*>(node.get()), depth);
 
 				return;
 			}
@@ -263,7 +263,7 @@ namespace LX::Debug
 
 				std::cout << std::string(depth, '\t') << "Return Statement: " << std::endl;
 
-				DebugLog(returnStatement->expr, depth + 1);
+				Log(returnStatement->expr, depth + 1);
 
 				return;
 			}
@@ -274,7 +274,7 @@ namespace LX::Debug
 
 				std::cout << std::string(depth, '\t') << "Bracketed Expression: " << std::endl;
 
-				DebugLog(bracketedExpression->expr, depth + 1);
+				Log(bracketedExpression->expr, depth + 1);
 
 				return;
 			}
@@ -288,11 +288,11 @@ namespace LX::Debug
 		}
 	}
 
-	inline void DebugLog(LX::Parser::FileAST& AST)
+	inline void Log(LX::Parser::FileAST& AST)
 	{
 		for (LX::Parser::FunctionDeclaration& funcDecl : AST.functions)
 		{
-			DebugLog(&funcDecl, 0);
+			Log(&funcDecl, 0);
 		}
 
 	}

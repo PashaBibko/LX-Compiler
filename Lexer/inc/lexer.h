@@ -95,15 +95,21 @@ namespace LX::Lexer
 			// Reference to the source code
 			const std::string& currentSource;
 
+			//
+			const bool debug;
+
 			// Token vectors for each of the token types
 
 			std::vector<Token> funcTokens;
+
+			// Debug vector to hold the stream sections
+			std::vector<LexerStreamSect> sections;
 
 		public:
 			// Constructor that takes the source code string
 			// It will do everything needed to lex the source code
 			// The output for each of the token types will be stored in thier respective vectors
-			Lexer(const std::string& source);
+			Lexer(const std::string& source, const bool debug);
 
 			// Default destructor - Here to look pretty
 			~Lexer() = default;
@@ -112,6 +118,12 @@ namespace LX::Lexer
 			inline std::vector<Token>& getFunctionTokens()
 			{
 				return funcTokens;
+			}
+
+			// Returns the stream sections
+			inline std::vector<LexerStreamSect>& getSections()
+			{
+				return sections;
 			}
 	};
 }

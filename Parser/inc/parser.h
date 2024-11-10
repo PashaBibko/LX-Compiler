@@ -2,7 +2,7 @@
 
 #include <cdt/ast.h>
 
-#include <debug/DebugLog.h>
+#include <debug/Log.h>
 
 namespace LX::Parser
 {
@@ -37,6 +37,6 @@ namespace LX::Parser
 	public:
 		Parser() {}
 
-		void parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out, bool debugMode);
+		void parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out);
 	};
 }

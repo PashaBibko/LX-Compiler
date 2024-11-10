@@ -26,7 +26,7 @@
     <ClInclude Include="inc\cdt\token.h">
       <Filter>Header Files\cdt</Filter>
     </ClInclude>
-    <ClInclude Include="inc\debug\DebugLog.h">
+    <ClInclude Include="inc\debug\Log.h">
       <Filter>Header Files\debug</Filter>
     </ClInclude>
     <ClInclude Include="inc\debug\error.h">

@@ -6,7 +6,7 @@
 
 #include <macro/dll-func.h>
 
-#include <debug/DebugLog.h>
+#include <debug/Log.h>
 
 namespace LX::Parser
 {
@@ -678,7 +678,7 @@ namespace LX::Parser
 		}
 	}
 
-	void Parser::parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out, bool debugMode)
+	void Parser::parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out)
 	{
 		// Initialize
 		currentTokens = &tokens;
@@ -693,8 +693,6 @@ namespace LX::Parser
 		while ((*currentTokens)[currentIndex].type != LX::Lexer::TokenType::END_OF_FILE)
 		{
 			out.functions.push_back(parseFunctionDeclaration());
-
-			LX::Debug::DebugLog(&out.functions.back(), 0);
 		}
 	}
 }
