@@ -186,12 +186,12 @@ namespace LX::API
 		// Main translator function call
 		try
 		{
-			LX::Translator::Translator translator;
-
 			std::string outDir = std::string(folder) + "/build";
 
 			for (LX::Parser::FunctionDeclaration& func : astMap[id].functions)
 			{
+				LX::Translator::Translator translator;
+
 				translator.assemble(func, outDir, filename);
 			}
 
