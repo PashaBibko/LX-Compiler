@@ -51,44 +51,41 @@ namespace LX::Lexer
 	static bool constexpr isWhitespace(const char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
 
 	// Who doesn't love macros
-	#define SINGLE_CASE_OP(OP, TOKEN) case OP: { t.emplace_back(TokenType::TOKEN); break; }
+	#define SINGLE_CASE_OP(OP, TOKEN) case OP: { t.emplace_back(FuncToken::TOKEN); break; }
 
-	#define MULTI_CASE_OP(DEFAULT) if (auto it = opMap.find((*current)[currentIndex++ + 1]); it != opMap.end()) { t.emplace_back(it->second); } else { t.emplace_back(TokenType::DEFAULT); } break;
+	#define MULTI_CASE_OP(DEFAULT) if (auto it = opMap.find((*current)[currentIndex++ + 1]); it != opMap.end()) { t.emplace_back(it->second); } else { t.emplace_back(FuncToken::DEFAULT); } break;
 
-	static const std::unordered_map<std::string, TokenType> keywords =
+	static const std::unordered_map<std::string, FuncToken::Type> keywords =
 	{
 		// Variables
-		{ "int", TokenType::INT_DEC },
-		{ "string", TokenType::STR_DEC },
+		{ "int", FuncToken::INT_DEC },
+		{ "string", FuncToken::STR_DEC },
 
-		{ "const", TokenType::CONST },
+		{ "const", FuncToken::CONST },
 
 		// Control flow
-		{ "if", TokenType::IF },
-		{ "elif", TokenType::ELIF },
-		{ "else", TokenType::ELSE },
+		{ "if", FuncToken::IF },
+		{ "elif", FuncToken::ELIF },
+		{ "else", FuncToken::ELSE },
 
-		{ "for", TokenType::FOR },
-		{ "while", TokenType::WHILE },
+		{ "for", FuncToken::FOR },
+		{ "while", FuncToken::WHILE },
 
-		{ "break", TokenType::BREAK },
-		{ "continue", TokenType::CONTINUE },
-		{ "return", TokenType::RETURN },
-
-		{ "func", TokenType::FUNCTION },
-		{ "proc", TokenType::PROCEDURE },
+		{ "break", FuncToken::BREAK },
+		{ "continue", FuncToken::CONTINUE },
+		{ "return", FuncToken::RETURN },
 
 		// Logical
-		{ "&&", TokenType::AND },
-		{ "and", TokenType::AND },
+		{ "&&", FuncToken::AND },
+		{ "and", FuncToken::AND },
 
-		{ "||", TokenType::OR },
-		{ "or", TokenType::OR },
+		{ "||", FuncToken::OR },
+		{ "or", FuncToken::OR },
 
-		{ "not", TokenType::NOT }
+		{ "not", FuncToken::NOT }
 	};
 
-	static void lexFunctionFromStringView(LexerStreamSect& sect, std::vector<Token>& t, const std::string_view* current)
+	static void lexFunctionFromStringView(LexerStreamSect& sect, std::vector<FuncToken>& t, const std::string_view* current)
 	{
 		// Variables to keep track of the current index and the length of the current string
 		size_t currentIndex = 0;
@@ -119,7 +116,7 @@ namespace LX::Lexer
 
 				// Finds wether the token is a keyword or an identifier
 				if (auto it = keywords.find(word); it != keywords.end()) { t.emplace_back(it->second); }
-				else { t.emplace_back(TokenType::IDENTIFIER, word); }
+				else { t.emplace_back(FuncToken::IDENTIFIER, word); }
 			}
 
 			// Else it will be an operator or an invalid character
@@ -145,7 +142,7 @@ namespace LX::Lexer
 
 						// Uses emplace instead of push to avoid copying
 						// Unsure if std::string_view would be more efficient as this has a higher cache hit rate
-						t.emplace_back(TokenType::STRING_LITERAL, std::string(current->substr(stringStart, currentIndex - stringStart)));
+						t.emplace_back(FuncToken::STRING_LITERAL, std::string(current->substr(stringStart, currentIndex - stringStart)));
 
 						break;
 					}
@@ -168,10 +165,10 @@ namespace LX::Lexer
 					// Multi-case operators (Macro defined near the top of this file)
 					case '+':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '+', TokenType::INCREMENT },
-							{ '=', TokenType::PLUS_EQUALS }
+							{ '+', FuncToken::INCREMENT },
+							{ '=', FuncToken::PLUS_EQUALS }
 						};
 
 						MULTI_CASE_OP(PLUS)
@@ -179,11 +176,11 @@ namespace LX::Lexer
 
 					case '-':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '-', TokenType::DECREMENT },
-							{ '=', TokenType::MINUS_EQUALS },
-							{ '>', TokenType::ARROW }
+							{ '-', FuncToken::DECREMENT },
+							{ '=', FuncToken::MINUS_EQUALS },
+							{ '>', FuncToken::ARROW }
 						};
 
 						MULTI_CASE_OP(MINUS)
@@ -191,9 +188,9 @@ namespace LX::Lexer
 
 					case '*':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '=', TokenType::MULTIPLY_EQUALS }
+							{ '=', FuncToken::MULTIPLY_EQUALS }
 						};
 
 						MULTI_CASE_OP(MULTIPLY)
@@ -201,9 +198,9 @@ namespace LX::Lexer
 
 					case '/':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '=', TokenType::DIVIDE_EQUALS }
+							{ '=', FuncToken::DIVIDE_EQUALS }
 						};
 
 						MULTI_CASE_OP(DIVIDE)
@@ -211,10 +208,10 @@ namespace LX::Lexer
 
 					case '=':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '=', TokenType::EQUALS },
-							{ '>', TokenType::DOUBLE_ARROW }
+							{ '=', FuncToken::EQUALS },
+							{ '>', FuncToken::DOUBLE_ARROW }
 						};
 
 						MULTI_CASE_OP(ASSIGN)
@@ -224,9 +221,9 @@ namespace LX::Lexer
 
 					case '!':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '=', TokenType::NOT_EQUALS }
+							{ '=', FuncToken::NOT_EQUALS }
 						};
 
 						MULTI_CASE_OP(NOT)
@@ -234,9 +231,9 @@ namespace LX::Lexer
 
 					case '>':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '=', TokenType::GREATER_THAN_EQUALS }
+							{ '=', FuncToken::GREATER_THAN_EQUALS }
 						};
 
 						MULTI_CASE_OP(GREATER_THAN)
@@ -244,9 +241,9 @@ namespace LX::Lexer
 
 					case '<':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ '=', TokenType::LESS_THAN_EQUALS }
+							{ '=', FuncToken::LESS_THAN_EQUALS }
 						};
 
 						MULTI_CASE_OP(LESS_THAN)
@@ -254,9 +251,9 @@ namespace LX::Lexer
 
 					case ':':
 					{
-						static std::unordered_map<char, TokenType> opMap
+						static std::unordered_map<char, FuncToken::Type> opMap
 						{
-							{ ':', TokenType::DOUBLE_COLON }
+							{ ':', FuncToken::DOUBLE_COLON }
 						};
 
 						MULTI_CASE_OP(COLON)
@@ -278,14 +275,12 @@ namespace LX::Lexer
 	{
 		// Gets a reference to the correct vector in the lexer
 		// We use this instead of via the sect because it has less overhead
-		std::vector<Token>& t = sect.creator.getFunctionTokens();
-
-		// Lexes the identifier
-		lexFunctionFromStringView(sect, t, sect.getIdentifier());
-		t.emplace_back(TokenType::LEFT_BRACE);
+		std::vector<FuncToken>& t = sect.creator.getFunctionTokens();
 
 		// Lexes the block
+		t.emplace_back(FuncToken::LEFT_BRACE);
 		lexFunctionFromStringView(sect, t, sect.getBlock());
-		t.emplace_back(TokenType::RIGHT_BRACE);
+		t.emplace_back(FuncToken::RIGHT_BRACE);
+		t.emplace_back(FuncToken::END_OF_SCOPE);
 	}
 }

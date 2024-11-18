@@ -2,7 +2,7 @@
 
 This code is licensed under a propietary License found [here](LICENSE)
 
-The official website for the LX language can be found [here WIP](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+The official website for the LX language can be found [here (WIP)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 All information need to build and run the compiler is contained on this README but to use/learn the language it is recommended to use the offical website
 

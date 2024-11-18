@@ -1,0 +1,20 @@
+
+decorator<dec>
+func[typename T type] name(typename T var)
+{}
+
+enum name
+{}
+
+decorator<dec>
+shader[vec4] name(Uniform<vec3> gpos, vec2 uv)
+{}
+
+decorator<dec>
+class name<typename T>
+{}
+
+macro name(vars)
+{}
+
+keyword, identifier [] <> {} () ,

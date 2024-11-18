@@ -93,37 +93,37 @@ namespace LX::Translator
 		translator.out << ";";
 	}
 
-	static const std::unordered_map<LX::Lexer::TokenType, std::string> operatorMap = 
+	static const std::unordered_map<LX::Lexer::FuncToken::Type, std::string> operatorMap = 
 	{
-		{ LX::Lexer::TokenType::PLUS, "+"},
-		{ LX::Lexer::TokenType::MINUS, "-"},
-		{ LX::Lexer::TokenType::MULTIPLY, "*"},
-		{ LX::Lexer::TokenType::DIVIDE, "/"},
-		{ LX::Lexer::TokenType::MODULO, "%"},
+		{ LX::Lexer::FuncToken::PLUS, "+"},
+		{ LX::Lexer::FuncToken::MINUS, "-"},
+		{ LX::Lexer::FuncToken::MULTIPLY, "*"},
+		{ LX::Lexer::FuncToken::DIVIDE, "/"},
+		{ LX::Lexer::FuncToken::MODULO, "%"},
 
-		{ LX::Lexer::TokenType::PLUS_EQUALS, "+="},
-		{ LX::Lexer::TokenType::MINUS_EQUALS, "-="},
-		{ LX::Lexer::TokenType::MULTIPLY_EQUALS, "*="},
-		{ LX::Lexer::TokenType::DIVIDE_EQUALS, "/="},
+		{ LX::Lexer::FuncToken::PLUS_EQUALS, "+="},
+		{ LX::Lexer::FuncToken::MINUS_EQUALS, "-="},
+		{ LX::Lexer::FuncToken::MULTIPLY_EQUALS, "*="},
+		{ LX::Lexer::FuncToken::DIVIDE_EQUALS, "/="},
 
-		{ LX::Lexer::TokenType::EQUALS, "=="},
-		{ LX::Lexer::TokenType::NOT_EQUALS, "!="},
+		{ LX::Lexer::FuncToken::EQUALS, "=="},
+		{ LX::Lexer::FuncToken::NOT_EQUALS, "!="},
 
-		{ LX::Lexer::TokenType::LESS_THAN, "<"},
-		{ LX::Lexer::TokenType::LESS_THAN_EQUALS, "<="},
+		{ LX::Lexer::FuncToken::LESS_THAN, "<"},
+		{ LX::Lexer::FuncToken::LESS_THAN_EQUALS, "<="},
 
-		{ LX::Lexer::TokenType::GREATER_THAN, ">"},
-		{ LX::Lexer::TokenType::GREATER_THAN_EQUALS, ">="},
+		{ LX::Lexer::FuncToken::GREATER_THAN, ">"},
+		{ LX::Lexer::FuncToken::GREATER_THAN_EQUALS, ">="},
 
-		{ LX::Lexer::TokenType::AND, "&&"},
-		{ LX::Lexer::TokenType::OR, "||"},
-		{ LX::Lexer::TokenType::NOT, "!"},
+		{ LX::Lexer::FuncToken::AND, "&&"},
+		{ LX::Lexer::FuncToken::OR, "||"},
+		{ LX::Lexer::FuncToken::NOT, "!"},
 
-		{ LX::Lexer::TokenType::INCREMENT, "++"},
-		{ LX::Lexer::TokenType::DECREMENT, "--"}
+		{ LX::Lexer::FuncToken::INCREMENT, "++"},
+		{ LX::Lexer::FuncToken::DECREMENT, "--"}
 	};
 
-	static inline std::string getOperator(LX::Lexer::TokenType op)
+	static inline std::string getOperator(LX::Lexer::FuncToken::Type op)
 	{
 		return operatorMap.at(op);
 	}

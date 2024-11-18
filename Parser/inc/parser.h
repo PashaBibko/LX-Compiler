@@ -46,7 +46,7 @@ namespace LX::Parser
 	{
 	private:
 		// Current tokens
-		const std::vector<LX::Lexer::Token>* currentTokens;
+		const std::vector<LX::Lexer::FuncToken>* currentTokens;
 
 		// Current index in the tokens
 		size_t currentIndex = 0;
@@ -73,6 +73,6 @@ namespace LX::Parser
 	public:
 		Parser() {}
 
-		void parse(const std::vector<LX::Lexer::Token>& tokens, FileAST& out);
+		void parse(const std::vector<LX::Lexer::FuncToken>& tokens, FileAST& out);
 	};
 }

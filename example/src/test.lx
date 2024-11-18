@@ -1,32 +1,11 @@
-func[int]add(int a, int b)
+func[int] add(int a, int b)
 {
     return a + b
 }
 
-func[int]sub(int a, int b)
-{
-    return a - b
-}
-
 func[int] main()
 {
-    print("hello")
-    print(add(1, 2))
+    print("Hello, World!")
 
-    if (true)
-    {
-        print("Things are normal")
-
-        return 1 + 2
-    }
-
-    elif (false)
-    {
-        print("Time to go home")
-    }
-
-    else
-    {
-        print("What has gone on here")
-    }
+    return add(1, 2)
 }

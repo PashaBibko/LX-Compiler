@@ -63,7 +63,7 @@ namespace LX::API
 		return buffer.str();
 	}
 
-	std::unordered_map<int, std::vector<LX::Lexer::Token>> funcTokenMap;
+	std::unordered_map<int, std::vector<LX::Lexer::FuncToken>> funcTokenMap;
 	std::unordered_map<int, LX::Parser::FileAST> astMap;
 
 	// Lexer function call
@@ -105,7 +105,7 @@ namespace LX::API
 
 					if (userInput == "2")
 					{
-						for (const LX::Lexer::Token& token : funcTokenMap[id])
+						for (const LX::Lexer::FuncToken& token : funcTokenMap[id])
 						{
 							LX::Debug::Log(token);
 						}

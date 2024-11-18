@@ -42,125 +42,225 @@
 
 namespace LX::Lexer
 {
-	enum class TokenType : short
+	struct ScopeIdentifierToken
 	{
-		// Identifiers //
-		IDENTIFIER, // ( Word )
+		enum Type
+		{
+			// Brackets //
 
-		// Literals //
-		STRING_LITERAL,
+			// ()
+			LEFT_PAREN,
+			RIGHT_PAREN,
 
-		// Var Types //
+			// {}
+			LEFT_BRACE,
+			RIGHT_BRACE,
 
-		INT_DEC,
-		STR_DEC,
+			// []
+			LEFT_BRACKET,
+			RIGHT_BRACKET,
 
-		// Var Modifiers //
+			// <>
+			LEFT_ANGLE_BRACKET,
+			RIGHT_ANGLE_BRACKET,
 
-		CONST,
+			// Punctuation //
 
-		// Control flow //
-		// These are not identifiers because thier behavior cannot be changed at compile/runtime //
+			COMMA,
 
-		// Simple control flow
-		IF,
-		ELIF,
-		ELSE,
+			// General //
 
-		// Loops
-		FOR,
-		WHILE,
+			IDENTIFIER,
 
-		// Goto statements
-		BREAK,
-		CONTINUE,
-		RETURN,
+			// Keywords
 
-		// Functions
-		FUNCTION,
-		PROCEDURE,
+			DECORATOR,
+			TYPENAME,
+			UNIFORM,
 
-		// Operators //
+			FUNCTION,
+			ENUM,
+			CLASS,
+			STRUCT,
+			SHADER,
+			MACRO,
 
-		// Simple arithmetic operators
-		PLUS,
-		MINUS,
-		MULTIPLY,
-		DIVIDE,
-		MODULO,
+			// End of identifier //
+			END_OF_IDENTIFIER
+		};
 
-		// Complex arithmetic operators
-		PLUS_EQUALS,
-		MINUS_EQUALS,
-		MULTIPLY_EQUALS,
-		DIVIDE_EQUALS,
+		ScopeIdentifierToken() = default;
+		ScopeIdentifierToken(Type t, const std::string& v) : type(t), value(v) {}
 
-		POWER,
-
-		// Increment and decrement operators
-		INCREMENT,
-		DECREMENT,
-
-		// Comparison operators
-		EQUALS,
-		NOT_EQUALS,
-
-		GREATER_THAN, // >
-		GREATER_THAN_EQUALS, // >=
-
-		LESS_THAN, // <
-		LESS_THAN_EQUALS, // <=
-
-		// Logical operators
-		AND,
-		OR,
-		NOT,
-
-		// Assignment operators
-		ASSIGN,
-
-		// Separators //
-
-		// Singlechar
-		COMMA,
-		SEMICOLON,
-		COLON,
-		DOT,
-
-		// Multichar
-		ARROW, // ->
-		DOUBLE_ARROW, // =>
-		DOUBLE_COLON, // ::
-
-		// Brackets //
-
-		// ()
-		LEFT_PAREN,
-		RIGHT_PAREN,
-
-		// {}
-		LEFT_BRACE,
-		RIGHT_BRACE,
-
-		// []
-		LEFT_BRACKET,
-		RIGHT_BRACKET,
-
-		// Only occurs at the end of a file
-		END_OF_FILE,
-
-		// Causes an error if not defined
-		UNDEFINED
+		std::string value;
+		Type type;
 	};
 
-	class Token
+	struct FuncToken
 	{
-		public:
-			Token() = default;
-			Token(TokenType type, const std::string value = "") : value(value), type(type) {}
+		enum Type
+		{
+			// Identifiers //
+			IDENTIFIER, // ( Word )
 
-			std::string value;
-			TokenType type = TokenType::UNDEFINED;
+			// Literals //
+			STRING_LITERAL,
+
+			// Var Types //
+
+			INT_DEC,
+			STR_DEC,
+
+			// Var Modifiers //
+
+			CONST,
+
+			// Control flow //
+			// These are not identifiers because thier behavior cannot be changed at compile/runtime //
+
+			// Simple control flow
+			IF,
+			ELIF,
+			ELSE,
+
+			// Loops
+			FOR,
+			WHILE,
+
+			// Goto statements
+			BREAK,
+			CONTINUE,
+			RETURN,
+
+			// Operators //
+
+			// Simple arithmetic operators
+			PLUS,
+			MINUS,
+			MULTIPLY,
+			DIVIDE,
+			MODULO,
+
+			// Complex arithmetic operators
+			PLUS_EQUALS,
+			MINUS_EQUALS,
+			MULTIPLY_EQUALS,
+			DIVIDE_EQUALS,
+
+			POWER,
+
+			// Increment and decrement operators
+			INCREMENT,
+			DECREMENT,
+
+			// Comparison operators
+			EQUALS,
+			NOT_EQUALS,
+
+			GREATER_THAN, // >
+			GREATER_THAN_EQUALS, // >=
+
+			LESS_THAN, // <
+			LESS_THAN_EQUALS, // <=
+
+			// Logical operators
+			AND,
+			OR,
+			NOT,
+
+			// Assignment operators
+			ASSIGN,
+
+			// Separators //
+
+			// Singlechar
+			COMMA,
+			SEMICOLON,
+			COLON,
+			DOT,
+
+			// Multichar
+			ARROW, // ->
+			DOUBLE_ARROW, // =>
+			DOUBLE_COLON, // ::
+
+			// Brackets //
+
+			// ()
+			LEFT_PAREN,
+			RIGHT_PAREN,
+
+			// {}
+			LEFT_BRACE,
+			RIGHT_BRACE,
+
+			// []
+			LEFT_BRACKET,
+			RIGHT_BRACKET,
+
+			// Only occurs at the end of a scope
+			END_OF_SCOPE,
+
+			// Causes an error if not defined
+			UNDEFINED
+		};
+
+		FuncToken() = default;
+		FuncToken(Type t, const std::string& v = "") : type(t), value(v) {}
+
+		std::string value;
+		Type type;
 	};
 
+	struct ClassToken
+	{
+		enum Type
+		{
+		};
+
+		ClassToken() = default;
+		ClassToken(Type t, const std::string& v) : type(t), value(v) {}
+
+		std::string value;
+		Type type;
+	};
+
+	struct EnumToken
+	{
+		enum Type
+		{
+		};
+
+		EnumToken() = default;
+		EnumToken(Type t, const std::string& v) : type(t), value(v) {}
+
+		std::string value;
+		Type type;
+	};
+
+	struct MacroToken
+	{
+		enum Type
+		{
+		};
+
+		MacroToken() = default;
+		MacroToken(Type t, const std::string& v) : type(t), value(v) {}
+
+		std::string value;
+		Type type;
+	};
+
+	struct ShaderToken
+	{
+		enum Type
+		{
+		};
+
+		ShaderToken() = default;
+		ShaderToken(Type t, const std::string& v) : type(t), value(v) {}
+
+		std::string value;
+		Type type;
+	};
 }

@@ -70,11 +70,6 @@ namespace LX::Lexer
 			std::string_view identifier;
 			std::string_view block;
 
-			// String to hold the return type
-			// Some sections cannot have a return type so this will be void
-			// Functions and shaders can also have a return type of void
-			std::string info;
-
 			// The type of the section
 			// Used to call the correct lexing function
 			SectType type = SectType::UNDEFINED;
@@ -90,6 +85,9 @@ namespace LX::Lexer
 			// Function that will call the correct lexing function
 			// It will then add the tokens to the correct vector of the correct lexer
 			void generateTokens();
+
+			// Lexes the section identifier
+			void lexIdentifier();
 
 			// Debug function that will display the identifier, block and type of the stream section
 			void debugDisplay() const;
@@ -107,12 +105,6 @@ namespace LX::Lexer
 			{
 				return &identifier;
 			}
-
-			// Gets the info/return type of the block
-			inline const std::string& getInfo() const
-			{
-				return info;
-			}
 	};
 
 	class Lexer
@@ -129,7 +121,8 @@ namespace LX::Lexer
 
 			// Token vectors for each of the token types
 
-			std::vector<Token> funcTokens;
+			std::vector<ScopeIdentifierToken> scopeTokens;
+			std::vector<FuncToken> funcTokens;
 
 			// Debug vector to hold the stream sections
 			std::vector<LexerStreamSect> sections;
@@ -144,7 +137,7 @@ namespace LX::Lexer
 			~Lexer() = default;
 
 			// Returns the function tokens
-			inline std::vector<Token>& getFunctionTokens()
+			inline std::vector<FuncToken>& getFunctionTokens()
 			{
 				return funcTokens;
 			}

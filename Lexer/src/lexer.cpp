@@ -67,7 +67,7 @@ namespace LX::Lexer
 		{ SectType::ENUM, lexEnum }
 	};
 
-	LexerStreamSect::LexerStreamSect(std::string_view identifier, std::string_view block, Lexer& creator) : identifier(identifier), block(block), creator(creator)
+	LexerStreamSect::LexerStreamSect(std::string_view identifier, std::string_view block, Lexer& creator) : creator(creator)
 	{
 		// Gets length of the whitespace at the start of the identifier
 		size_t id_start = std::find_if(identifier.begin(), identifier.end(),
@@ -78,50 +78,20 @@ namespace LX::Lexer
 			[](char c) { return !isWhitespace(c); }) - block.begin();
 
 		// Trims the identifier and block
+		this->identifier = identifier.substr(id_start);
+		this->block = block.substr(block_start);
+	}
 
-		identifier = identifier.substr(id_start);
-		block = block.substr(block_start);
-
-		// Gets the size of the first word
-		size_t wordSize = std::find_if(identifier.begin(), identifier.end(),
-			[](char c) { return isWhitespace(c) || c == '['; }) - identifier.begin();
-
-		// The first word of the block (which is the type of the block)
-		// Ends when it reaches a non-alphabetical character
-		std::string_view blockType = identifier.substr(0, wordSize);
-
-		// The info inside <> is optinional but is still needed to be got before the lexer function is called
-		if (identifier[blockType.size()] == '[')
-		{
-			// The last character of the first word
-			// This is used to find the end of the <> block
-			size_t endOfInfo = identifier.find_first_of(']');
-
-			// Throws an error if the end of the <> block is not found
-			if (endOfInfo == std::string::npos)
-			{
-				THROW_ERROR("Expected a '[' to end the '[]' block");
-			}
-
-			// Sets the info to the block
-			info = identifier.substr(blockType.size() + 1, endOfInfo - blockType.size() - 1);
-		}
-
-		else
-		{
-			// Sets it to the default value
-			info = "void";
-		}
-
-		// Sets the type of the block
-		if (auto it = sectTypeMap.find(std::string(blockType)); it != sectTypeMap.end()) { type = it->second; }
-
-		// Throws an error if the block type is not found
-		else { THROW_ERROR("Unknown block type: " + std::string(blockType)); }
+	void LexerStreamSect::lexIdentifier()
+	{
+		THROW_ERROR("Pasha couldnt be asked to code this on a monday morning");
 	}
 
 	void LexerStreamSect::generateTokens()
 	{
+		// Lexes the identifier
+		lexIdentifier();
+
 		// Tries to find the module for the block type
 		if (auto it = modules.find(type); it != modules.end()) { it->second(*this); }
 
@@ -134,7 +104,6 @@ namespace LX::Lexer
 		// Fancy debug display
 		std::cout << "=============================================================== " << std::endl;
 		std::cout << "LexerStreamSect Debug Display\n" << std::endl;
-		std::cout << "Info: " << info << std::endl;
 		std::cout << "Type: " << static_cast<int>(type) << std::endl;
 		std::cout << "----------------------------- Identifier ---------------------- " << std::endl;
 		std::cout << identifier << std::endl;
@@ -207,9 +176,6 @@ namespace LX::Lexer
 
 				case '\0':
 				{
-					// Adds EOF token so the parser knows when to stop
-					funcTokens.emplace_back(TokenType::END_OF_FILE);
-
 					// Breaks out of the loop
 					return;
 				}

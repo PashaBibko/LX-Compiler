@@ -155,7 +155,7 @@ namespace LX::Parser
 			std::unique_ptr<ASTNode> lhs;
 			std::unique_ptr<ASTNode> rhs;
 
-			LX::Lexer::TokenType op;
+			LX::Lexer::FuncToken::Type op;
 	};
 
 	class UnaryOperation : public ASTNode
@@ -174,7 +174,7 @@ namespace LX::Parser
 			// Contents of the operation
 			std::unique_ptr<ASTNode> val;
 
-			LX::Lexer::TokenType op;
+			LX::Lexer::FuncToken::Type op;
 			Sided side;
 	};
 
