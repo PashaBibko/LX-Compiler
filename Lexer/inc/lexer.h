@@ -74,6 +74,8 @@ namespace LX::Lexer
 			// Used to call the correct lexing function
 			SectType type = SectType::UNDEFINED;
 
+			std::vector<ScopeIdentifierToken> idTokens;
+
 		public:
 			// Reference to the lexer that created this stream section
 			// Allows for it to add the tokens to the correct vector of the correct lexer
@@ -119,11 +121,6 @@ namespace LX::Lexer
 			//
 			const bool debug;
 
-			// Token vectors for each of the token types
-
-			std::vector<ScopeIdentifierToken> scopeTokens;
-			std::vector<FuncToken> funcTokens;
-
 			// Debug vector to hold the stream sections
 			std::vector<LexerStreamSect> sections;
 
@@ -135,12 +132,6 @@ namespace LX::Lexer
 
 			// Default destructor - Here to look pretty
 			~Lexer() = default;
-
-			// Returns the function tokens
-			inline std::vector<FuncToken>& getFunctionTokens()
-			{
-				return funcTokens;
-			}
 
 			// Returns the stream sections
 			inline std::vector<LexerStreamSect>& getSections()

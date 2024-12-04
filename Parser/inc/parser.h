@@ -25,7 +25,7 @@
 //     - Sell, rent, lease, or distribute the original software or any copies              //
 //       thereof, including modified versions.                                             //
 //     - Distribute the software or modified versions to any third party.                  //
-//                                                                                         //
+//                                                                                         // 
 // 4. Disclaimer of Warranty                                                               //
 //     This software is provided "as is", without warranty of any kind, either             //
 //     express or implied, including but not limited to the warranties of merchantability, //
@@ -73,6 +73,6 @@ namespace LX::Parser
 	public:
 		Parser() {}
 
-		void parse(const std::vector<LX::Lexer::FuncToken>& tokens, FileAST& out);
+		void parse(, FileAST& out);
 	};
 }

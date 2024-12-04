@@ -44,6 +44,7 @@
 
 static constexpr bool isAlpha(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 static constexpr bool isWhitespace(const char c) { return (c == ' ' || c == '\t') || (c == '\n' || c == '\r'); }
+static bool constexpr isAlphaNumeric(const char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'); }
 
 namespace LX::Lexer
 {
@@ -84,7 +85,117 @@ namespace LX::Lexer
 
 	void LexerStreamSect::lexIdentifier()
 	{
-		THROW_ERROR("Pasha couldnt be asked to code this on a monday morning");
+		// Variables to keep track of the current index and the length of the identifier
+		size_t currentIndex = 0, identifierLength = identifier.length();
+
+		// Variables to keep track of the [] location
+		size_t openBracketIndex = -1, closeBracketIndex = -1;
+
+		// Gets a direct reference to the identifier tokens to increase cache hits
+		std::vector<ScopeIdentifierToken>& tokens = creator.scopeTokens;
+
+		// Loop to lex the identifier
+		while (currentIndex < identifierLength)
+		{
+			// Skips whitespace
+			if (isWhitespace(identifier[currentIndex]));
+
+			else if (isAlphaNumeric(identifier[currentIndex]))
+			{
+				// Gets the start of the word
+				size_t wordStart = currentIndex;
+
+				// Loops until it reaches a non-alphanumeric character
+				while (currentIndex < identifierLength && isAlphaNumeric(identifier[currentIndex++]));
+
+				// Decrements (for some reason)
+				currentIndex--;
+
+				// Stores the word in a string
+				const std::string word = std::string(identifier.substr(wordStart, currentIndex - wordStart));
+
+				// Decrements again (for some reason)
+				currentIndex--;
+
+				static const std::unordered_map<std::string, ScopeIdentifierToken::Type> keywords =
+				{
+					{ "decorator", ScopeIdentifierToken::DECORATOR },
+					{ "typename", ScopeIdentifierToken::TYPENAME },
+					{ "uniform", ScopeIdentifierToken::UNIFORM }
+				};
+
+				static const std::unordered_map<std::string, std::pair<ScopeIdentifierToken::Type, SectType>> scopeTypes =
+				{
+					{ "func", {ScopeIdentifierToken::FUNCTION, SectType::FUNCTION } },
+					{ "enum", {ScopeIdentifierToken::ENUM, SectType::ENUM} },
+					{ "class", {ScopeIdentifierToken::CLASS, SectType::CLASS} },
+					{ "struct", {ScopeIdentifierToken::STRUCT, SectType::STRUCT} },
+					{ "shader", {ScopeIdentifierToken::SHADER, SectType::SHADER}},
+					{ "macro", {ScopeIdentifierToken::MACRO, SectType::MACRO} }
+				};
+
+				// Finds wether the token is a keyword or an identifier
+				if (auto it = scopeTypes.find(word); it != scopeTypes.end())
+				{
+					tokens.push_back(it->second.first);
+
+					if (type == SectType::UNDEFINED)
+					{
+						type = static_cast<SectType>(it->second.second);
+					}
+
+					else
+					{
+						THROW_ERROR("Cannot have multiple block types in a single identifier");
+					}
+				}
+
+				else if (auto it = keywords.find(word); it != keywords.end()) { tokens.push_back(it->second); }
+				else { tokens.push_back(ScopeIdentifierToken(ScopeIdentifierToken::IDENTIFIER, word)); }
+			}
+
+			else
+			{
+				static const std::unordered_map<char, ScopeIdentifierToken::Type> scopeIdentifierOpMap =
+				{
+					{ '[', ScopeIdentifierToken::LEFT_BRACKET },
+					{ ']', ScopeIdentifierToken::RIGHT_BRACKET },
+					{ '(', ScopeIdentifierToken::LEFT_PAREN },
+					{ ')', ScopeIdentifierToken::RIGHT_PAREN },
+					{ '{', ScopeIdentifierToken::LEFT_BRACE },
+					{ '}', ScopeIdentifierToken::RIGHT_BRACE },
+					{ '<', ScopeIdentifierToken::LEFT_ANGLE_BRACKET },
+					{ '>', ScopeIdentifierToken::RIGHT_ANGLE_BRACKET },
+					{ ',', ScopeIdentifierToken::COMMA }
+				};
+
+				if (auto it = scopeIdentifierOpMap.find(identifier[currentIndex]); it != scopeIdentifierOpMap.end())
+				{
+					tokens.push_back(it->second);
+
+					if (tokens.back().type == ScopeIdentifierToken::LEFT_BRACKET)
+					{
+						openBracketIndex = (openBracketIndex == -1) ? tokens.size() - 1 : THROW_ERROR("Cannot have duplicate brackets in a scope identifier");
+					}
+
+					else if (tokens.back().type == ScopeIdentifierToken::RIGHT_BRACKET)
+					{
+						closeBracketIndex = (closeBracketIndex == -1) ? tokens.size() - 1 : THROW_ERROR("Cannot have duplicate brackets in a scope identifier");
+					}
+				}
+
+				else
+				{
+					THROW_ERROR("Invalid character in identifier: " + std::string(1, identifier[currentIndex]));
+				}
+			}
+
+			// Increments the index
+			currentIndex++;
+		}
+
+		// Adds an end of identifier token to stop parser errors
+		tokens.push_back(ScopeIdentifierToken::END_OF_IDENTIFIER);
 	}
 
 	void LexerStreamSect::generateTokens()

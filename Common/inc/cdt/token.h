@@ -90,13 +90,27 @@ namespace LX::Lexer
 		};
 
 		ScopeIdentifierToken() = default;
-		ScopeIdentifierToken(Type t, const std::string& v) : type(t), value(v) {}
+		ScopeIdentifierToken(Type t, const std::string& v = "") : type(t), value(v) {}
 
 		std::string value;
 		Type type;
 	};
+	struct TokenBase
+	{
+		enum class TokenType
+		{
+			CLASS,
+			ENUM,
+			FUNC,
+			MACRO,
+			SHADER
+		};
 
-	struct FuncToken
+		TokenBase(TokenType t) : type(t) {}
+		const TokenType type;
+	};
+
+	struct FuncToken : public TokenBase
 	{
 		enum Type
 		{
@@ -206,59 +220,59 @@ namespace LX::Lexer
 		};
 
 		FuncToken() = default;
-		FuncToken(Type t, const std::string& v = "") : type(t), value(v) {}
+		FuncToken(Type t, const std::string& v = "") : TokenBase(TokenType::FUNC), type(t), value(v) {}
 
 		std::string value;
 		Type type;
 	};
 
-	struct ClassToken
+	struct ClassToken : public TokenBase
 	{
 		enum Type
 		{
 		};
 
 		ClassToken() = default;
-		ClassToken(Type t, const std::string& v) : type(t), value(v) {}
+		ClassToken(Type t, const std::string& v) : TokenBase(TokenType::CLASS), type(t), value(v) {}
 
 		std::string value;
 		Type type;
 	};
 
-	struct EnumToken
+	struct EnumToken : public TokenBase
 	{
 		enum Type
 		{
 		};
 
 		EnumToken() = default;
-		EnumToken(Type t, const std::string& v) : type(t), value(v) {}
+		EnumToken(Type t, const std::string& v) : TokenBase(TokenType::ENUM), type(t), value(v) {}
 
 		std::string value;
 		Type type;
 	};
 
-	struct MacroToken
+	struct MacroToken : public TokenBase
 	{
 		enum Type
 		{
 		};
 
 		MacroToken() = default;
-		MacroToken(Type t, const std::string& v) : type(t), value(v) {}
+		MacroToken(Type t, const std::string& v) : TokenBase(TokenType::MACRO), type(t), value(v) {}
 
 		std::string value;
 		Type type;
 	};
 
-	struct ShaderToken
+	struct ShaderToken : public TokenBase
 	{
 		enum Type
 		{
 		};
 
 		ShaderToken() = default;
-		ShaderToken(Type t, const std::string& v) : type(t), value(v) {}
+		ShaderToken(Type t, const std::string& v) : TokenBase(TokenType::SHADER), type(t), value(v) {}
 
 		std::string value;
 		Type type;

@@ -135,6 +135,7 @@ namespace LX::Lexer
 						// Loops until it reaches the closing quote
 						// \" will currently end it. I should fix this later
 						// ^ Written on 04/11/24. Please dont be a year later when I come back to this
+						//   Currently 19/11/23 Still dont feel like fixing it
 						while (currentIndex < currentLength && (*current)[currentIndex++] != '"');
 
 						// Decrements to avoid skipping the next character
@@ -278,9 +279,7 @@ namespace LX::Lexer
 		std::vector<FuncToken>& t = sect.creator.getFunctionTokens();
 
 		// Lexes the block
-		t.emplace_back(FuncToken::LEFT_BRACE);
 		lexFunctionFromStringView(sect, t, sect.getBlock());
-		t.emplace_back(FuncToken::RIGHT_BRACE);
 		t.emplace_back(FuncToken::END_OF_SCOPE);
 	}
 }
