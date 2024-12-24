@@ -162,6 +162,14 @@ namespace LX::API
 
 			parser.parse(funcTokenMap[id], astMap[id]);
 
+			if (debug == true)
+			{
+				for (LX::Parser::FunctionDeclaration& func : astMap[id].functions)
+				{
+					Debug::Log(&func, 0);
+				}
+			}
+
 			return true;
 		}
 
